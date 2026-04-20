@@ -73,7 +73,7 @@ export default function Image() {
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <span style={{ fontSize: 24, opacity: 0.8 }}>vuelveacasa.mx</span>
+          <span style={{ fontSize: 24, opacity: 0.8 }}>vuelvecasa.com</span>
           <span
             style={{
               fontSize: 22,

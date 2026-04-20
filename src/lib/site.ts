@@ -3,20 +3,20 @@ export const SITE = {
   tagline: "Reporta, encuentra y ayuda a que vuelvan a casa.",
   description:
     "VuelveaCasa es la red comunitaria de México para reportar mascotas perdidas, avistar mascotas encontradas, activar alertas por zona, ofrecer hogares temporales y donar para apoyar rescates verificados.",
-  url: "https://vuelveacasa.mx",
+  url: "https://vuelvecasa.com",
   locale: "es-MX",
   country: "MX",
   contact: {
-    email: "hola@vuelveacasa.mx",
-    ayuda: "ayuda@vuelveacasa.mx",
-    prensa: "prensa@vuelveacasa.mx",
+    email: "hola@vuelvecasa.com",
+    ayuda: "ayuda@vuelvecasa.com",
+    prensa: "prensa@vuelvecasa.com",
     phone: "+52 55 0000 0000",
   },
   social: {
-    instagram: "https://instagram.com/vuelveacasa.mx",
-    tiktok: "https://tiktok.com/@vuelveacasa.mx",
-    facebook: "https://facebook.com/vuelveacasa.mx",
-    x: "https://x.com/vuelveacasa_mx",
+    instagram: "https://instagram.com/vuelvecasa.mx",
+    tiktok: "https://tiktok.com/@vuelvecasa.mx",
+    facebook: "https://facebook.com/vuelvecasa",
+    x: "https://x.com/vuelvecasa",
   },
   founded: "2026",
   legal: {
@@ -25,7 +25,7 @@ export const SITE = {
 } as const;
 
 export const CITIES = [
-  { slug: "cdmx", name: "Ciudad de México", short: "CDMX", state: "CDMX" },
+  { slug: "cdmx", name: "Ciudad de México", short: "CDMX", state: "Ciudad de México" },
   { slug: "guadalajara", name: "Guadalajara", short: "GDL", state: "Jalisco" },
   { slug: "monterrey", name: "Monterrey", short: "MTY", state: "Nuevo León" },
   { slug: "puebla", name: "Puebla", short: "PUE", state: "Puebla" },

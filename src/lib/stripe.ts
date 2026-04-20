@@ -9,7 +9,7 @@
  *   2. Set in .env:
  *        STRIPE_SECRET_KEY=sk_live_...
  *        STRIPE_WEBHOOK_SECRET=whsec_...
- *        NEXT_PUBLIC_SITE_URL=https://vuelveacasa.mx
+ *        NEXT_PUBLIC_SITE_URL=https://vuelvecasa.com
  *   3. Optionally pre-create Stripe Products/Prices and set IDs below.
  *
  * The route handlers already follow Stripe's canonical Checkout redirect flow
@@ -34,7 +34,7 @@ export const STRIPE_CONFIG = {
       rescate: "Donación · Rescatistas aliados",
     }[causa] || "Donación VuelveaCasa"),
   publicSiteUrl:
-    process.env.NEXT_PUBLIC_SITE_URL || "https://vuelveacasa.mx",
+    process.env.NEXT_PUBLIC_SITE_URL || "https://vuelvecasa.com",
 };
 
 export function stripeEnabled() {
