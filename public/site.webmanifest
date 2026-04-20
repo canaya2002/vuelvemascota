@@ -1,0 +1,50 @@
+{
+  "name": "VuelveaCasa",
+  "short_name": "VuelveaCasa",
+  "description": "Red comunitaria de México para mascotas perdidas, encontradas y rescates.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "theme_color": "#ff5a36",
+  "background_color": "#fffaf5",
+  "categories": ["lifestyle", "social", "utilities"],
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Reportar mascota perdida",
+      "short_name": "Perdida",
+      "url": "/mascota-perdida"
+    },
+    {
+      "name": "Reportar mascota encontrada",
+      "short_name": "Encontrada",
+      "url": "/mascota-encontrada"
+    },
+    {
+      "name": "Donar",
+      "short_name": "Donar",
+      "url": "/donar"
+    }
+  ]
+}
