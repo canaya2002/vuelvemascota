@@ -9,6 +9,8 @@ type Body = {
   recurrente?: boolean;
   causa?: string;
   currency?: string;
+  caso_id?: string;
+  caso_slug?: string;
 };
 
 export async function POST(req: Request) {
@@ -24,6 +26,8 @@ export async function POST(req: Request) {
   const causa = ["fondo", "emergencia", "rescate"].includes(body.causa || "")
     ? (body.causa as string)
     : "fondo";
+  const casoId = typeof body.caso_id === "string" ? body.caso_id : undefined;
+  const casoSlug = typeof body.caso_slug === "string" ? body.caso_slug : undefined;
 
   if (!amount || amount < STRIPE_CONFIG.minAmount) {
     return NextResponse.json(
@@ -49,8 +53,20 @@ export async function POST(req: Request) {
   try {
     const stripe = await getStripe();
 
-    const successUrl = `${STRIPE_CONFIG.publicSiteUrl}/donar/gracias?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${STRIPE_CONFIG.publicSiteUrl}/donar?canceled=1`;
+    const successUrl = casoSlug
+      ? `${STRIPE_CONFIG.publicSiteUrl}/casos/${casoSlug}?gracias=1`
+      : `${STRIPE_CONFIG.publicSiteUrl}/donar/gracias?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = casoSlug
+      ? `${STRIPE_CONFIG.publicSiteUrl}/casos/${casoSlug}?canceled=1`
+      : `${STRIPE_CONFIG.publicSiteUrl}/donar?canceled=1`;
+
+    const productName = casoId
+      ? `Donación a caso · VuelveaCasa`
+      : STRIPE_CONFIG.productName(causa);
+
+    const metadata: Record<string, string> = { causa };
+    if (casoId) metadata.caso_id = casoId;
+    if (casoSlug) metadata.caso_slug = casoSlug;
 
     const session = await stripe.checkout.sessions.create({
       mode: recurrente ? "subscription" : "payment",
@@ -58,7 +74,7 @@ export async function POST(req: Request) {
       success_url: successUrl,
       cancel_url: cancelUrl,
       allow_promotion_codes: false,
-      metadata: { causa },
+      metadata,
       line_items: [
         {
           quantity: 1,
@@ -66,7 +82,7 @@ export async function POST(req: Request) {
             currency: STRIPE_CONFIG.currency,
             unit_amount: amount * 100,
             product_data: {
-              name: STRIPE_CONFIG.productName(causa),
+              name: productName,
               description: recurrente
                 ? "Donación mensual a VuelveaCasa"
                 : "Donación única a VuelveaCasa",

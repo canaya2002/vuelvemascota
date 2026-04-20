@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
 import { SITE, CITIES } from "@/lib/site";
 import { HUB_SLUGS } from "@/lib/seoContent";
+import { casosRepo } from "@/lib/casos";
+import { aliadosRepo } from "@/lib/aliadosRepo";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = SITE.url;
   const now = new Date();
 
@@ -11,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "/como-funciona", priority: 0.9, changeFrequency: "monthly" },
     { url: "/para-quien-es", priority: 0.8, changeFrequency: "monthly" },
     { url: "/casos-de-uso", priority: 0.8, changeFrequency: "monthly" },
+    { url: "/casos", priority: 0.9, changeFrequency: "hourly" },
     { url: "/donar", priority: 0.9, changeFrequency: "weekly" },
     { url: "/rescatistas", priority: 0.8, changeFrequency: "monthly" },
     { url: "/veterinarias", priority: 0.8, changeFrequency: "monthly" },
@@ -19,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "/contacto", priority: 0.6, changeFrequency: "monthly" },
     { url: "/registro", priority: 0.9, changeFrequency: "weekly" },
     { url: "/ciudades", priority: 0.8, changeFrequency: "weekly" },
+    { url: "/aliados", priority: 0.8, changeFrequency: "weekly" },
     { url: "/privacidad", priority: 0.2, changeFrequency: "yearly" },
     { url: "/terminos", priority: 0.2, changeFrequency: "yearly" },
   ];
@@ -35,10 +39,42 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
   }));
 
-  return [...staticPaths, ...hubPaths, ...cityPaths].map((p) => ({
+  const casoRows = await casosRepo.listSlugsForSitemap(1000);
+  const casoPaths = casoRows.map((c) => ({
+    url: `/casos/${c.slug}`,
+    priority: 0.7,
+    changeFrequency: "daily" as const,
+    lastModified: new Date(c.updated_at),
+  }));
+
+  const aliadosRows = await aliadosRepo.listVerificados({ limit: 300 });
+  const aliadoPaths = aliadosRows.map((a) => ({
+    url: `/aliados/${a.slug}`,
+    priority: 0.6,
+    changeFrequency: "weekly" as const,
+    lastModified: new Date(a.created_at),
+  }));
+
+  const base404 = [...staticPaths, ...hubPaths, ...cityPaths].map((p) => ({
     url: `${base}${p.url}`,
     lastModified: now,
     changeFrequency: p.changeFrequency,
     priority: p.priority,
   }));
+
+  return [
+    ...base404,
+    ...casoPaths.map((p) => ({
+      url: `${base}${p.url}`,
+      lastModified: p.lastModified,
+      changeFrequency: p.changeFrequency,
+      priority: p.priority,
+    })),
+    ...aliadoPaths.map((p) => ({
+      url: `${base}${p.url}`,
+      lastModified: p.lastModified,
+      changeFrequency: p.changeFrequency,
+      priority: p.priority,
+    })),
+  ];
 }

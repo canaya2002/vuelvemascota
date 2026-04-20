@@ -48,6 +48,7 @@ export async function POST(req: Request) {
           recurrente: session.mode === "subscription",
           email: session.customer_details?.email,
           status: "completed",
+          caso_id: session.metadata?.caso_id || null,
         });
         break;
       }

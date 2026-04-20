@@ -22,7 +22,11 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
-      // Add CDN hosts here if/when images stop being served from /public.
+      // Supabase Storage público (fotos de casos). Cubre cualquier proyecto.
+      { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
+      // Clerk avatars (UserButton).
+      { protocol: "https", hostname: "img.clerk.com" },
+      { protocol: "https", hostname: "images.clerk.dev" },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },

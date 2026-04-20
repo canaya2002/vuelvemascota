@@ -3,6 +3,7 @@ import { PageHero } from "@/components/PageHero";
 import { Section } from "@/components/Section";
 import { CTA } from "@/components/CTA";
 import { DonationWidget } from "@/components/DonationWidget";
+import { TransparenciaPanel } from "@/components/TransparenciaPanel";
 import { FeatureCard } from "@/components/FeatureCard";
 import {
   IconHeart,
@@ -48,8 +49,16 @@ export default function Page() {
             </div>
 
             <h3 id="transparencia" className="mt-14 text-2xl font-semibold">
-              Transparencia
+              Transparencia · números en vivo
             </h3>
+            <p className="mt-2 text-[var(--ink-soft)]">
+              Actualizados automáticamente desde nuestra base de datos y el historial de Stripe.
+            </p>
+            <div className="mt-4">
+              <TransparenciaPanel />
+            </div>
+
+            <h3 className="mt-14 text-2xl font-semibold">Criterios</h3>
             <ul className="mt-4 space-y-3">
               {trans.map((t) => (
                 <li key={t} className="flex items-start gap-3">

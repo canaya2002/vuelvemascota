@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import Script from "next/script";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@/components/Analytics";
+import { PwaRegister } from "@/components/PwaRegister";
 import { SITE } from "@/lib/site";
+import { FLAGS } from "@/lib/flags";
 
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans-local",
@@ -171,7 +174,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
+  const tree = (
     <html lang="es-MX" className={`${sans.variable} ${display.variable}`}>
       <body className="min-h-screen flex flex-col">
         <Script
@@ -196,7 +199,30 @@ export default function RootLayout({
         </main>
         <Footer />
         <Analytics />
+        <PwaRegister />
       </body>
     </html>
   );
+
+  if (FLAGS.auth) {
+    return (
+      <ClerkProvider
+        appearance={{
+          variables: {
+            colorPrimary: "#ff5a36",
+            colorText: "#0b1f33",
+            borderRadius: "12px",
+          },
+        }}
+        signInUrl="/entrar"
+        signUpUrl="/crear-cuenta"
+        signInFallbackRedirectUrl="/panel"
+        signUpFallbackRedirectUrl="/panel"
+      >
+        {tree}
+      </ClerkProvider>
+    );
+  }
+
+  return tree;
 }

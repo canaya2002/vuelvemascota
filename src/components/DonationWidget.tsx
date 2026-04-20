@@ -4,15 +4,30 @@ import { IconHeart } from "./Icons";
 
 const PRESETS = [100, 250, 500, 1000, 2500];
 
-export function DonationWidget() {
+export type DonationWidgetProps = {
+  casoId?: string;
+  casoSlug?: string;
+  casoTitulo?: string;
+  compact?: boolean;
+  defaultCausa?: "fondo" | "emergencia" | "rescate";
+};
+
+export function DonationWidget({
+  casoId,
+  casoSlug,
+  casoTitulo,
+  compact,
+  defaultCausa = "fondo",
+}: DonationWidgetProps) {
   const [amount, setAmount] = useState<number>(250);
   const [custom, setCustom] = useState<string>("");
   const [recurrente, setRecurrente] = useState(false);
-  const [causa, setCausa] = useState("fondo");
+  const [causa, setCausa] = useState<string>(casoId ? "rescate" : defaultCausa);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   const effective = custom ? Number(custom) : amount;
+  const isForCaso = !!casoId;
 
   function submit() {
     setError(null);
@@ -26,7 +41,14 @@ export function DonationWidget() {
         const res = await fetch("/api/donar/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: value, recurrente, causa, currency: "mxn" }),
+          body: JSON.stringify({
+            amount: value,
+            recurrente,
+            causa,
+            currency: "mxn",
+            caso_id: casoId,
+            caso_slug: casoSlug,
+          }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -54,44 +76,52 @@ export function DonationWidget() {
           <IconHeart size={22} />
         </span>
         <div>
-          <h3 className="text-xl font-semibold">Hacer una donación</h3>
-          <p className="text-sm text-[var(--ink-soft)]">Pago seguro con Stripe · MXN</p>
+          <h3 className="text-xl font-semibold">
+            {isForCaso ? "Apoyar este caso" : "Hacer una donación"}
+          </h3>
+          <p className="text-sm text-[var(--ink-soft)]">
+            {isForCaso && casoTitulo
+              ? `Para ${casoTitulo}`
+              : "Pago seguro con Stripe · MXN"}
+          </p>
         </div>
       </div>
 
-      <fieldset className="mt-6">
-        <legend className="vc-label">Destino</legend>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          {[
-            { v: "fondo", t: "Fondo comunitario" },
-            { v: "emergencia", t: "Emergencias veterinarias" },
-            { v: "rescate", t: "Rescatistas aliados" },
-          ].map((o) => (
-            <label
-              key={o.v}
-              className={`cursor-pointer px-3 py-3 rounded-xl border text-sm text-center transition-colors ${
-                causa === o.v
-                  ? "bg-[var(--brand-soft)] border-[var(--brand)] text-[var(--brand-ink)] font-semibold"
-                  : "border-[var(--line-strong)] bg-white hover:border-[var(--ink)]"
-              }`}
-            >
-              <input
-                type="radio"
-                name="causa"
-                value={o.v}
-                checked={causa === o.v}
-                onChange={() => setCausa(o.v)}
-                className="sr-only"
-              />
-              {o.t}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      {!isForCaso && (
+        <fieldset className="mt-6">
+          <legend className="vc-label">Destino</legend>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {[
+              { v: "fondo", t: "Fondo comunitario" },
+              { v: "emergencia", t: "Emergencias veterinarias" },
+              { v: "rescate", t: "Rescatistas aliados" },
+            ].map((o) => (
+              <label
+                key={o.v}
+                className={`cursor-pointer px-3 py-3 rounded-xl border text-sm text-center transition-colors ${
+                  causa === o.v
+                    ? "bg-[var(--brand-soft)] border-[var(--brand)] text-[var(--brand-ink)] font-semibold"
+                    : "border-[var(--line-strong)] bg-white hover:border-[var(--ink)]"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="causa"
+                  value={o.v}
+                  checked={causa === o.v}
+                  onChange={() => setCausa(o.v)}
+                  className="sr-only"
+                />
+                {o.t}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
 
       <fieldset className="mt-6">
         <legend className="vc-label">Monto (MXN)</legend>
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+        <div className={`grid gap-2 ${compact ? "grid-cols-3" : "grid-cols-3 sm:grid-cols-5"}`}>
           {PRESETS.map((n) => (
             <button
               key={n}
@@ -121,18 +151,19 @@ export function DonationWidget() {
         />
       </fieldset>
 
-      <label className="mt-5 flex items-start gap-3 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={recurrente}
-          onChange={(e) => setRecurrente(e.target.checked)}
-          className="mt-1 w-5 h-5 accent-[var(--brand)]"
-        />
-        <span className="text-sm text-[var(--ink-soft)]">
-          Hacerla <strong>mensual</strong> para sostener la operación
-          comunitaria.
-        </span>
-      </label>
+      {!isForCaso && (
+        <label className="mt-5 flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={recurrente}
+            onChange={(e) => setRecurrente(e.target.checked)}
+            className="mt-1 w-5 h-5 accent-[var(--brand)]"
+          />
+          <span className="text-sm text-[var(--ink-soft)]">
+            Hacerla <strong>mensual</strong> para sostener la operación comunitaria.
+          </span>
+        </label>
+      )}
 
       <button
         type="button"
@@ -149,8 +180,8 @@ export function DonationWidget() {
         </p>
       )}
       <p className="mt-3 text-xs text-[var(--muted)]">
-        Pago procesado por Stripe. No guardamos datos de tu tarjeta. Puedes
-        cancelar recurrencias cuando quieras.
+        Pago procesado por Stripe. No guardamos datos de tu tarjeta.
+        {isForCaso ? " Este monto se registra en la transparencia del caso." : ""}
       </p>
     </div>
   );

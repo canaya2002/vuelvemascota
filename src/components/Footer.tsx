@@ -12,6 +12,7 @@ const col1 = [
 const col2 = [
   { href: "/rescatistas", label: "Rescatistas y refugios" },
   { href: "/veterinarias", label: "Veterinarias y aliados" },
+  { href: "/aliados", label: "Directorio de aliados" },
   { href: "/alertas", label: "Alertas por zona" },
   { href: "/registro", label: "Registro anticipado" },
 ];

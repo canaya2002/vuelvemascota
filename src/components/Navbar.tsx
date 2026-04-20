@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { IconPaw, IconMenu, IconX } from "./Icons";
+import { FLAGS } from "@/lib/flags";
 
 const LINKS = [
+  { href: "/casos", label: "Casos" },
   { href: "/como-funciona", label: "Cómo funciona" },
-  { href: "/para-quien-es", label: "Para quién es" },
-  { href: "/casos-de-uso", label: "Casos" },
   { href: "/rescatistas", label: "Rescatistas" },
   { href: "/veterinarias", label: "Veterinarias" },
   { href: "/faq", label: "FAQ" },
@@ -66,9 +67,13 @@ export function Navbar() {
           <Link href="/donar" className="vc-btn vc-btn-outline text-sm py-2.5 px-4">
             Donar
           </Link>
-          <Link href="/registro" className="vc-btn vc-btn-primary text-sm py-2.5 px-4">
-            Registrarme
-          </Link>
+          {FLAGS.auth ? (
+            <AuthActionsDesktop />
+          ) : (
+            <Link href="/registro" className="vc-btn vc-btn-primary text-sm py-2.5 px-4">
+              Registrarme
+            </Link>
+          )}
         </div>
 
         <button
@@ -83,10 +88,7 @@ export function Navbar() {
 
       {open && (
         <div className="lg:hidden fixed inset-0 top-[64px] bg-[var(--bg)] z-40 overflow-y-auto">
-          <nav
-            aria-label="Móvil"
-            className="vc-container py-6 flex flex-col gap-1"
-          >
+          <nav aria-label="Móvil" className="vc-container py-6 flex flex-col gap-1">
             {LINKS.map((l) => (
               <Link
                 key={l.href}
@@ -111,25 +113,105 @@ export function Navbar() {
             >
               Contacto
             </Link>
-            <div className="mt-4 flex flex-col gap-3">
-              <Link
-                href="/registro"
-                onClick={() => setOpen(false)}
-                className="vc-btn vc-btn-primary"
-              >
-                Registrarme gratis
-              </Link>
-              <Link
-                href="/donar"
-                onClick={() => setOpen(false)}
-                className="vc-btn vc-btn-outline"
-              >
-                Apoyar con una donación
-              </Link>
-            </div>
+
+            {FLAGS.auth ? (
+              <AuthActionsMobile onNavigate={() => setOpen(false)} />
+            ) : (
+              <div className="mt-4 flex flex-col gap-3">
+                <Link
+                  href="/registro"
+                  onClick={() => setOpen(false)}
+                  className="vc-btn vc-btn-primary"
+                >
+                  Registrarme gratis
+                </Link>
+                <Link
+                  href="/donar"
+                  onClick={() => setOpen(false)}
+                  className="vc-btn vc-btn-outline"
+                >
+                  Apoyar con una donación
+                </Link>
+              </div>
+            )}
           </nav>
         </div>
       )}
     </header>
+  );
+}
+
+/**
+ * Estos subcomponentes solo se renderizan cuando FLAGS.auth es true,
+ * lo que implica que ClerkProvider está montado y useUser funciona.
+ */
+
+function AuthActionsDesktop() {
+  const { isSignedIn, isLoaded } = useUser();
+  if (!isLoaded) {
+    return <div className="w-9 h-9 rounded-full bg-[var(--bg-alt)] animate-pulse" />;
+  }
+  if (isSignedIn) {
+    return (
+      <>
+        <Link
+          href="/panel"
+          className="text-sm font-medium text-[var(--ink)] hover:text-[var(--brand-ink)] px-3"
+        >
+          Panel
+        </Link>
+        <UserButton
+          appearance={{ elements: { avatarBox: "w-9 h-9" } }}
+        />
+      </>
+    );
+  }
+  return (
+    <>
+      <Link
+        href="/entrar"
+        className="text-sm font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] px-3"
+      >
+        Entrar
+      </Link>
+      <Link
+        href="/crear-cuenta"
+        className="vc-btn vc-btn-primary text-sm py-2.5 px-4"
+      >
+        Crear cuenta
+      </Link>
+    </>
+  );
+}
+
+function AuthActionsMobile({ onNavigate }: { onNavigate: () => void }) {
+  const { isSignedIn, isLoaded } = useUser();
+  if (!isLoaded) return null;
+  if (isSignedIn) {
+    return (
+      <div className="mt-4 flex flex-col gap-3">
+        <Link
+          href="/panel"
+          onClick={onNavigate}
+          className="vc-btn vc-btn-primary"
+        >
+          Ir a mi panel
+        </Link>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-4 flex flex-col gap-3">
+      <Link
+        href="/crear-cuenta"
+        onClick={onNavigate}
+        className="vc-btn vc-btn-primary"
+      >
+        Crear cuenta gratis
+      </Link>
+      <Link href="/entrar" onClick={onNavigate} className="vc-btn vc-btn-outline">
+        Entrar
+      </Link>
+    </div>
   );
 }

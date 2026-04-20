@@ -20,6 +20,8 @@ Lo que sigue está ordenado por prioridad real. Puedes omitir los marcados como 
 | 08 | `08-analytics.md` — GA4 / Vercel Analytics | 20 min | **Sí** | Métricas de lanzamiento |
 | 09 | `09-tiktok.md` — TikTok y Meta Pixels | 40 min | Opcional (solo si corres ads) | Optimización de campañas |
 | 10 | `10-legal.md` — privacidad, términos, razón social | 1–2 h + revisión externa | **Sí** parcial | Cobros y cumplimiento |
+| 11 | `11-auth.md` — Clerk (Fase 2) | 30 min | Solo Fase 2 | Cuentas reales y panel |
+| 12 | `12-casos.md` — Casos con fotos, mapa y avistamientos (Sprint 2.1) | 30 min | Solo Fase 2 | Producto operativo |
 
 ---
 
@@ -49,6 +51,11 @@ Todas viven en `.env.local` (dev) y en Vercel → Settings → Environment Varia
 | Variable | Doc | Sin ella, ¿qué pasa? |
 |---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | SETUP | OG/canonical usan default |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | 11 | Fase 1 puro, `/panel` redirige |
+| `CLERK_SECRET_KEY` | 11 | Fase 1 puro |
+| `CLERK_WEBHOOK_SECRET` | 11 | Usuarios no se sincronizan a DB |
+| `SUPABASE_URL` | 12 | Upload de fotos deshabilitado |
+| `SUPABASE_SERVICE_ROLE` | 12 | Upload de fotos deshabilitado |
 | `STRIPE_SECRET_KEY` | 02 | Donaciones muestran "estamos activando" |
 | `STRIPE_WEBHOOK_SECRET` | 02 | Webhook ignora eventos (200 OK) |
 | `STRIPE_PRICE_MONTHLY_*` | 02 | Crea price ad-hoc |
