@@ -6,6 +6,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@/components/Analytics";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { PwaRegister } from "@/components/PwaRegister";
 import { SITE } from "@/lib/site";
 import { FLAGS } from "@/lib/flags";
@@ -199,6 +200,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <Analytics />
+        <VercelAnalytics />
         <PwaRegister />
       </body>
     </html>
