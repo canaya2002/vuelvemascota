@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   IconPaw,
   IconBell,
@@ -7,7 +8,9 @@ import {
   IconShield,
   IconArrow,
 } from "./Icons";
-import { HERO_VIDEO, HERO_POSTER } from "@/lib/images";
+import { HERO_VIDEO, HERO_POSTER, pickRange } from "@/lib/images";
+
+const HERO_FLOATS = pickRange(36, 3);
 
 export function Hero() {
   return (
@@ -26,22 +29,25 @@ export function Hero() {
         />
         <div className="vc-hero-overlay" />
 
+        <FloatingPhotos />
+
         <div className="relative z-10 vc-container py-20 md:py-24 text-white">
           <div className="max-w-3xl">
-            <span className="vc-eyebrow !bg-white/18 !text-white border border-white/25 backdrop-blur-md">
+            <span className="vc-eyebrow !bg-white/18 !text-white border border-white/25 backdrop-blur-md vc-fade-up">
+              <span className="relative inline-flex w-2 h-2 rounded-full bg-[var(--brand)] vc-pulse-ring" />
               <IconPaw size={14} /> Red comunitaria para mascotas en México
             </span>
-            <h1 className="mt-6 text-[2.4rem] leading-[1.04] sm:text-5xl md:text-6xl lg:text-[4.6rem] font-bold tracking-tight">
+            <h1 className="mt-6 text-[2.4rem] leading-[1.04] sm:text-5xl md:text-6xl lg:text-[4.6rem] font-bold tracking-tight vc-fade-up vc-fade-up-delay-1">
               Reporta, encuentra y ayuda a que{" "}
-              <span className="text-[var(--brand)]">vuelvan a casa</span>.
+              <span className="vc-gradient-text">vuelvan a casa</span>.
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
+            <p className="mt-6 text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed vc-fade-up vc-fade-up-delay-2">
               VuelveaCasa es la plataforma mexicana para reportar mascotas
               perdidas, avistar mascotas encontradas, activar alertas por zona,
               abrir hogares temporales y apoyar rescates reales.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href="/registro" className="vc-btn vc-btn-primary">
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 vc-fade-up vc-fade-up-delay-3">
+              <Link href="/registro" className="vc-btn vc-btn-primary vc-shine">
                 Registrarme gratis <IconArrow size={18} />
               </Link>
               <Link href="/donar" className="vc-btn vc-btn-ghost">
@@ -71,7 +77,7 @@ export function Hero() {
         </div>
 
         <div className="absolute bottom-6 right-6 z-10 hidden md:inline-flex items-center gap-2 rounded-full vc-glass-dark-strong text-white text-xs px-3 py-1.5">
-          <span className="w-2 h-2 rounded-full bg-[var(--brand)] animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-[var(--brand)] vc-pulse-ring" />
           Activando cobertura por ciudad
         </div>
       </div>
@@ -91,5 +97,42 @@ function HeroFeature({
       <span className="text-[var(--brand)]">{icon}</span>
       {label}
     </li>
+  );
+}
+
+function FloatingPhotos() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 z-[1] hidden lg:block"
+    >
+      <div className="absolute top-[14%] right-[6%] w-[180px] h-[230px] rounded-[28px] overflow-hidden ring-1 ring-white/30 shadow-2xl vc-float">
+        <Image
+          src={HERO_FLOATS[0]}
+          alt=""
+          fill
+          sizes="180px"
+          className="object-cover"
+        />
+      </div>
+      <div className="absolute top-[42%] right-[20%] w-[140px] h-[180px] rounded-[24px] overflow-hidden ring-1 ring-white/30 shadow-xl vc-float" style={{ animationDelay: "1.4s" }}>
+        <Image
+          src={HERO_FLOATS[1]}
+          alt=""
+          fill
+          sizes="140px"
+          className="object-cover"
+        />
+      </div>
+      <div className="absolute bottom-[18%] right-[4%] w-[160px] h-[160px] rounded-full overflow-hidden ring-2 ring-white/40 shadow-2xl vc-float" style={{ animationDelay: "0.7s" }}>
+        <Image
+          src={HERO_FLOATS[2]}
+          alt=""
+          fill
+          sizes="160px"
+          className="object-cover"
+        />
+      </div>
+    </div>
   );
 }

@@ -11,6 +11,8 @@ import { uploadPhoto, storageEnabled } from "./storage";
 import { FLAGS } from "./flags";
 import { SITE, CITIES } from "./site";
 import { isEstadoMx } from "./estados";
+import { moderate } from "./moderation";
+import { moderateImage } from "./moderationImage";
 import {
   alertaCasoNueva,
   avistamientoNotify,
@@ -123,6 +125,29 @@ export async function createCasoAction(
     return { ok: false, message: "Revisa los campos marcados.", errors };
   }
 
+  // Moderación: descripción + señas (campos de texto libre)
+  if (data.descripcion) {
+    const mod = await moderate(data.descripcion, "caso", { userId: user.id });
+    if (!mod.ok) {
+      return {
+        ok: false,
+        message: mod.reason,
+        errors: { descripcion: mod.reason },
+      };
+    }
+    data.descripcion = mod.clean;
+  }
+  if (data.senas) {
+    const mod = await moderate(data.senas, "caso", {
+      minLength: 2,
+      userId: user.id,
+    });
+    if (!mod.ok) {
+      return { ok: false, message: mod.reason, errors: { senas: mod.reason } };
+    }
+    data.senas = mod.clean;
+  }
+
   // Asegurar fila en usuarios (idempotente) usando el sync de Clerk.
   const primary =
     user.emailAddresses?.find((e) => e.id === user.primaryEmailAddressId) ||
@@ -140,22 +165,38 @@ export async function createCasoAction(
     return { ok: false, message: "No pudimos guardar el caso. Intenta de nuevo." };
   }
 
-  // Subir fotos (si hay) — hasta 6.
+  // Subir fotos (si hay) — hasta 6. Moderación previa al storage para no
+  // pagar bytes de imágenes rechazadas.
+  let rejectedPhotos = 0;
   if (storageEnabled()) {
     const files = formData.getAll("fotos") as File[];
     const usable = files.filter((f) => f && f.size > 0).slice(0, 6);
-    for (let i = 0; i < usable.length; i++) {
-      const file = usable[i];
-      const ext = (file.type.split("/")[1] || "jpg").toLowerCase();
+    let position = 0;
+    for (const file of usable) {
+      const mime = file.type || "image/jpeg";
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const imgMod = await moderateImage(bytes, mime);
+      if (!imgMod.ok) {
+        rejectedPhotos += 1;
+        console.warn(
+          "[moderation:image:rejected]",
+          imgMod.provider,
+          imgMod.category,
+          imgMod.score
+        );
+        continue;
+      }
+      const ext = (mime.split("/")[1] || "jpg").toLowerCase();
       const name = `${crypto.randomUUID()}.${ext}`;
       const path = `${created.id}/${name}`;
-      const bytes = new Uint8Array(await file.arrayBuffer());
-      const up = await uploadPhoto({ path, bytes, contentType: file.type || "image/jpeg" });
+      const up = await uploadPhoto({ path, bytes, contentType: mime });
       if (up.ok) {
-        await casosRepo.addPhoto(created.id, up.url, i);
+        await casosRepo.addPhoto(created.id, up.url, position);
+        position += 1;
       }
     }
   }
+  void rejectedPhotos; // reservado para surfacing en UI más adelante
 
   // Notificación al dueño (si hay email).
   try {
@@ -378,9 +419,9 @@ export async function addAvistamientoAction(
   formData: FormData
 ): Promise<CasoActionState> {
   const casoId = str(formData, "caso_id");
-  const descripcion = str(formData, "descripcion");
+  const descripcionRaw = str(formData, "descripcion");
   const fecha_avistado = str(formData, "fecha_avistado");
-  if (!casoId || !descripcion || descripcion.length < 10) {
+  if (!casoId || !descripcionRaw || descripcionRaw.length < 10) {
     return {
       ok: false,
       message: "Describe el avistamiento con al menos 10 caracteres.",
@@ -389,8 +430,22 @@ export async function addAvistamientoAction(
   if (!fecha_avistado) {
     return { ok: false, message: "Indica fecha del avistamiento." };
   }
-
   let autor_usuario_id: string | null = null;
+  let authorUserKey: string | null = null;
+  if (FLAGS.auth) {
+    const user = await currentUser();
+    if (user) authorUserKey = user.id;
+  }
+
+  const mod = await moderate(descripcionRaw, "avistamiento", {
+    minLength: 10,
+    userId: authorUserKey,
+  });
+  if (!mod.ok) {
+    return { ok: false, message: mod.reason };
+  }
+  const descripcion = mod.clean;
+
   if (FLAGS.auth) {
     const user = await currentUser();
     if (user) {
@@ -629,23 +684,46 @@ export async function uploadFotosAction(
   if (usable.length === 0)
     return { ok: false, message: "No seleccionaste fotos." };
 
-  for (let i = 0; i < usable.length; i++) {
-    const file = usable[i];
-    const ext = (file.type.split("/")[1] || "jpg").toLowerCase();
+  let added = 0;
+  let rejected = 0;
+  for (const file of usable) {
+    const mime = file.type || "image/jpeg";
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const imgMod = await moderateImage(bytes, mime);
+    if (!imgMod.ok) {
+      rejected += 1;
+      continue;
+    }
+    const ext = (mime.split("/")[1] || "jpg").toLowerCase();
     const name = `${crypto.randomUUID()}.${ext}`;
     const path = `${caso.id}/${name}`;
-    const bytes = new Uint8Array(await file.arrayBuffer());
     const up = await uploadPhoto({
       path,
       bytes,
-      contentType: file.type || "image/jpeg",
+      contentType: mime,
     });
-    if (up.ok) await casosRepo.addPhoto(caso.id, up.url, existing + i);
+    if (up.ok) {
+      await casosRepo.addPhoto(caso.id, up.url, existing + added);
+      added += 1;
+    }
   }
 
   revalidatePath(`/casos/${slug}`);
   revalidatePath(`/panel/casos/${slug}`);
-  return { ok: true, message: "Fotos agregadas." };
+  if (added === 0 && rejected > 0) {
+    return {
+      ok: false,
+      message:
+        "Ninguna foto pasó la revisión de contenido. Ajusta y vuelve a intentar.",
+    };
+  }
+  return {
+    ok: true,
+    message:
+      rejected > 0
+        ? `${added} foto(s) agregada(s). ${rejected} se rechazaron por revisión de contenido.`
+        : "Fotos agregadas.",
+  };
 }
 
 export async function addUpdateAction(
@@ -658,9 +736,15 @@ export async function addUpdateAction(
 
   const casoId = str(formData, "caso_id");
   const slug = str(formData, "slug");
-  const mensaje = str(formData, "mensaje");
-  if (!casoId || !mensaje || mensaje.length < 3)
+  const mensajeRaw = str(formData, "mensaje");
+  if (!casoId || !mensajeRaw || mensajeRaw.length < 3)
     return { ok: false, message: "Escribe un mensaje." };
+  const mod = await moderate(mensajeRaw, "comentario", {
+    minLength: 3,
+    userId: user.id,
+  });
+  if (!mod.ok) return { ok: false, message: mod.reason };
+  const mensaje = mod.clean;
 
   const row = await db.getUserByClerkId(user.id);
   const autor_usuario_id = (row?.id as string | undefined) ?? null;

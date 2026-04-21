@@ -1,6 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
-  IconPaw,
   IconInstagram,
   IconTiktok,
   IconFacebook,
@@ -31,23 +31,28 @@ const col3 = [
   { href: "/hogar-temporal", label: "Hogar temporal" },
 ];
 
-const col4 = [
-  { href: "/contacto", label: "Contacto" },
+const col5 = [
+  { href: "/foros", label: "Foros de la comunidad" },
+  { href: "/chat", label: "Chat de ayuda rápida" },
   { href: "/faq", label: "Preguntas frecuentes" },
+  { href: "/contacto", label: "Contacto" },
+];
+
+const col4 = [
   { href: "/privacidad", label: "Aviso de privacidad" },
   { href: "/terminos", label: "Términos y condiciones" },
 ];
 
 export function Footer() {
   return (
-    <footer className="relative mt-24 bg-[var(--bg-deep)] text-white overflow-hidden">
-      {/* Ambient glow */}
+    <footer className="relative mt-24 bg-white text-[var(--ink)] border-t border-[var(--line)] overflow-hidden">
+      {/* Ambient glow (muy sutil sobre blanco) */}
       <div
         aria-hidden
-        className="absolute inset-0 opacity-60 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(700px 400px at 10% 0%, rgba(255,90,54,0.18), transparent 60%), radial-gradient(600px 400px at 90% 100%, rgba(16,160,121,0.12), transparent 60%)",
+            "radial-gradient(700px 380px at 8% 0%, rgba(225,29,72,0.05), transparent 60%), radial-gradient(600px 360px at 92% 100%, rgba(14,165,233,0.06), transparent 60%)",
         }}
       />
 
@@ -55,23 +60,33 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-12">
           {/* Brand column */}
           <div className="lg:col-span-2">
-            <Link href="/" className="vc-logo text-white">
-              <span className="vc-logo-mark">
-                <IconPaw size={22} />
+            <Link
+              href="/"
+              className="vc-logo text-[var(--ink)]"
+              aria-label="VuelveaCasa — Inicio"
+            >
+              <span className="vc-logo-mark" aria-hidden>
+                <Image
+                  src="/icon.png"
+                  alt=""
+                  width={36}
+                  height={36}
+                  sizes="36px"
+                />
               </span>
               <span className="text-xl">VuelveaCasa</span>
             </Link>
-            <p className="mt-5 text-white/70 max-w-sm text-sm leading-relaxed">
+            <p className="mt-5 text-[var(--ink-soft)] max-w-sm text-sm leading-relaxed">
               La red comunitaria de México para reportar mascotas perdidas,
-              activar alertas por zona y apoyar rescates verificados.
-              Cercanía, transparencia y acción inmediata.
+              activar alertas por zona y apoyar rescates verificados. Cercanía,
+              transparencia y acción inmediata.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/75 px-3 py-1.5 rounded-full border border-white/15 bg-white/5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ink-soft)] px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--bg-alt)]">
                 <IconShield size={13} /> Aliados verificados
               </span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/75 px-3 py-1.5 rounded-full border border-white/15 bg-white/5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ink-soft)] px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--bg-alt)]">
                 <IconHeart size={13} /> Donaciones rastreables
               </span>
             </div>
@@ -100,9 +115,9 @@ export function Footer() {
           <FooterCol title="Buscar ayuda" links={col3} />
         </div>
 
-        <div className="mt-14 pt-8 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mt-14 pt-8 border-t border-[var(--line)] grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h4 className="text-xs uppercase tracking-[0.12em] text-white/50 font-semibold">
+            <h4 className="text-xs uppercase tracking-[0.12em] text-[var(--muted)] font-semibold">
               Ciudades con cobertura prioritaria
             </h4>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -110,7 +125,7 @@ export function Footer() {
                 <Link
                   key={c.slug}
                   href={`/ciudades/${c.slug}`}
-                  className="text-xs px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/12 text-white/80 border border-white/10 transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-full bg-[var(--bg-alt)] hover:bg-[var(--brand-soft)] text-[var(--ink-soft)] hover:text-[var(--brand-ink)] border border-[var(--line)] transition-colors"
                 >
                   {c.name}
                 </Link>
@@ -118,13 +133,28 @@ export function Footer() {
             </div>
           </div>
           <div className="md:text-right">
-            <h4 className="text-xs uppercase tracking-[0.12em] text-white/50 font-semibold">
-              Soporte y legal
+            <h4 className="text-xs uppercase tracking-[0.12em] text-[var(--muted)] font-semibold">
+              Comunidad y soporte
             </h4>
             <ul className="mt-3 flex md:justify-end flex-wrap gap-x-5 gap-y-2 text-sm">
+              {col5.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="text-[var(--ink-soft)] hover:text-[var(--brand-ink)] transition-colors"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <ul className="mt-3 flex md:justify-end flex-wrap gap-x-5 gap-y-2 text-xs">
               {col4.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-white/80 hover:text-white transition-colors">
+                  <Link
+                    href={l.href}
+                    className="text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
+                  >
                     {l.label}
                   </Link>
                 </li>
@@ -133,13 +163,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 text-xs text-white/50 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div className="mt-10 text-xs text-[var(--muted)] flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <p>
-            © {new Date().getFullYear()} {SITE.legal.razonSocial}. Hecho en México con cariño por las mascotas.
+            © {new Date().getFullYear()} {SITE.legal.razonSocial}. Hecho en
+            México con cariño por las mascotas.
           </p>
           <p>
             <a
-              className="underline underline-offset-4 hover:text-white transition-colors"
+              className="underline underline-offset-4 hover:text-[var(--ink)] transition-colors"
               href={`mailto:${SITE.contact.email}`}
             >
               {SITE.contact.email}
@@ -160,7 +191,7 @@ function FooterCol({
 }) {
   return (
     <div>
-      <h4 className="text-xs uppercase tracking-[0.12em] text-white/50 font-semibold">
+      <h4 className="text-xs uppercase tracking-[0.12em] text-[var(--muted)] font-semibold">
         {title}
       </h4>
       <ul className="mt-3 space-y-2 text-sm">
@@ -168,7 +199,7 @@ function FooterCol({
           <li key={l.href}>
             <Link
               href={l.href}
-              className="text-white/80 hover:text-white transition-colors"
+              className="text-[var(--ink-soft)] hover:text-[var(--brand-ink)] transition-colors"
             >
               {l.label}
             </Link>
@@ -194,7 +225,7 @@ function SocialLink({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="w-10 h-10 rounded-full bg-white/8 hover:bg-white/18 border border-white/15 inline-flex items-center justify-center transition-colors"
+      className="w-10 h-10 rounded-full bg-[var(--bg-alt)] hover:bg-[var(--brand-soft)] text-[var(--ink-soft)] hover:text-[var(--brand-ink)] border border-[var(--line)] inline-flex items-center justify-center transition-colors"
     >
       {icon}
     </a>

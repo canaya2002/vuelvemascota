@@ -25,6 +25,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: "/aliados", priority: 0.8, changeFrequency: "weekly" },
     { url: "/privacidad", priority: 0.2, changeFrequency: "yearly" },
     { url: "/terminos", priority: 0.2, changeFrequency: "yearly" },
+    { url: "/foros", priority: 0.8, changeFrequency: "daily" },
+    { url: "/chat", priority: 0.7, changeFrequency: "hourly" },
+    { url: "/chat/general", priority: 0.6, changeFrequency: "hourly" },
+    { url: "/chat/urgencias", priority: 0.6, changeFrequency: "hourly" },
+    { url: "/chat/veterinarias", priority: 0.5, changeFrequency: "daily" },
+    { url: "/chat/rescatistas", priority: 0.5, changeFrequency: "daily" },
   ];
 
   const hubPaths = HUB_SLUGS.map((slug) => ({

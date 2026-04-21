@@ -25,18 +25,28 @@ export function Section({
     tone === "alt"
       ? "bg-[var(--bg-alt)]"
       : tone === "dark"
-      ? "bg-[#0b1f33] text-white"
+      ? "relative overflow-hidden bg-[#0b1f33] text-white"
       : "";
   return (
     <section id={id} className={`py-20 md:py-28 ${toneClass} ${className}`}>
-      <div className="vc-container">
+      {tone === "dark" && (
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none opacity-70"
+          style={{
+            background:
+              "radial-gradient(700px 380px at 15% 10%, rgba(225,29,72,0.22), transparent 60%), radial-gradient(600px 380px at 90% 90%, rgba(14,165,233,0.18), transparent 60%)",
+          }}
+        />
+      )}
+      <div className="relative vc-container">
         {(eyebrow || title || subtitle) && (
           <div
             className={`max-w-3xl ${align === "center" ? "mx-auto text-center" : ""} mb-12`}
           >
             {eyebrow && (
               <span
-                className={`vc-eyebrow ${tone === "dark" ? "!bg-white/10 !text-white" : ""}`}
+                className={`vc-eyebrow ${tone === "dark" ? "!bg-white/14 !text-white !border !border-white/20" : ""}`}
               >
                 {eyebrow}
               </span>
@@ -44,7 +54,7 @@ export function Section({
             {title && (
               <h2
                 className={`mt-5 text-3xl md:text-5xl font-bold ${
-                  tone === "dark" ? "text-white" : ""
+                  tone === "dark" ? "!text-white" : ""
                 }`}
               >
                 {title}
@@ -53,7 +63,7 @@ export function Section({
             {subtitle && (
               <p
                 className={`mt-5 text-lg md:text-xl leading-relaxed ${
-                  tone === "dark" ? "text-white/75" : "text-[var(--ink-soft)]"
+                  tone === "dark" ? "text-white/80" : "text-[var(--ink-soft)]"
                 }`}
               >
                 {subtitle}

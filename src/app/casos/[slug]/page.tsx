@@ -10,6 +10,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { CasoBanner } from "@/components/CasoBanner";
 import { DonationWidget } from "@/components/DonationWidget";
 import { DonationProgress } from "@/components/DonationProgress";
+import { DonationAppeal } from "@/components/DonationAppeal";
 import MapView from "@/components/MapViewLazy";
 import {
   IconPaw,
@@ -129,6 +130,11 @@ export default async function Page({
 
       <div className="vc-container py-8 md:py-12">
         {bannerVariant && <CasoBanner variant={bannerVariant} />}
+        {bannerVariant === "creado" && (
+          <div className="mt-6">
+            <DonationAppeal variant="caso-publicado" />
+          </div>
+        )}
 
         <nav className="mt-6 text-sm text-[var(--ink-soft)] flex gap-2 flex-wrap">
           <Link href="/casos" className="hover:text-[var(--ink)]">

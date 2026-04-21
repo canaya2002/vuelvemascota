@@ -1,17 +1,25 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { UserButton, useUser } from "@clerk/nextjs";
-import { IconPaw, IconMenu, IconX, IconHeart, IconBell, IconSearch } from "./Icons";
+import {
+  IconMenu,
+  IconX,
+  IconHeart,
+  IconBell,
+  IconSearch,
+} from "./Icons";
 import { FLAGS } from "@/lib/flags";
 
 const LINKS = [
   { href: "/casos", label: "Casos", icon: IconSearch },
   { href: "/como-funciona", label: "Cómo funciona" },
   { href: "/alertas", label: "Alertas", icon: IconBell },
+  { href: "/foros", label: "Foros" },
+  { href: "/chat", label: "Chat" },
   { href: "/rescatistas", label: "Rescatistas" },
   { href: "/veterinarias", label: "Veterinarias" },
-  { href: "/faq", label: "FAQ" },
 ];
 
 export function Navbar() {
@@ -37,7 +45,7 @@ export function Navbar() {
       className={`sticky top-0 z-40 transition-all ${
         scrolled
           ? "vc-glass-strong border-b border-[var(--glass-border)]"
-          : "bg-transparent"
+          : "bg-white/70 backdrop-blur-md"
       }`}
     >
       <div className="vc-container flex items-center justify-between py-3">
@@ -46,20 +54,30 @@ export function Navbar() {
           className="vc-logo text-[var(--ink)]"
           aria-label="VuelveaCasa — Inicio"
         >
-          <span className="vc-logo-mark">
-            <IconPaw size={22} />
+          <span className="vc-logo-mark" aria-hidden>
+            <Image
+              src="/icon.png"
+              alt=""
+              width={36}
+              height={36}
+              priority
+              sizes="36px"
+            />
           </span>
           <span className="text-lg sm:text-xl">VuelveaCasa</span>
         </Link>
 
-        <nav aria-label="Principal" className="hidden lg:flex items-center gap-0.5">
+        <nav
+          aria-label="Principal"
+          className="hidden lg:flex items-center gap-0.5"
+        >
           {LINKS.map((l) => {
             const Icon = l.icon;
             return (
               <Link
                 key={l.href}
                 href={l.href}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] rounded-full hover:bg-white/60 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] rounded-full hover:bg-white/70 transition-colors"
               >
                 {Icon && <Icon size={15} />}
                 {l.label}
@@ -69,13 +87,19 @@ export function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-2">
-          <Link href="/donar" className="vc-btn vc-btn-glass text-sm !py-2.5 !px-4">
+          <Link
+            href="/donar"
+            className="vc-btn vc-btn-glass text-sm !py-2.5 !px-4"
+          >
             <IconHeart size={15} /> Donar
           </Link>
           {FLAGS.auth ? (
             <AuthActionsDesktop />
           ) : (
-            <Link href="/registro" className="vc-btn vc-btn-primary text-sm !py-2.5 !px-4">
+            <Link
+              href="/registro"
+              className="vc-btn vc-btn-primary text-sm !py-2.5 !px-4"
+            >
               Registrarme
             </Link>
           )}
@@ -93,7 +117,10 @@ export function Navbar() {
 
       {open && (
         <div className="lg:hidden fixed inset-0 top-[64px] z-40 overflow-y-auto vc-glass-strong">
-          <nav aria-label="Móvil" className="vc-container py-6 flex flex-col gap-1">
+          <nav
+            aria-label="Móvil"
+            className="vc-container py-6 flex flex-col gap-1"
+          >
             {LINKS.map((l) => {
               const Icon = l.icon;
               return (
@@ -171,9 +198,7 @@ function AuthActionsDesktop() {
         >
           Panel
         </Link>
-        <UserButton
-          appearance={{ elements: { avatarBox: "w-9 h-9" } }}
-        />
+        <UserButton appearance={{ elements: { avatarBox: "w-9 h-9" } }} />
       </>
     );
   }
@@ -201,11 +226,7 @@ function AuthActionsMobile({ onNavigate }: { onNavigate: () => void }) {
   if (isSignedIn) {
     return (
       <div className="mt-5 flex flex-col gap-3">
-        <Link
-          href="/panel"
-          onClick={onNavigate}
-          className="vc-btn vc-btn-primary"
-        >
+        <Link href="/panel" onClick={onNavigate} className="vc-btn vc-btn-primary">
           Ir a mi panel
         </Link>
       </div>

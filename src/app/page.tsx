@@ -8,6 +8,7 @@ import { FeatureCard } from "@/components/FeatureCard";
 import { FAQ } from "@/components/FAQ";
 import { CTA } from "@/components/CTA";
 import { ImageMosaic } from "@/components/ImageMosaic";
+import { PhotoMarquee } from "@/components/PhotoMarquee";
 import {
   IconPaw,
   IconSearch,
@@ -84,6 +85,8 @@ const AUDIENCE_IMGS = pickRange(0, 6); // 0..5
 const TRUST_IMGS = pickRange(6, 3); // 6..8
 const MOSAIC_IMGS = pickRange(9, 6); // 9..14
 const DONATION_IMGS = pickRange(15, 4); // 15..18
+const MARQUEE_A = pickRange(20, 8); // 20..27
+const MARQUEE_B = pickRange(28, 8); // 28..35
 
 export default function Page() {
   const faqJsonLd = {
@@ -130,13 +133,23 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
 
-      {/* Value prop strip */}
-      <section className="py-12 border-b border-[var(--line)] bg-white">
-        <div className="vc-container grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <Stat big="Gratis" small="Publicar y recibir alertas" />
-          <Stat big="100% MX" small="Enfocado en México" />
-          <Stat big="24/7" small="Alertas en tu zona" />
-          <Stat big="Verificado" small="Aliados reales" />
+      {/* Auto-carousel de rostros (amistoso, enérgico) */}
+      <section className="py-10 md:py-14 bg-white border-b border-[var(--line)]">
+        <div className="vc-container">
+          <p className="text-center text-xs uppercase tracking-[0.18em] text-[var(--muted)] font-semibold mb-6">
+            Historias que nos mueven · Comunidad VuelveaCasa
+          </p>
+        </div>
+        <PhotoMarquee images={MARQUEE_A} size="md" rounded="2xl" label="Carrusel de fotos de mascotas" />
+      </section>
+
+      {/* Value prop strip — glass cards */}
+      <section className="py-14 md:py-20 bg-white">
+        <div className="vc-container grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <StatCard big="Gratis" small="Publicar y recibir alertas" />
+          <StatCard big="100% MX" small="Enfocado en México" />
+          <StatCard big="24/7" small="Alertas en tu zona" />
+          <StatCard big="Verificado" small="Aliados reales" />
         </div>
       </section>
 
@@ -365,7 +378,7 @@ export default function Page() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="relative aspect-square rounded-3xl overflow-hidden">
+            <div className="relative aspect-square rounded-3xl overflow-hidden vc-tilt ring-1 ring-[var(--line)]">
               <Image
                 src={DONATION_IMGS[0]}
                 alt="Rescate de mascota"
@@ -374,7 +387,7 @@ export default function Page() {
                 className="object-cover"
               />
             </div>
-            <div className="relative aspect-square rounded-3xl overflow-hidden translate-y-6">
+            <div className="relative aspect-square rounded-3xl overflow-hidden translate-y-6 vc-tilt ring-1 ring-[var(--line)]">
               <Image
                 src={DONATION_IMGS[1]}
                 alt="Mascota en cuidado"
@@ -383,7 +396,7 @@ export default function Page() {
                 className="object-cover"
               />
             </div>
-            <div className="relative aspect-square rounded-3xl overflow-hidden translate-y-6">
+            <div className="relative aspect-square rounded-3xl overflow-hidden translate-y-6 vc-tilt ring-1 ring-[var(--line)]">
               <Image
                 src={DONATION_IMGS[2]}
                 alt="Voluntaria con perro rescatado"
@@ -392,7 +405,7 @@ export default function Page() {
                 className="object-cover"
               />
             </div>
-            <div className="relative aspect-square rounded-3xl overflow-hidden">
+            <div className="relative aspect-square rounded-3xl overflow-hidden vc-tilt ring-1 ring-[var(--line)]">
               <Image
                 src={DONATION_IMGS[3]}
                 alt="Mascota con su familia"
@@ -403,6 +416,18 @@ export default function Page() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Segunda galería en movimiento (sentido inverso) */}
+      <section className="py-10 md:py-14 bg-white border-y border-[var(--line)]">
+        <PhotoMarquee
+          images={MARQUEE_B}
+          size="sm"
+          rounded="2xl"
+          direction="right"
+          speed="slow"
+          label="Carrusel de rescates y reencuentros"
+        />
       </section>
 
       {/* Coverage */}
@@ -441,22 +466,24 @@ export default function Page() {
           <Link href="/faq" className="vc-btn vc-btn-outline">
             Ver todas las preguntas
           </Link>
-          <Link href="/contacto" className="vc-btn vc-btn-dark">
+          <Link href="/contacto" className="vc-btn vc-btn-primary">
             Contactarnos
           </Link>
         </div>
       </Section>
 
-      <CTA />
+      <CTA seed={39} />
     </>
   );
 }
 
-function Stat({ big, small }: { big: string; small: string }) {
+function StatCard({ big, small }: { big: string; small: string }) {
   return (
-    <div>
-      <p className="text-2xl md:text-3xl font-bold text-[var(--ink)]">{big}</p>
-      <p className="text-sm md:text-base text-[var(--ink-soft)]">{small}</p>
+    <div className="vc-card-glass text-center !p-5 md:!p-7">
+      <p className="text-2xl md:text-4xl font-bold text-[var(--ink)] vc-gradient-text inline-block">
+        {big}
+      </p>
+      <p className="mt-2 text-sm md:text-base text-[var(--ink-soft)]">{small}</p>
     </div>
   );
 }
@@ -512,7 +539,7 @@ function ImageMosaicStatic({
         {images.map((src, i) => (
           <div
             key={i}
-            className={`relative overflow-hidden rounded-2xl aspect-square ring-1 ring-[var(--line)] ${
+            className={`group relative overflow-hidden rounded-2xl aspect-square ring-1 ring-[var(--line)] transition-transform duration-500 hover:-translate-y-1 ${
               i === 0
                 ? "col-span-2 row-span-2 aspect-auto md:aspect-square"
                 : ""
@@ -523,7 +550,7 @@ function ImageMosaicStatic({
               alt=""
               fill
               sizes="(max-width:768px) 50vw, (max-width:1024px) 33vw, 16vw"
-              className="object-cover"
+              className="object-cover group-hover:scale-[1.06] transition-transform duration-700"
             />
           </div>
         ))}

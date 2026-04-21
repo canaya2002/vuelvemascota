@@ -4,6 +4,7 @@ import { useFormStatus } from "react-dom";
 import { addAvistamientoAction, type CasoActionState } from "@/lib/casoActions";
 import { TextField, TextArea } from "./Field";
 import { IconArrow, IconCheck } from "../Icons";
+import { DonationAppeal } from "../DonationAppeal";
 
 const initial: CasoActionState = { ok: false, message: "" };
 
@@ -12,16 +13,19 @@ export function AvistamientoForm({ casoId }: { casoId: string }) {
 
   if (state.ok) {
     return (
-      <div className="vc-card bg-[var(--accent-soft)] border-[var(--accent)]/30">
-        <div className="flex items-start gap-3">
-          <span className="w-10 h-10 rounded-full bg-[var(--accent)] text-white inline-flex items-center justify-center">
-            <IconCheck size={22} />
-          </span>
-          <div>
-            <h3 className="text-lg font-semibold text-[#0d6b52]">¡Gracias!</h3>
-            <p className="mt-1 text-[#0d6b52]/80">{state.message}</p>
+      <div className="space-y-4">
+        <div className="vc-card bg-[var(--accent-soft)] border-[var(--accent)]/30">
+          <div className="flex items-start gap-3">
+            <span className="w-10 h-10 rounded-full bg-[var(--accent)] text-white inline-flex items-center justify-center">
+              <IconCheck size={22} />
+            </span>
+            <div>
+              <h3 className="text-lg font-semibold text-[#0d6b52]">¡Gracias!</h3>
+              <p className="mt-1 text-[#0d6b52]/80">{state.message}</p>
+            </div>
           </div>
         </div>
+        <DonationAppeal variant="avistamiento" compact />
       </div>
     );
   }

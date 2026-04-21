@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db, maybeBreak } from "./db";
 
 export type DonacionRow = {
   id: string;
@@ -44,7 +44,7 @@ export const donacionesRepo = {
       `) as unknown as DonacionRow[];
       return rows;
     } catch (err) {
-      console.error("[donaciones:listByEmail:error]", err);
+      maybeBreak("donaciones:listByEmail", err);
       return [];
     }
   },
@@ -79,7 +79,7 @@ export const donacionesRepo = {
         porCausa: Object.fromEntries(porCausa.map((r) => [r.causa, r.total])),
       };
     } catch (err) {
-      console.error("[donaciones:statsByEmail:error]", err);
+      maybeBreak("donaciones:statsByEmail", err);
       return empty;
     }
   },

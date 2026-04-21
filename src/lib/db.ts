@@ -27,10 +27,85 @@ function createClient(): Sql | null {
   return client;
 }
 
-const sql = createClient();
+let sql = createClient();
+
+/**
+ * Si detectamos que la conexión está rota (credenciales equivocadas,
+ * proyecto pausado, tenant inválido), apagamos el cliente para el resto
+ * del proceso y la app sigue funcionando en modo stub sin reintentos
+ * ni logs ruidosos.
+ */
+let brokenReported = false;
+export function markDbBroken(reason: string, err?: unknown) {
+  if (sql) {
+    try {
+      (sql as unknown as { end?: () => void }).end?.();
+    } catch {
+      /* noop */
+    }
+    sql = null;
+    (globalThis as unknown as { _sql?: unknown })._sql = undefined;
+  }
+  if (!brokenReported) {
+    brokenReported = true;
+    console.warn(
+      `[db:disabled] ${reason}. Corriendo en modo stub. Detalle:`,
+      err instanceof Error ? err.message : err
+    );
+  }
+}
+
+/**
+ * Envuelve queries en un guard que: (1) si la DB ya está marcada rota,
+ * devuelve el fallback; (2) si un error FATAL tira la conexión, marca la
+ * DB como rota para queries subsecuentes.
+ */
+export async function safeDbQuery<T>(
+  run: () => Promise<T>,
+  fallback: T,
+  label: string
+): Promise<T> {
+  if (!sql) return fallback;
+  try {
+    return await run();
+  } catch (err) {
+    const e = err as { code?: string; severity?: string; message?: string };
+    const fatal =
+      e?.severity === "FATAL" ||
+      e?.code === "XX000" ||
+      /tenant|authentication|SASL|password/i.test(e?.message ?? "");
+    if (fatal) {
+      markDbBroken(`${label}: ${e?.code ?? "unknown"}`, err);
+    } else if (!brokenReported) {
+      console.error(`[${label}]`, err);
+    }
+    return fallback;
+  }
+}
 
 export function dbEnabled() {
   return sql !== null;
+}
+
+/**
+ * Helper para usar dentro de los repos. Si el error es FATAL (credenciales,
+ * tenant, pooler), apaga la DB para el resto del proceso y registra una sola
+ * línea. Para errores normales hace un console.error clásico pero sin flood
+ * cuando la DB ya está rota.
+ */
+export function maybeBreak(label: string, err: unknown) {
+  const e = err as { code?: string; severity?: string; message?: string };
+  const fatal =
+    e?.severity === "FATAL" ||
+    e?.code === "XX000" ||
+    /tenant|authentication|SASL|password/i.test(e?.message ?? "");
+  if (fatal) {
+    markDbBroken(label, err);
+    return;
+  }
+  if (!brokenReported) {
+    console.error(`[${label}]`, err);
+  }
 }
 
 export type DonationRecord = {
@@ -173,6 +248,10 @@ export const db = {
     }
   },
 
-  /* raw escape hatch para queries específicas de Sprint 2.1+ */
-  raw: sql,
+  /* raw escape hatch para queries específicas de Sprint 2.1+.
+     Es un getter para que, tras un fallo FATAL y markDbBroken(), todos
+     los consumidores que lean `db.raw` reciban null automáticamente. */
+  get raw() {
+    return sql;
+  },
 };

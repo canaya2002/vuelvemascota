@@ -79,7 +79,7 @@ export function waitlistWelcome(name: string) {
         <h1 style="margin:0 0 12px; font-size:28px;">Estás dentro, ${escapeHtml(name)}.</h1>
         <p>Gracias por sumarte a <strong>${SITE.name}</strong>. Te avisaremos apenas tu zona se active y podrás reportar, recibir alertas y apoyar casos reales.</p>
         <p>Mientras tanto, puedes apoyar a la comunidad:</p>
-        <p><a href="${SITE.url}/donar" style="display:inline-block; background:#ff5a36; color:#fff; padding:12px 18px; border-radius:999px; text-decoration:none; font-weight:600;">Apoyar con una donación</a></p>
+        <p><a href="${SITE.url}/donar" style="display:inline-block; background:#e11d48; color:#fff; padding:12px 18px; border-radius:999px; text-decoration:none; font-weight:600;">Apoyar con una donación</a></p>
         <p style="color:#6a7a8c; font-size:13px; margin-top:24px;">Si no te registraste tú, ignora este correo.</p>
       </div>
     `,
@@ -141,7 +141,7 @@ export function avistamientoNotify(
           <p style="margin:0;white-space:pre-wrap;">${escapeHtml(data.avistamiento.descripcion)}</p>
           ${data.avistamiento.autor_nombre || data.avistamiento.autor_contacto ? `<p style="margin-top:10px;font-size:13px;">Contacto: <strong>${escapeHtml(data.avistamiento.autor_nombre ?? "")}${data.avistamiento.autor_contacto ? " · " + escapeHtml(data.avistamiento.autor_contacto) : ""}</strong></p>` : ""}
         </div>
-        <p><a href="${SITE.url}/casos/${data.casoSlug}" style="display:inline-block;background:#ff5a36;color:#fff;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:600;">Ver caso</a></p>
+        <p><a href="${SITE.url}/casos/${data.casoSlug}" style="display:inline-block;background:#e11d48;color:#fff;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:600;">Ver caso</a></p>
         <p style="color:#6a7a8c;font-size:13px;margin-top:24px;">Este es un aviso automático de VuelveaCasa.</p>
       </div>
     `,
@@ -205,7 +205,7 @@ export function matchConfirmadoNotify(
           ${contactoLines.join("")}
         </div>
         <p style="margin-top:18px;">
-          <a href="${SITE.url}/casos/${otherCaso.slug}" style="display:inline-block;background:#ff5a36;color:#fff;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:600;">Ver el otro caso</a>
+          <a href="${SITE.url}/casos/${otherCaso.slug}" style="display:inline-block;background:#e11d48;color:#fff;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:600;">Ver el otro caso</a>
         </p>
         <p style="color:#6a7a8c;font-size:13px;margin-top:24px;">Cuando confirmen que sí es la misma mascota, no olvides marcar el caso como reencontrado para cerrar el ciclo.</p>
       </div>
@@ -272,12 +272,12 @@ export function alertaCasoNueva(
     subject: `[Alerta] ${titulo}${data.caso.nombre ? " · " + data.caso.nombre : ""}`,
     html: `
       <div style="font-family: -apple-system, Segoe UI, Roboto, Inter, sans-serif; color:#0b1f33; max-width:560px; margin:0 auto;">
-        <p style="text-transform:uppercase;letter-spacing:0.05em;font-size:12px;color:#ff5a36;font-weight:700;margin:0;">Alerta de zona</p>
+        <p style="text-transform:uppercase;letter-spacing:0.05em;font-size:12px;color:#e11d48;font-weight:700;margin:0;">Alerta de zona</p>
         <h2 style="margin:6px 0 10px;">${escapeHtml(titulo)}</h2>
         ${data.caso.foto ? `<img src="${data.caso.foto}" alt="" style="width:100%;max-width:520px;height:auto;border-radius:14px;margin-bottom:14px;"/>` : ""}
         <p>${escapeHtml(data.caso.especie)}${data.caso.colonia ? " · " + escapeHtml(data.caso.colonia) : ""}</p>
         ${data.caso.descripcion ? `<p style="white-space:pre-wrap;">${escapeHtml(data.caso.descripcion.slice(0, 280))}</p>` : ""}
-        <p style="margin-top:18px;"><a href="${SITE.url}/casos/${data.caso.slug}" style="display:inline-block;background:#ff5a36;color:#fff;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:600;">Ver caso y ayudar</a></p>
+        <p style="margin-top:18px;"><a href="${SITE.url}/casos/${data.caso.slug}" style="display:inline-block;background:#e11d48;color:#fff;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:600;">Ver caso y ayudar</a></p>
         <p style="color:#6a7a8c;font-size:13px;margin-top:28px;">
           Recibes este correo porque tienes una alerta activa en tu zona.
           <a href="${SITE.url}/panel/alertas" style="color:#0b1f33;">Ajustar alertas</a>.

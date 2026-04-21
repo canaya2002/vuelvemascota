@@ -155,12 +155,12 @@ function FilterLink({
   return (
     <Link
       href={href}
-      className={`rounded-full border transition-colors ${
-        small ? "text-xs px-3 py-1" : "text-sm px-4 py-1.5"
+      className={`rounded-full border font-medium transition-colors ${
+        small ? "text-xs px-3 py-1.5" : "text-sm px-4 py-2"
       } ${
         active
-          ? "bg-[var(--ink)] text-white border-[var(--ink)]"
-          : "border-[var(--line-strong)] bg-white text-[var(--ink-soft)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+          ? "bg-[var(--brand)] !text-white border-[var(--brand)]"
+          : "border-[var(--line-strong)] bg-white !text-[var(--ink-soft)] hover:border-[var(--brand)] hover:!text-[var(--brand-ink)]"
       }`}
     >
       {children}

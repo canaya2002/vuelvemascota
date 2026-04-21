@@ -94,6 +94,7 @@ create table if not exists usuarios (
   email text not null,
   nombre text,
   ciudad text,
+  estado text,
   rol text,                                    -- 'dueño'|'voluntario'|'rescatista'|'veterinaria'|'admin'
   telefono text,
   foto_url text,
@@ -102,6 +103,9 @@ create table if not exists usuarios (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+-- Para agregar en DBs existentes:
+alter table usuarios add column if not exists estado text;
+alter table usuarios add column if not exists bio text;
 create unique index if not exists usuarios_email_unique on usuarios (lower(email));
 
 -- ---------------------------------------------------------------------------
@@ -297,4 +301,56 @@ create trigger casos_set_updated_at
 drop trigger if exists usuarios_set_updated_at on usuarios;
 create trigger usuarios_set_updated_at
   before update on usuarios
+  for each row execute function set_updated_at();
+
+-- ---------------------------------------------------------------------------
+-- Foros comunitarios + chat de ayuda rápida
+-- ---------------------------------------------------------------------------
+
+create table if not exists foro_hilos (
+  id uuid primary key default gen_random_uuid(),
+  autor_usuario_id uuid references usuarios(id) on delete set null,
+  titulo text not null,
+  cuerpo text not null,
+  categoria text not null check (categoria in ('experiencias','consejos','rescates','busqueda','adopcion','otros')),
+  ciudad text,
+  reportado int not null default 0,
+  oculto boolean not null default false,
+  respuestas_count int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists foro_hilos_created_at_idx on foro_hilos (created_at desc);
+create index if not exists foro_hilos_categoria_idx on foro_hilos (categoria);
+
+create table if not exists foro_respuestas (
+  id uuid primary key default gen_random_uuid(),
+  hilo_id uuid not null references foro_hilos(id) on delete cascade,
+  autor_usuario_id uuid references usuarios(id) on delete set null,
+  cuerpo text not null,
+  reportado int not null default 0,
+  oculto boolean not null default false,
+  created_at timestamptz not null default now()
+);
+create index if not exists foro_respuestas_hilo_idx on foro_respuestas (hilo_id, created_at);
+
+create table if not exists chat_mensajes (
+  id uuid primary key default gen_random_uuid(),
+  autor_usuario_id uuid references usuarios(id) on delete set null,
+  autor_nombre text,
+  canal text not null default 'general' check (canal in ('general','urgencias','veterinarias','rescatistas')),
+  cuerpo text not null,
+  reportado int not null default 0,
+  oculto boolean not null default false,
+  created_at timestamptz not null default now()
+);
+create index if not exists chat_mensajes_canal_idx on chat_mensajes (canal, created_at desc);
+
+alter table foro_hilos enable row level security;
+alter table foro_respuestas enable row level security;
+alter table chat_mensajes enable row level security;
+
+drop trigger if exists foro_hilos_set_updated_at on foro_hilos;
+create trigger foro_hilos_set_updated_at
+  before update on foro_hilos
   for each row execute function set_updated_at();

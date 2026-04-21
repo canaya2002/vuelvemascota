@@ -1,12 +1,12 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { createCasoAction, type CasoActionState } from "@/lib/casoActions";
 import { CITIES } from "@/lib/site";
 import { ESTADOS_MX } from "@/lib/estados";
 import { TextField, TextArea, Select } from "./Field";
-import { IconArrow } from "../Icons";
+import { IconArrow, IconX } from "../Icons";
 
 const MapPicker = dynamic(() => import("../MapPicker"), {
   ssr: false,
@@ -204,31 +204,14 @@ export function CasoForm({ storageEnabled, defaultCiudad, defaultNombre }: Props
         </div>
       </div>
 
-      {/* Fotos */}
-      <div>
-        <label className="vc-label">Fotos (hasta 6)</label>
-        {storageEnabled ? (
-          <>
-            <input
-              type="file"
-              name="fotos"
-              multiple
-              accept="image/*"
-              onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 6))}
-              className="block w-full text-sm text-[var(--ink-soft)] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--brand-soft)] file:text-[var(--brand-ink)] hover:file:bg-[var(--brand)] hover:file:text-white"
-            />
-            {files.length > 0 && (
-              <p className="vc-hint">
-                {files.length} foto(s) seleccionada(s). Se subirán al publicar.
-              </p>
-            )}
-          </>
-        ) : (
-          <p className="text-sm text-[var(--muted)] italic">
-            Upload de fotos se activa cuando Supabase Storage esté configurado. Puedes publicar sin fotos y agregarlas después.
-          </p>
-        )}
-      </div>
+      {/* Fotos — siempre disponible; el server action sube cuando el storage está listo. */}
+      <PhotoUploader
+        files={files}
+        setFiles={setFiles}
+        storageEnabled={storageEnabled}
+      />
+      {/* Duplicamos el input para que el FormData incluya los archivos. */}
+      <HiddenFotos files={files} />
 
       {/* Contacto */}
       <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-4 vc-card bg-[var(--bg-alt)]">
@@ -283,5 +266,124 @@ function Submit() {
     <button type="submit" disabled={pending} className="vc-btn vc-btn-primary">
       {pending ? "Publicando…" : "Publicar caso"} <IconArrow size={18} />
     </button>
+  );
+}
+
+function PhotoUploader({
+  files,
+  setFiles,
+  storageEnabled,
+}: {
+  files: File[];
+  setFiles: (f: File[]) => void;
+  storageEnabled: boolean;
+}) {
+  const previews = useMemo(
+    () => files.map((f) => URL.createObjectURL(f)),
+    [files]
+  );
+  useEffect(() => {
+    return () => {
+      previews.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [previews]);
+
+  const MAX = 6;
+  const addFiles = (list: FileList | null) => {
+    if (!list) return;
+    const incoming = Array.from(list).filter((f) => f.type.startsWith("image/"));
+    const combined = [...files, ...incoming].slice(0, MAX);
+    setFiles(combined);
+  };
+  const removeAt = (i: number) => {
+    const copy = files.slice();
+    copy.splice(i, 1);
+    setFiles(copy);
+  };
+
+  return (
+    <div>
+      <label className="vc-label">Fotos (hasta {MAX})</label>
+      <label
+        className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[var(--line-strong)] bg-[var(--bg-alt)] hover:bg-white hover:border-[var(--brand)] transition-colors px-6 py-8 cursor-pointer text-center"
+      >
+        <span className="text-sm font-semibold text-[var(--ink)]">
+          Arrastra o haz clic para seleccionar fotos
+        </span>
+        <span className="text-xs text-[var(--muted)]">
+          JPG/PNG/WEBP · hasta {MAX} archivos
+        </span>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={(e) => addFiles(e.target.files)}
+          className="sr-only"
+        />
+      </label>
+      {!storageEnabled && (
+        <p className="vc-hint">
+          El almacenamiento de fotos aún no está configurado. Puedes previsualizarlas
+          aquí y el caso se publicará sin ellas — las podrás agregar cuando esté listo.
+        </p>
+      )}
+      {previews.length > 0 && (
+        <ul className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+          {previews.map((src, i) => (
+            <li
+              key={i}
+              className="relative aspect-square rounded-xl overflow-hidden ring-1 ring-[var(--line)] bg-white"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={`Foto ${i + 1}`}
+                className="w-full h-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => removeAt(i)}
+                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-[var(--ink)]/75 text-white inline-flex items-center justify-center hover:bg-[var(--ink)]"
+                aria-label={`Quitar foto ${i + 1}`}
+              >
+                <IconX size={14} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Los <input type="file"> controlados no persisten los archivos entre renders;
+ * para enviar los archivos con FormData sincronizamos un DataTransfer a un
+ * input oculto con `name="fotos"` en cada cambio.
+ */
+function HiddenFotos({ files }: { files: File[] }) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    try {
+      const dt = new DataTransfer();
+      for (const f of files) dt.items.add(f);
+      el.files = dt.files;
+    } catch {
+      /* DataTransfer may not be available in some browsers; form fallback handled server-side */
+    }
+  }, [files]);
+  return (
+    <input
+      ref={inputRef}
+      type="file"
+      name="fotos"
+      multiple
+      accept="image/*"
+      className="hidden"
+      tabIndex={-1}
+      aria-hidden
+    />
   );
 }

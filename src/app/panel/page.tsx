@@ -55,7 +55,7 @@ export default async function Page() {
               Agrega tu ciudad y foto para sumar credibilidad a tus reportes.
             </p>
           </div>
-          <Link href="/panel/cuenta" className="vc-btn vc-btn-primary">
+          <Link href="/panel/perfil" className="vc-btn vc-btn-primary">
             Completar perfil <IconArrow size={16} />
           </Link>
         </div>

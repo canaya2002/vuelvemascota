@@ -62,7 +62,7 @@ const nextConfig: NextConfig = {
       { source: "/register", destination: "/registro", permanent: true },
       { source: "/donate", destination: "/donar", permanent: true },
       { source: "/faqs", destination: "/faq", permanent: true },
-      { source: "/aliados", destination: "/veterinarias", permanent: false },
+      { source: "/partners", destination: "/aliados", permanent: true },
       { source: "/refugios", destination: "/rescatistas", permanent: true },
       { source: "/como", destination: "/como-funciona", permanent: true },
       { source: "/privacy", destination: "/privacidad", permanent: true },

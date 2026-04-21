@@ -22,7 +22,7 @@ export function CTA({
   return (
     <section className="py-20 md:py-24">
       <div className="vc-container">
-        <div className="relative overflow-hidden rounded-[28px] bg-[#0b1f33] text-white px-6 md:px-14 py-14 md:py-20">
+        <div className="relative overflow-hidden rounded-[28px] bg-[#0b1f33] text-white px-6 md:px-14 py-14 md:py-20 vc-shine">
           <Image
             src={pickImage(seed)}
             alt=""
@@ -35,12 +35,12 @@ export function CTA({
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(115deg, rgba(11,31,51,0.95) 30%, rgba(11,31,51,0.70) 60%, rgba(255,90,54,0.55) 100%)",
+                "linear-gradient(115deg, rgba(11,31,51,0.95) 30%, rgba(11,31,51,0.70) 60%, rgba(225,29,72,0.55) 100%)",
             }}
             aria-hidden
           />
           <div className="relative max-w-2xl">
-            <h2 className="text-3xl md:text-5xl font-bold">{title}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold !text-white">{title}</h2>
             <p className="mt-5 text-lg md:text-xl text-white/85 leading-relaxed">
               {subtitle}
             </p>

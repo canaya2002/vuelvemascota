@@ -16,7 +16,7 @@ export default function Image() {
           flexDirection: "column",
           justifyContent: "space-between",
           background:
-            "linear-gradient(135deg, #0b1f33 0%, #14304b 40%, #ff5a36 120%)",
+            "linear-gradient(135deg, #0b1f33 0%, #14304b 40%, #e11d48 120%)",
           color: "#fff",
           padding: "72px",
           fontFamily: "system-ui, sans-serif",
@@ -28,7 +28,7 @@ export default function Image() {
               width: 56,
               height: 56,
               borderRadius: 9999,
-              background: "#ff5a36",
+              background: "#e11d48",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -79,7 +79,7 @@ export default function Image() {
               fontSize: 22,
               padding: "14px 22px",
               borderRadius: 9999,
-              background: "#ff5a36",
+              background: "#e11d48",
               fontWeight: 600,
             }}
           >

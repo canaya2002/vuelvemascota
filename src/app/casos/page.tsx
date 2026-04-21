@@ -111,7 +111,7 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
               className="vc-input flex-1 min-w-[220px]"
               aria-label="Buscar casos"
             />
-            <button type="submit" className="vc-btn vc-btn-dark text-sm">
+            <button type="submit" className="vc-btn vc-btn-primary text-sm">
               Buscar
             </button>
             {q && (
@@ -169,13 +169,13 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
           </form>
 
           {/* Toggle lista / mapa */}
-          <div className="mb-6 inline-flex rounded-full border border-[var(--line-strong)] bg-white p-1">
+          <div className="mb-6 inline-flex rounded-full border border-[var(--line-strong)] bg-white p-1 shadow-sm">
             <Link
               href={`/casos${currentQs({ vista: undefined })}`}
               className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 vista === "lista"
-                  ? "bg-[var(--ink)] text-white"
-                  : "text-[var(--ink-soft)]"
+                  ? "bg-[var(--brand)] !text-white"
+                  : "!text-[var(--ink-soft)] hover:!text-[var(--ink)]"
               }`}
             >
               Lista
@@ -184,8 +184,8 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
               href={`/casos${currentQs({ vista: "mapa" })}`}
               className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
                 vista === "mapa"
-                  ? "bg-[var(--ink)] text-white"
-                  : "text-[var(--ink-soft)]"
+                  ? "bg-[var(--brand)] !text-white"
+                  : "!text-[var(--ink-soft)] hover:!text-[var(--ink)]"
               }`}
             >
               Mapa
@@ -370,12 +370,12 @@ function FilterLink({
   return (
     <Link
       href={href}
-      className={`rounded-full border transition-colors ${
-        small ? "text-xs px-3 py-1" : "text-sm px-4 py-1.5"
+      className={`rounded-full border font-medium transition-colors ${
+        small ? "text-xs px-3 py-1.5" : "text-sm px-4 py-2"
       } ${
         active
-          ? "bg-[var(--ink)] text-white border-[var(--ink)]"
-          : "border-[var(--line-strong)] bg-white text-[var(--ink-soft)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+          ? "bg-[var(--brand)] !text-white border-[var(--brand)] shadow-sm shadow-[rgba(var(--brand-rgb),0.25)]"
+          : "border-[var(--line-strong)] bg-white !text-[var(--ink-soft)] hover:border-[var(--brand)] hover:!text-[var(--brand-ink)]"
       }`}
     >
       {children}

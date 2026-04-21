@@ -50,8 +50,31 @@ export const metadata: Metadata = {
     "mascota encontrada Querétaro",
     "perro perdido Mérida",
     "gato perdido Tijuana",
+    "mascota perdida León",
+    "mascota perdida Toluca",
+    "mascota perdida Cancún",
+    // Zonas MX amplias
+    "perro perdido área metropolitana Monterrey",
+    "gato perdido zona metropolitana Guadalajara",
+    "mascota perdida Estado de México",
+    "mascota perdida Puebla Cholula",
+    "mascota perdida Playa del Carmen",
+    "mascota perdida San Luis Potosí",
+    "mascota perdida Aguascalientes",
+    "mascota perdida Oaxaca",
+    "mascota perdida Veracruz",
+    "mascota perdida Chihuahua",
+    "mascota perdida Hermosillo",
+    "mascota perdida Torreón",
+    "mascota perdida Saltillo",
+    "mascota perdida Morelia",
+    "mascota perdida Ciudad Juárez",
+    "mascota perdida Pachuca",
+    "mascota perdida Cuernavaca",
+    "mascota perdida Culiacán",
     // Action-based
     "alertas mascotas colonia",
+    "alerta perro perdido cerca",
     "hogar temporal mascota",
     "hogar temporal perro",
     "hogar temporal gato",
@@ -60,12 +83,20 @@ export const metadata: Metadata = {
     "donar a rescate animal",
     "refugio mascotas México",
     "veterinaria mascota encontrada",
+    // Community
+    "foro mascotas perdidas",
+    "comunidad rescate animal México",
+    "chat ayuda rescate mascotas",
+    "experiencias reencuentro mascotas",
+    "consejos dueños perros y gatos",
     // Long-tail
     "encontré un perro qué hago",
     "encontré un gato qué hago",
     "cómo reportar una mascota perdida",
     "cómo activar alertas mascotas",
     "red de rescatistas México",
+    "plataforma rescate mascotas gratis",
+    "dónde reportar mascota perdida México",
     // Brand
     "VuelveaCasa",
     "vuelvecasa",
@@ -79,6 +110,7 @@ export const metadata: Metadata = {
     languages: {
       "es-MX": "/",
       "es": "/",
+      "x-default": "/",
     },
   },
   openGraph: {
@@ -217,11 +249,15 @@ const organizationJsonLd = {
   knowsAbout: [
     "Mascotas perdidas",
     "Rescate animal",
-    "Alertas comunitarias",
+    "Alertas comunitarias por zona",
     "Hogar temporal para mascotas",
     "Donaciones a rescatistas",
     "Veterinarias aliadas",
+    "Avistamientos de mascotas",
+    "Reportes hiperlocales",
+    "Comunidad de rescatistas México",
   ],
+  knowsLanguage: ["es-MX", "es"],
   slogan: SITE.tagline,
   description: SITE.description,
 };
@@ -268,6 +304,8 @@ const webAppJsonLd = {
     "Donaciones transparentes",
     "Directorio de aliados verificados",
     "Matching entre casos perdidas y encontradas",
+    "Foros comunitarios moderados",
+    "Chat de ayuda rápida por canales",
   ],
   areaServed: CITIES.map((c) => ({
     "@type": "City",
@@ -282,8 +320,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const tree = (
-    <html lang="es-MX" className={`${sans.variable} ${display.variable}`}>
-      <body className="min-h-screen flex flex-col">
+    <html
+      lang="es-MX"
+      className={`${sans.variable} ${display.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <Script
           id="ld-org"
           type="application/ld+json"
@@ -322,7 +364,7 @@ export default function RootLayout({
       <ClerkProvider
         appearance={{
           variables: {
-            colorPrimary: "#ff5a36",
+            colorPrimary: "#e11d48",
             colorText: "#0a1a2b",
             borderRadius: "12px",
           },

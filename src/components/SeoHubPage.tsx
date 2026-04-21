@@ -106,7 +106,7 @@ export function SeoHubPage({ hub }: { hub: SeoHub }) {
         </div>
       </section>
 
-      <CTA seed={hub.seed + 3} />
+      <CTA seed={hub.seed + 10} />
     </>
   );
 }

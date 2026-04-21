@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db, maybeBreak } from "./db";
 import type { CasoEspecie, CasoTipo } from "./casos";
 
 export type AlertaRow = {
@@ -54,7 +54,7 @@ export const alertasRepo = {
       `) as unknown as AlertaRow[];
       return rows;
     } catch (err) {
-      console.error("[alertas:listMine:error]", err);
+      maybeBreak("alertas:listMine", err);
       return [];
     }
   },
@@ -84,7 +84,7 @@ export const alertasRepo = {
       `;
       return { ok: rows.length > 0 };
     } catch (err) {
-      console.error("[alertas:create:error]", err);
+      maybeBreak("alertas:create", err);
       return { ok: false };
     }
   },
@@ -176,7 +176,7 @@ export const alertasRepo = {
         return d <= a.radio_m;
       });
     } catch (err) {
-      console.error("[alertas:matches:error]", err);
+      maybeBreak("alertas:matches", err);
       return [];
     }
   },

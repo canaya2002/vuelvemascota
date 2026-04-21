@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db, maybeBreak } from "./db";
 
 export type CasoTipo = "perdida" | "encontrada" | "avistamiento";
 export type CasoEspecie = "perro" | "gato" | "otro";
@@ -225,7 +225,7 @@ export const casosRepo = {
       `) as unknown as CasoConFotos[];
       return rows;
     } catch (err) {
-      console.error("[casos:list:error]", err);
+      maybeBreak("casos:list", err);
       return [];
     }
   },
@@ -390,7 +390,7 @@ export const casosRepo = {
       }>;
       return rows;
     } catch (err) {
-      console.error("[casos:listMyAvist:error]", err);
+      maybeBreak("casos:listMyAvist", err);
       return [];
     }
   },

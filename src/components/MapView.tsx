@@ -47,8 +47,8 @@ export default function MapView({ lat, lng, radio = 0, height = 320 }: MapViewPr
             center={[lat, lng]}
             radius={radio}
             pathOptions={{
-              color: "#ff5a36",
-              fillColor: "#ff5a36",
+              color: "#e11d48",
+              fillColor: "#e11d48",
               fillOpacity: 0.12,
               weight: 2,
             }}
