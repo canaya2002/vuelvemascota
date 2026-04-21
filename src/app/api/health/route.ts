@@ -18,6 +18,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   let dbReady = false;
   let dbTables: string[] = [];
+  let dbError: string | null = null;
   if (db.raw) {
     try {
       const rows = (await db.raw`
@@ -32,8 +33,9 @@ export async function GET() {
       `) as unknown as Array<{ tablename: string }>;
       dbReady = true;
       dbTables = rows.map((r) => r.tablename);
-    } catch {
+    } catch (err) {
       dbReady = false;
+      dbError = err instanceof Error ? err.message : String(err);
     }
   }
 
@@ -56,6 +58,7 @@ export async function GET() {
     db: {
       connected: dbReady,
       tables: dbTables,
+      error: dbError,
     },
     site: {
       url: process.env.NEXT_PUBLIC_SITE_URL || null,

@@ -94,14 +94,29 @@ export const pushRepo = {
 };
 
 /**
- * Encoder VAPID + ECDH minimal. Usamos Web Crypto para firmar el JWT VAPID
- * y enviar un POST al endpoint de push. Si se queda corto para un proveedor
- * específico, podemos cambiar a `web-push` package más adelante.
+ * Envío real con la librería `web-push`. Firma el JWT VAPID y cifra el payload
+ * (ECE, draft-ietf-webpush-encryption-08). Solo corre en runtime Node.js
+ * (no Edge), así que cualquier route handler que llame a `sendPush` debe usar
+ * `export const runtime = "nodejs"` (default en Next 16).
  *
- * Para mantener el alcance pragmático, aquí dejamos un ENVIO STUB que loggea
- * en vez de cifrar. La suscripción + UI ya están funcionales; la cifra del
- * payload es un TODO claramente marcado.
+ * Si el endpoint retorna 404/410 → la suscripción expiró, la borramos de la DB
+ * para no seguir intentando.
  */
+let webpushConfigured = false;
+async function getWebPush() {
+  const mod = await import("web-push");
+  const webpush = mod.default ?? mod;
+  if (!webpushConfigured && pushEnabled()) {
+    webpush.setVapidDetails(
+      process.env.VAPID_SUBJECT as string,
+      process.env.VAPID_PUBLIC_KEY as string,
+      process.env.VAPID_PRIVATE_KEY as string
+    );
+    webpushConfigured = true;
+  }
+  return webpush;
+}
+
 export async function sendPush(
   sub: { endpoint: string; p256dh: string; auth: string },
   payload: { title: string; body?: string; url?: string }
@@ -110,20 +125,24 @@ export async function sendPush(
     console.log("[push:stub]", sub.endpoint, payload);
     return { ok: true };
   }
-  // TODO: firmar con VAPID + cifrar payload con ECE (draft-ietf-webpush-encryption-08).
-  // Por ahora enviamos un push "tickle" sin payload (el SW puede hacer fetch del último evento).
   try {
-    const res = await fetch(sub.endpoint, {
-      method: "POST",
-      headers: {
-        TTL: "60",
-        Urgency: "high",
-        Authorization: `vapid t=${process.env.VAPID_PUBLIC_KEY}, k=${process.env.VAPID_PUBLIC_KEY}`,
+    const webpush = await getWebPush();
+    const res = await webpush.sendNotification(
+      {
+        endpoint: sub.endpoint,
+        keys: { p256dh: sub.p256dh, auth: sub.auth },
       },
-    });
-    return { ok: res.ok, status: res.status };
+      JSON.stringify(payload),
+      { TTL: 60, urgency: "high" }
+    );
+    return { ok: true, status: res.statusCode };
   } catch (err) {
+    const statusCode = (err as { statusCode?: number })?.statusCode;
+    if (statusCode === 404 || statusCode === 410) {
+      await pushRepo.remove(sub.endpoint);
+      return { ok: false, status: statusCode };
+    }
     console.error("[push:send:error]", err);
-    return { ok: false };
+    return { ok: false, status: statusCode };
   }
 }
