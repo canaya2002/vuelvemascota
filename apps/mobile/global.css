@@ -1,0 +1,5 @@
+/* NativeWind entry: Tailwind base + components + utilities.
+   Metro los compila en runtime — no existen archivos generados. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

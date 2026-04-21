@@ -11,7 +11,7 @@
  */
 
 export type TrustDecision = {
-  /** ¿Debemos llamar a Hive (provider caro) para este usuario en este contexto? */
+  /** ¿Debemos llamar al provider pago (Azure/etc) para este usuario en este contexto? */
   useHive: boolean;
   /** Etiqueta diagnóstico */
   reason: string;

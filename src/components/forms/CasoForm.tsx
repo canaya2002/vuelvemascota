@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import { createCasoAction, type CasoActionState } from "@/lib/casoActions";
 import { CITIES } from "@/lib/site";
 import { ESTADOS_MX } from "@/lib/estados";
+import { compressBatch } from "@/lib/imageCompress";
 import { TextField, TextArea, Select } from "./Field";
 import { IconArrow, IconX } from "../Icons";
 
@@ -289,11 +290,19 @@ function PhotoUploader({
   }, [previews]);
 
   const MAX = 6;
-  const addFiles = (list: FileList | null) => {
+  const [compressing, setCompressing] = useState(false);
+  const addFiles = async (list: FileList | null) => {
     if (!list) return;
     const incoming = Array.from(list).filter((f) => f.type.startsWith("image/"));
-    const combined = [...files, ...incoming].slice(0, MAX);
-    setFiles(combined);
+    if (incoming.length === 0) return;
+    setCompressing(true);
+    try {
+      const compressed = await compressBatch(incoming);
+      const combined = [...files, ...compressed].slice(0, MAX);
+      setFiles(combined);
+    } finally {
+      setCompressing(false);
+    }
   };
   const removeAt = (i: number) => {
     const copy = files.slice();
@@ -305,13 +314,17 @@ function PhotoUploader({
     <div>
       <label className="vc-label">Fotos (hasta {MAX})</label>
       <label
-        className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[var(--line-strong)] bg-[var(--bg-alt)] hover:bg-white hover:border-[var(--brand)] transition-colors px-6 py-8 cursor-pointer text-center"
+        className={`flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed bg-[var(--bg-alt)] hover:bg-white hover:border-[var(--brand)] transition-colors px-6 py-8 cursor-pointer text-center ${
+          compressing ? "opacity-60 pointer-events-none" : "border-[var(--line-strong)]"
+        }`}
       >
         <span className="text-sm font-semibold text-[var(--ink)]">
-          Arrastra o haz clic para seleccionar fotos
+          {compressing
+            ? "Optimizando imágenes…"
+            : "Arrastra o haz clic para seleccionar fotos"}
         </span>
         <span className="text-xs text-[var(--muted)]">
-          JPG/PNG/WEBP · hasta {MAX} archivos
+          JPG/PNG/WEBP · hasta {MAX} archivos · se optimizan automáticamente
         </span>
         <input
           type="file"
@@ -319,6 +332,7 @@ function PhotoUploader({
           accept="image/*"
           onChange={(e) => addFiles(e.target.files)}
           className="sr-only"
+          disabled={compressing}
         />
       </label>
       {!storageEnabled && (

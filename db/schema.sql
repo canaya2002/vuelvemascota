@@ -106,6 +106,20 @@ create table if not exists usuarios (
 -- Para agregar en DBs existentes:
 alter table usuarios add column if not exists estado text;
 alter table usuarios add column if not exists bio text;
+alter table usuarios add column if not exists expo_push_token text;
+alter table usuarios add column if not exists expo_push_platform text;
+
+-- Tabla opcional multi-dispositivo para push (un usuario puede tener web + ios + android)
+create table if not exists push_tokens (
+  id uuid primary key default gen_random_uuid(),
+  usuario_id uuid not null references usuarios(id) on delete cascade,
+  token text not null unique,
+  platform text check (platform in ('ios','android','web')),
+  device_name text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists push_tokens_usuario_idx on push_tokens (usuario_id);
 create unique index if not exists usuarios_email_unique on usuarios (lower(email));
 
 -- ---------------------------------------------------------------------------

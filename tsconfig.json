@@ -19,7 +19,13 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@vuelvecasa/shared": ["./packages/shared/src/index.ts"],
+      "@vuelvecasa/shared/*": ["./packages/shared/src/*"],
+      "@vuelvecasa/design-tokens": ["./packages/design-tokens/src/index.ts"],
+      "@vuelvecasa/design-tokens/*": ["./packages/design-tokens/src/*"],
+      "@vuelvecasa/api-client": ["./packages/api-client/src/index.ts"],
+      "@vuelvecasa/api-client/*": ["./packages/api-client/src/*"]
     }
   },
   "include": [
@@ -30,5 +36,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "apps", "packages/*/node_modules", "packages/*/dist"]
 }

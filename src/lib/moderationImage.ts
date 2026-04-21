@@ -14,7 +14,7 @@
  */
 
 import { createHash } from "node:crypto";
-import { moderateImageWithHive } from "./moderationProviders";
+import { moderateImageWithAzure } from "./moderationProviders";
 
 export type ImageModerationResult =
   | { ok: true; provider?: string; cached?: boolean }
@@ -93,8 +93,8 @@ export async function moderateImage(
     return cached;
   }
 
-  // 3. Moderar con Hive (provider ya degrada solo si no hay key).
-  const verdict = await moderateImageWithHive(bytes, mime);
+  // 3. Moderar con Azure Content Safety (provider ya degrada solo si no hay key).
+  const verdict = await moderateImageWithAzure(bytes, mime);
 
   if ("ok" in verdict && verdict.ok) {
     const out: ImageModerationResult = {

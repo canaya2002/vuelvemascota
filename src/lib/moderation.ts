@@ -1,17 +1,19 @@
 /**
- * Pipeline de moderación de contenido textual (3 capas):
+ * Pipeline de moderación de contenido textual (2 capas para texto):
  *
  *   1. REGLAS LOCALES (gratis, instantáneas) — primer filtro: PII, insultos
  *      obvios, spam, off-topic, enlaces no permitidos.
- *   2. OPENAI MODERATION (gratis) — clasifica odio, violencia, sexual,
- *      self-harm, acoso, etc. Cubre variaciones lingüísticas y contexto.
- *   3. HIVE MODERATION (pago) — red de seguridad final, solo se activa:
- *        - si MODERATION_MODE=strict, o
- *        - el texto es largo (foros/chat con contexto rico), o
- *        - el usuario no tiene historial limpio.
+ *   2. OPENAI MODERATION (gratis, omni-moderation-latest) — clasifica odio,
+ *      violencia, sexual, self-harm, acoso, etc. Cubre variaciones lingüísticas,
+ *      modismos ES-MX y contexto. Es suficiente para texto — no necesitamos
+ *      un proveedor pago adicional aquí.
  *
- * La función pública `moderate()` es async. Todos los server actions que la
- * llaman ya están en async → solo añadir `await`.
+ *   (Imágenes pasan por Azure Content Safety en `moderationImage.ts`.
+ *    OpenAI Moderation no cubre imágenes todavía de forma fiable.)
+ *
+ * Modo `strict` mantiene la opción de Azure para texto (ver nota abajo) por
+ * si alguna vez quieres doble verificación en foros, pero está apagado por
+ * default para ahorrar costos.
  *
  * Uso del resultado:
  *  - { ok: true, clean } → texto sanitizado listo para persistir
@@ -20,7 +22,7 @@
 
 import {
   moderateWithOpenAI,
-  moderateTextWithHive,
+  moderateTextWithAzure,
   moderationEnv,
   type ProviderVerdict,
 } from "./moderationProviders";
@@ -326,14 +328,19 @@ export async function moderate(
     }
   }
 
-  // CAPA 3 — Hive (pago). Gating por trust + longitud.
-  if (mode !== "off" && moderationEnv.hive()) {
+  // CAPA 3 (opcional) — Azure Content Safety para texto SOLO en modo strict.
+  //
+  // Rationale: OpenAI Moderation (capa 2) ya cubre ~95% de los abusos en
+  // texto de forma gratuita. Llamar a Azure en cada texto duplicaría costo
+  // sin beneficio proporcional. Solo lo activamos si explícitamente se pide
+  // modo strict (ej. foros de alto riesgo, casos con contenido sensible).
+  if (mode === "strict" && moderationEnv.azure()) {
     const trust = decideTrust(opts?.userId, local.clean.length, mode);
     if (trust.useHive) {
-      const hv = await moderateTextWithHive(local.clean);
-      if (!hv.ok) {
+      const az = await moderateTextWithAzure(local.clean);
+      if (!az.ok) {
         recordFlagged(opts?.userId);
-        return verdictToResult(hv, local.clean, local.warnings);
+        return verdictToResult(az, local.clean, local.warnings);
       }
     }
   }
@@ -356,6 +363,6 @@ export function moderationStatus() {
   return {
     mode: moderationEnv.mode(),
     openai: moderationEnv.openai(),
-    hive: moderationEnv.hive(),
+    azure: moderationEnv.azure(),
   };
 }

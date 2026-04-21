@@ -1,0 +1,15 @@
+{
+  "name": "@vuelvecasa/shared",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./site": "./src/site.ts",
+    "./estados": "./src/estados.ts",
+    "./types": "./src/types.ts",
+    "./validations": "./src/validations.ts"
+  },
+  "sideEffects": false
+}

@@ -19,6 +19,13 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
+  // Monorepo: compila paquetes TS locales directamente desde su source.
+  transpilePackages: [
+    "@vuelvecasa/shared",
+    "@vuelvecasa/design-tokens",
+    "@vuelvecasa/api-client",
+  ],
+
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
