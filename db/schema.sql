@@ -66,6 +66,10 @@ create table if not exists donaciones (
   raw jsonb,
   created_at timestamptz not null default now()
 );
+-- Migración incremental: si donaciones existía de una versión anterior sin estas columnas.
+alter table donaciones add column if not exists stripe_subscription_id text;
+alter table donaciones add column if not exists caso_id uuid;
+alter table donaciones add column if not exists raw jsonb;
 create index if not exists donaciones_status on donaciones (status);
 create index if not exists donaciones_causa on donaciones (causa);
 create index if not exists donaciones_caso_id on donaciones (caso_id);
@@ -108,7 +112,6 @@ create table if not exists casos (
   senas text,                                  -- texto libre de señas
   descripcion text,
   fecha_evento date not null,                  -- fecha de extravío o hallazgo
-  estado text,                                 -- entidad federativa MX (Jalisco, CDMX, ...)
   ciudad text not null,
   municipio text,                              -- alcaldía (CDMX) o municipio (resto)
   colonia text,
@@ -134,6 +137,10 @@ create index if not exists casos_tipo_estado on casos (tipo, estado);
 -- Migración incremental: si la DB ya existía sin estas columnas, add them.
 alter table casos add column if not exists estado text;
 alter table casos add column if not exists municipio text;
+alter table casos add column if not exists meta_donacion integer;
+alter table casos add column if not exists donado_mxn integer not null default 0;
+alter table casos add column if not exists vistas integer not null default 0;
+alter table casos add column if not exists destacado boolean not null default false;
 
 create index if not exists casos_ciudad_estado on casos (ciudad, estado);
 create index if not exists casos_estado on casos (estado) where estado is not null;
