@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Hero } from "@/components/Hero";
 import { Section } from "@/components/Section";
 import { FeatureCard } from "@/components/FeatureCard";
@@ -14,26 +15,47 @@ import {
   IconHeart,
   IconHome,
   IconShield,
-  IconSpark,
   IconCheck,
   IconArrow,
   IconStethoscope,
   IconMoney,
 } from "@/components/Icons";
-import { pickImage, pickMany } from "@/lib/images";
+import { pickRange } from "@/lib/images";
 import { CITIES, SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: `${SITE.name} — Reporta mascotas perdidas y ayuda a que vuelvan a casa en México`,
+  title: `${SITE.name} — Mascotas perdidas en México · Reporta, encuentra y ayuda`,
   description:
-    "Red comunitaria de México para reportar mascotas perdidas, avistar mascotas encontradas, activar alertas por zona, ofrecer hogar temporal y donar a rescates verificados.",
+    "La red comunitaria #1 de México para reportar mascotas perdidas, avistar mascotas encontradas, activar alertas por zona, ofrecer hogar temporal y donar a rescates verificados. CDMX, Guadalajara, Monterrey y más.",
   alternates: { canonical: "/" },
+  keywords: [
+    "mascotas perdidas México",
+    "perro perdido CDMX",
+    "gato perdido Guadalajara",
+    "reportar mascota perdida",
+    "mascota encontrada",
+    "rescate animal México",
+    "hogar temporal mascota",
+    "donar rescate animal",
+    "alertas mascotas colonia",
+    "buscar perro perdido",
+    "VuelveaCasa",
+    "vuelvecasa.com",
+  ],
+  openGraph: {
+    title: `${SITE.name} — Reporta, encuentra y ayuda a mascotas en México`,
+    description:
+      "Plataforma mexicana para reportar mascotas perdidas, activar alertas por zona y apoyar rescates verificados.",
+    url: SITE.url,
+    type: "website",
+    locale: "es_MX",
+  },
 };
 
 const faqHome = [
   {
     q: "¿Cómo funciona VuelveaCasa si acabo de perder a mi mascota?",
-    a: "Creas un reporte gratis con fotos, zona de extravío y señas. Enviamos alertas a personas cercanas, vecinos registrados, rescatistas aliados y veterinarias de tu área. Todo queda organizado en un caso fácil de compartir por WhatsApp.",
+    a: "Creas un reporte gratis con fotos, zona de extravío y señas en menos de 2 minutos. Enviamos alertas inmediatas a personas cercanas, vecinos registrados, rescatistas aliados y veterinarias de tu área. Todo queda organizado en un caso compartible por WhatsApp.",
   },
   {
     q: "¿Es gratis publicar un caso?",
@@ -41,29 +63,78 @@ const faqHome = [
   },
   {
     q: "¿Por qué no usar solo Facebook o WhatsApp?",
-    a: "Porque un post se pierde en minutos. Aquí cada caso tiene ficha, geolocalización, seguimiento, verificaciones y una red de aliados locales. Reducimos el ruido y aumentamos las probabilidades reales de reencuentro.",
+    a: "Porque un post se pierde en minutos. Aquí cada caso tiene ficha con geolocalización, seguimiento, verificaciones y una red de aliados locales. Reducimos el ruido y aumentamos las probabilidades reales de reencuentro.",
   },
   {
     q: "¿Cómo aseguran que las donaciones llegan a quien las necesita?",
-    a: "Los casos verificados pasan una validación básica con rescatistas o veterinarias aliadas. Cada donación muestra su destino y se concilia con Stripe. El objetivo es transparencia total desde el primer peso.",
+    a: "Los casos verificados pasan una validación básica con rescatistas o veterinarias aliadas. Cada donación muestra su destino y se concilia con Stripe. Transparencia total desde el primer peso.",
   },
   {
     q: "¿En qué ciudades están activos?",
-    a: "Arrancamos en CDMX, Guadalajara, Monterrey y seguimos sumando ciudades. Puedes registrarte y te avisamos cuando tu zona se active. Mientras tanto, tu reporte queda visible para la red nacional.",
+    a: "Arrancamos en CDMX, Guadalajara, Monterrey, Puebla, Querétaro, Mérida, Tijuana, León, Toluca y Cancún, y seguimos sumando. Puedes registrarte y te avisamos cuando tu zona se active.",
+  },
+  {
+    q: "¿Qué tan rápido llegan las alertas a mi zona?",
+    a: "En tiempo real. Cuando creas un caso, todas las personas con alerta activa en tu radio reciben notificación por correo o push en segundos. También rescatistas y veterinarias aliadas de tu ciudad.",
   },
 ];
 
+// Rangos de imágenes — cada sección usa un bloque NO SOLAPADO de la galería.
+const AUDIENCE_IMGS = pickRange(0, 6); // 0..5
+const TRUST_IMGS = pickRange(6, 3); // 6..8
+const MOSAIC_IMGS = pickRange(9, 6); // 9..14
+const DONATION_IMGS = pickRange(15, 4); // 15..18
+
 export default function Page() {
-  const trust = pickMany(3, 2);
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqHome.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Reporte y búsqueda de mascotas perdidas en México",
+    provider: {
+      "@type": "Organization",
+      name: SITE.name,
+      url: SITE.url,
+    },
+    areaServed: { "@type": "Country", name: "Mexico" },
+    serviceType: "Reporte de mascotas perdidas, alertas por zona, hogar temporal y donaciones",
+    availableChannel: {
+      "@type": "ServiceChannel",
+      serviceUrl: SITE.url,
+      availableLanguage: "es-MX",
+    },
+  };
+
   return (
     <>
       <Hero />
 
+      {/* Structured data: FAQ + Service */}
+      <Script
+        id="ld-faq-home"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <Script
+        id="ld-service-home"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
+
       {/* Value prop strip */}
-      <section className="py-10 border-b border-[var(--line)] bg-white">
+      <section className="py-12 border-b border-[var(--line)] bg-white">
         <div className="vc-container grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <Stat big="Gratis" small="Publicar y recibir alertas" />
-          <Stat big="Mx 🇲🇽" small="Enfocado 100% en México" />
+          <Stat big="100% MX" small="Enfocado en México" />
           <Stat big="24/7" small="Alertas en tu zona" />
           <Stat big="Verificado" small="Aliados reales" />
         </div>
@@ -89,7 +160,7 @@ export default function Page() {
           <FeatureCard
             icon={<IconBell size={22} />}
             title="Activa alertas por zona"
-            body="Define tu colonia o radio de interés y recibe avisos inmediatos cuando una mascota se pierde o se encuentra cerca de ti."
+            body="Define tu colonia o radio y recibe avisos inmediatos cuando una mascota se pierde o aparece cerca de ti."
             tint="accent"
           />
           <FeatureCard
@@ -142,18 +213,23 @@ export default function Page() {
               b: "Se coordinan entregas, traslados, hogar temporal o atención veterinaria si es necesario.",
             },
           ].map((s) => (
-            <div key={s.n} className="vc-card bg-white">
-              <span className="text-sm font-semibold text-[var(--brand)]">
+            <div key={s.n} className="vc-card-glass">
+              <span className="text-sm font-bold text-[var(--brand)] tracking-wider">
                 {s.n}
               </span>
               <h3 className="mt-3 text-xl font-semibold">{s.t}</h3>
-              <p className="mt-3 text-[var(--ink-soft)] leading-relaxed">{s.b}</p>
+              <p className="mt-3 text-[var(--ink-soft)] leading-relaxed">
+                {s.b}
+              </p>
             </div>
           ))}
         </div>
 
         <div className="mt-14">
-          <ImageMosaic count={6} offset={4} caption="Historias reales que nos mueven todos los días." />
+          <ImageMosaicStatic
+            images={MOSAIC_IMGS}
+            caption="Historias reales que nos mueven todos los días."
+          />
         </div>
       </Section>
 
@@ -164,39 +240,39 @@ export default function Page() {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AudienceCard
-            img={pickImage(0)}
+            img={AUDIENCE_IMGS[0]}
             title="Dueños que perdieron a su mascota"
             body="Actúas rápido, sin depender de que un post se viralice. Tu caso es visible, actualizable y compartible."
             href="/para-quien-es#dueños"
           />
           <AudienceCard
-            img={pickImage(1)}
+            img={AUDIENCE_IMGS[1]}
             title="Personas que encontraron una mascota"
             body="La subes y te conectamos con quien la busca. También puedes activar hogar temporal mientras aparece su familia."
             href="/para-quien-es#rescataste"
           />
           <AudienceCard
-            img={pickImage(3)}
+            img={AUDIENCE_IMGS[2]}
             title="Quienes quieren ayudar"
             body="Sumas tu colonia a las alertas, ofreces resguardo, difundes o donas a casos verificados. Poco es mucho."
             href="/para-quien-es#ayudar"
           />
           <AudienceCard
-            img={pickImage(5)}
+            img={AUDIENCE_IMGS[3]}
             title="Rescatistas y refugios"
             body="Publica casos, recibe apoyo económico, coordina traslados y accede a una red activa de voluntarios."
             href="/rescatistas"
           />
           <AudienceCard
-            img={pickImage(6)}
+            img={AUDIENCE_IMGS[4]}
             title="Veterinarias y clínicas"
             body="Recibe avisos cuando llega una mascota sin dueño. Aparece en el directorio de aliados verificados."
             href="/veterinarias"
           />
           <AudienceCard
-            img={pickImage(8)}
+            img={AUDIENCE_IMGS[5]}
             title="Aliados y patrocinadores"
-            body="Suma tu marca o comunidad a un impacto medible y local. Tenemos formatos de alianza transparentes."
+            body="Suma tu marca o comunidad a un impacto medible y local. Formatos de alianza transparentes."
             href="/contacto?tema=aliados"
           />
         </div>
@@ -228,14 +304,17 @@ export default function Page() {
             tint="ink"
           />
         </div>
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-4">
-          {trust.map((src, i) => (
-            <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {TRUST_IMGS.map((src, i) => (
+            <div
+              key={i}
+              className="relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-[var(--line)]"
+            >
               <Image
                 src={src}
                 alt=""
                 fill
-                sizes="(max-width:768px) 50vw, 33vw"
+                sizes="(max-width:768px) 100vw, 33vw"
                 className="object-cover"
               />
             </div>
@@ -254,7 +333,9 @@ export default function Page() {
               Ayuda real, no solo un like.
             </h2>
             <p className="mt-5 text-lg text-[var(--ink-soft)] leading-relaxed">
-              Las donaciones apoyan veterinaria de emergencia, alimento, transporte y rescate de mascotas en riesgo. Puedes dar a un caso específico o al fondo comunitario que activa apoyo donde más urge.
+              Las donaciones apoyan veterinaria de emergencia, alimento,
+              transporte y rescate de mascotas en riesgo. Puedes dar a un caso
+              específico o al fondo comunitario que activa apoyo donde más urge.
             </p>
             <ul className="mt-6 space-y-3">
               {[
@@ -263,7 +344,10 @@ export default function Page() {
                 "Transporte, traslados y capturas seguras",
                 "Apoyo a rescatistas verificados",
               ].map((t) => (
-                <li key={t} className="flex items-start gap-3 text-[var(--ink)]">
+                <li
+                  key={t}
+                  className="flex items-start gap-3 text-[var(--ink)]"
+                >
                   <span className="mt-1 text-[var(--accent)]">
                     <IconCheck size={18} />
                   </span>
@@ -283,7 +367,7 @@ export default function Page() {
           <div className="grid grid-cols-2 gap-3">
             <div className="relative aspect-square rounded-3xl overflow-hidden">
               <Image
-                src={pickImage(10)}
+                src={DONATION_IMGS[0]}
                 alt="Rescate de mascota"
                 fill
                 sizes="(max-width:1024px) 50vw, 25vw"
@@ -292,7 +376,7 @@ export default function Page() {
             </div>
             <div className="relative aspect-square rounded-3xl overflow-hidden translate-y-6">
               <Image
-                src={pickImage(12)}
+                src={DONATION_IMGS[1]}
                 alt="Mascota en cuidado"
                 fill
                 sizes="(max-width:1024px) 50vw, 25vw"
@@ -301,7 +385,7 @@ export default function Page() {
             </div>
             <div className="relative aspect-square rounded-3xl overflow-hidden translate-y-6">
               <Image
-                src={pickImage(14)}
+                src={DONATION_IMGS[2]}
                 alt="Voluntaria con perro rescatado"
                 fill
                 sizes="(max-width:1024px) 50vw, 25vw"
@@ -310,7 +394,7 @@ export default function Page() {
             </div>
             <div className="relative aspect-square rounded-3xl overflow-hidden">
               <Image
-                src={pickImage(16)}
+                src={DONATION_IMGS[3]}
                 alt="Mascota con su familia"
                 fill
                 sizes="(max-width:1024px) 50vw, 25vw"
@@ -326,7 +410,7 @@ export default function Page() {
         tone="dark"
         eyebrow="Cobertura"
         title="Arrancamos por ciudades clave y seguimos sumando."
-        subtitle="Registrate y te avisamos cuando tu zona se active. Mientras tanto, tu caso ya queda visible en la red nacional."
+        subtitle="Registrate y te avisamos cuando tu zona se active. Mientras tanto, tu caso queda visible en la red nacional."
       >
         <div className="flex flex-wrap gap-3">
           {CITIES.map((c) => (
@@ -413,4 +497,42 @@ function AudienceCard({
   );
 }
 
-void IconSpark;
+// Versión del mosaic que recibe las imágenes ya calculadas (sin duplicados).
+function ImageMosaicStatic({
+  images,
+  caption,
+}: {
+  images: string[];
+  caption?: string;
+}) {
+  void ImageMosaic; // keep import usage parity
+  return (
+    <div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+        {images.map((src, i) => (
+          <div
+            key={i}
+            className={`relative overflow-hidden rounded-2xl aspect-square ring-1 ring-[var(--line)] ${
+              i === 0
+                ? "col-span-2 row-span-2 aspect-auto md:aspect-square"
+                : ""
+            }`}
+          >
+            <Image
+              src={src}
+              alt=""
+              fill
+              sizes="(max-width:768px) 50vw, (max-width:1024px) 33vw, 16vw"
+              className="object-cover"
+            />
+          </div>
+        ))}
+      </div>
+      {caption && (
+        <p className="mt-4 text-sm text-[var(--muted)] text-center">
+          {caption}
+        </p>
+      )}
+    </div>
+  );
+}

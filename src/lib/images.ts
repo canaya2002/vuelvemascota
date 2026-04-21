@@ -49,21 +49,31 @@ const RAW = [
   "gettyimages-sb10066465l-001-612x612 (1).jpg",
 ];
 
-// Raw path strings. We encode spaces to %20 and keep parens — URL-safe for browsers and Next/Image.
 export const GALLERY: string[] = RAW.map(
   (name) => `/generales/${name.replace(/ /g, "%20")}`
 );
 
 export const HERO_VIDEO = "/videos/vuelveacasalanding.mp4";
+// Poster fuera del rango usado por la home (0..18) para evitar duplicados visibles.
+export const HERO_POSTER = GALLERY[19];
 
 export function pickImage(seed: number): string {
-  return GALLERY[((seed % GALLERY.length) + GALLERY.length) % GALLERY.length];
+  const i = ((seed % GALLERY.length) + GALLERY.length) % GALLERY.length;
+  return GALLERY[i];
 }
 
 export function pickMany(count: number, offset = 0): string[] {
   const out: string[] = [];
-  for (let i = 0; i < count; i++) {
-    out.push(pickImage(i + offset));
-  }
+  for (let i = 0; i < count; i++) out.push(pickImage(i + offset));
+  return out;
+}
+
+/**
+ * Rango sin duplicados. Útil para secciones que necesitan N imágenes únicas
+ * y distintas a las de otras secciones.
+ */
+export function pickRange(start: number, count: number): string[] {
+  const out: string[] = [];
+  for (let i = 0; i < count; i++) out.push(pickImage(start + i));
   return out;
 }

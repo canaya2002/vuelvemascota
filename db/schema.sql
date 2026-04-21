@@ -50,6 +50,16 @@ create table if not exists aliados (
   slug text unique,                            -- para /aliados/[slug] una vez verificados
   created_at timestamptz not null default now()
 );
+-- Migración incremental: si aliados existía antes sin slug.
+alter table aliados add column if not exists slug text;
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'aliados_slug_key'
+  ) then
+    alter table aliados add constraint aliados_slug_key unique (slug);
+  end if;
+end$$;
 create index if not exists aliados_tipo_estado on aliados (tipo, estado);
 
 create table if not exists donaciones (

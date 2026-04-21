@@ -2,12 +2,13 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { UserButton, useUser } from "@clerk/nextjs";
-import { IconPaw, IconMenu, IconX } from "./Icons";
+import { IconPaw, IconMenu, IconX, IconHeart, IconBell, IconSearch } from "./Icons";
 import { FLAGS } from "@/lib/flags";
 
 const LINKS = [
-  { href: "/casos", label: "Casos" },
+  { href: "/casos", label: "Casos", icon: IconSearch },
   { href: "/como-funciona", label: "Cómo funciona" },
+  { href: "/alertas", label: "Alertas", icon: IconBell },
   { href: "/rescatistas", label: "Rescatistas" },
   { href: "/veterinarias", label: "Veterinarias" },
   { href: "/faq", label: "FAQ" },
@@ -35,49 +36,53 @@ export function Navbar() {
     <header
       className={`sticky top-0 z-40 transition-all ${
         scrolled
-          ? "bg-[rgba(255,250,245,0.85)] backdrop-blur-md border-b border-[var(--line)]"
+          ? "vc-glass-strong border-b border-[var(--glass-border)]"
           : "bg-transparent"
       }`}
     >
-      <div className="vc-container flex items-center justify-between py-4">
+      <div className="vc-container flex items-center justify-between py-3">
         <Link
           href="/"
-          className="flex items-center gap-2 font-semibold text-[var(--ink)]"
-          aria-label="Ir al inicio"
+          className="vc-logo text-[var(--ink)]"
+          aria-label="VuelveaCasa — Inicio"
         >
-          <span className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-[var(--brand)] text-white">
-            <IconPaw size={20} />
+          <span className="vc-logo-mark">
+            <IconPaw size={22} />
           </span>
-          <span className="text-lg tracking-tight">VuelveaCasa</span>
+          <span className="text-lg sm:text-xl">VuelveaCasa</span>
         </Link>
 
-        <nav aria-label="Principal" className="hidden lg:flex items-center gap-1">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="px-3 py-2 text-sm font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] rounded-full hover:bg-[var(--bg-alt)] transition-colors"
-            >
-              {l.label}
-            </Link>
-          ))}
+        <nav aria-label="Principal" className="hidden lg:flex items-center gap-0.5">
+          {LINKS.map((l) => {
+            const Icon = l.icon;
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] rounded-full hover:bg-white/60 transition-colors"
+              >
+                {Icon && <Icon size={15} />}
+                {l.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="hidden lg:flex items-center gap-2">
-          <Link href="/donar" className="vc-btn vc-btn-outline text-sm py-2.5 px-4">
-            Donar
+          <Link href="/donar" className="vc-btn vc-btn-glass text-sm !py-2.5 !px-4">
+            <IconHeart size={15} /> Donar
           </Link>
           {FLAGS.auth ? (
             <AuthActionsDesktop />
           ) : (
-            <Link href="/registro" className="vc-btn vc-btn-primary text-sm py-2.5 px-4">
+            <Link href="/registro" className="vc-btn vc-btn-primary text-sm !py-2.5 !px-4">
               Registrarme
             </Link>
           )}
         </div>
 
         <button
-          className="lg:hidden inline-flex w-10 h-10 items-center justify-center rounded-full border border-[var(--line-strong)] bg-white"
+          className="lg:hidden inline-flex w-10 h-10 items-center justify-center rounded-full vc-glass-strong"
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -87,29 +92,40 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="lg:hidden fixed inset-0 top-[64px] bg-[var(--bg)] z-40 overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 top-[64px] z-40 overflow-y-auto vc-glass-strong">
           <nav aria-label="Móvil" className="vc-container py-6 flex flex-col gap-1">
-            {LINKS.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="py-3 px-4 rounded-xl text-base font-medium text-[var(--ink)] hover:bg-[var(--bg-alt)]"
-              >
-                {l.label}
-              </Link>
-            ))}
+            {LINKS.map((l) => {
+              const Icon = l.icon;
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="py-3.5 px-4 rounded-xl text-base font-semibold text-[var(--ink)] hover:bg-white flex items-center gap-3 transition-colors"
+                >
+                  {Icon && (
+                    <span className="text-[var(--brand)]">
+                      <Icon size={18} />
+                    </span>
+                  )}
+                  {l.label}
+                </Link>
+              );
+            })}
             <Link
               href="/donar"
               onClick={() => setOpen(false)}
-              className="py-3 px-4 rounded-xl text-base font-medium text-[var(--ink)] hover:bg-[var(--bg-alt)]"
+              className="py-3.5 px-4 rounded-xl text-base font-semibold text-[var(--ink)] hover:bg-white flex items-center gap-3"
             >
+              <span className="text-[var(--brand)]">
+                <IconHeart size={18} />
+              </span>
               Donar
             </Link>
             <Link
               href="/contacto"
               onClick={() => setOpen(false)}
-              className="py-3 px-4 rounded-xl text-base font-medium text-[var(--ink)] hover:bg-[var(--bg-alt)]"
+              className="py-3.5 px-4 rounded-xl text-base font-semibold text-[var(--ink)] hover:bg-white"
             >
               Contacto
             </Link>
@@ -117,7 +133,7 @@ export function Navbar() {
             {FLAGS.auth ? (
               <AuthActionsMobile onNavigate={() => setOpen(false)} />
             ) : (
-              <div className="mt-4 flex flex-col gap-3">
+              <div className="mt-5 flex flex-col gap-3">
                 <Link
                   href="/registro"
                   onClick={() => setOpen(false)}
@@ -141,11 +157,6 @@ export function Navbar() {
   );
 }
 
-/**
- * Estos subcomponentes solo se renderizan cuando FLAGS.auth es true,
- * lo que implica que ClerkProvider está montado y useUser funciona.
- */
-
 function AuthActionsDesktop() {
   const { isSignedIn, isLoaded } = useUser();
   if (!isLoaded) {
@@ -156,7 +167,7 @@ function AuthActionsDesktop() {
       <>
         <Link
           href="/panel"
-          className="text-sm font-medium text-[var(--ink)] hover:text-[var(--brand-ink)] px-3"
+          className="text-sm font-semibold text-[var(--ink)] hover:text-[var(--brand-ink)] px-3"
         >
           Panel
         </Link>
@@ -176,7 +187,7 @@ function AuthActionsDesktop() {
       </Link>
       <Link
         href="/crear-cuenta"
-        className="vc-btn vc-btn-primary text-sm py-2.5 px-4"
+        className="vc-btn vc-btn-primary text-sm !py-2.5 !px-4"
       >
         Crear cuenta
       </Link>
@@ -189,7 +200,7 @@ function AuthActionsMobile({ onNavigate }: { onNavigate: () => void }) {
   if (!isLoaded) return null;
   if (isSignedIn) {
     return (
-      <div className="mt-4 flex flex-col gap-3">
+      <div className="mt-5 flex flex-col gap-3">
         <Link
           href="/panel"
           onClick={onNavigate}
@@ -201,7 +212,7 @@ function AuthActionsMobile({ onNavigate }: { onNavigate: () => void }) {
     );
   }
   return (
-    <div className="mt-4 flex flex-col gap-3">
+    <div className="mt-5 flex flex-col gap-3">
       <Link
         href="/crear-cuenta"
         onClick={onNavigate}

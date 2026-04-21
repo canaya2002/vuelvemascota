@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Analytics } from "@/components/Analytics";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { PwaRegister } from "@/components/PwaRegister";
-import { SITE } from "@/lib/site";
+import { SITE, CITIES } from "@/lib/site";
 import { FLAGS } from "@/lib/flags";
 
 const sans = Plus_Jakarta_Sans({
@@ -33,29 +33,52 @@ export const metadata: Metadata = {
   description: SITE.description,
   applicationName: SITE.name,
   keywords: [
-    "mascota perdida",
-    "mascota encontrada",
+    // Core Mexico queries
+    "mascota perdida México",
+    "mascota encontrada México",
     "perro perdido",
     "gato perdido",
-    "reportar mascota",
-    "rescate animal México",
-    "ayuda para mascotas",
-    "alertas de mascotas",
-    "hogar temporal perro",
-    "donar rescate animal",
-    "refugio mascotas México",
-    "encontré un perro",
-    "encontré un gato",
+    "reportar mascota perdida",
     "cómo encontrar a mi mascota",
+    "buscar perro perdido",
+    "buscar gato perdido",
+    // Cities
+    "perro perdido CDMX",
+    "gato perdido Guadalajara",
+    "mascota perdida Monterrey",
+    "perro perdido Puebla",
+    "mascota encontrada Querétaro",
+    "perro perdido Mérida",
+    "gato perdido Tijuana",
+    // Action-based
+    "alertas mascotas colonia",
+    "hogar temporal mascota",
+    "hogar temporal perro",
+    "hogar temporal gato",
+    "ayuda para rescate animal",
+    "rescate animal México",
+    "donar a rescate animal",
+    "refugio mascotas México",
     "veterinaria mascota encontrada",
+    // Long-tail
+    "encontré un perro qué hago",
+    "encontré un gato qué hago",
+    "cómo reportar una mascota perdida",
+    "cómo activar alertas mascotas",
+    "red de rescatistas México",
+    // Brand
+    "VuelveaCasa",
+    "vuelvecasa",
+    "vuelvecasa.com",
   ],
-  authors: [{ name: SITE.name }],
+  authors: [{ name: SITE.name, url: SITE.url }],
   creator: SITE.name,
   publisher: SITE.name,
   alternates: {
     canonical: "/",
     languages: {
       "es-MX": "/",
+      "es": "/",
     },
   },
   openGraph: {
@@ -79,10 +102,13 @@ export const metadata: Metadata = {
     title: `${SITE.name} — Reporta, encuentra y ayuda a mascotas en México`,
     description: SITE.description,
     images: ["/opengraph-image"],
+    creator: "@vuelvecasa",
+    site: "@vuelvecasa",
   },
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
@@ -113,6 +139,7 @@ export const metadata: Metadata = {
       { url: "/icon.png", type: "image/png" },
     ],
     apple: "/apple-touch-icon.png",
+    shortcut: "/favicon.ico",
   },
   manifest: "/site.webmanifest",
   category: "community",
@@ -121,12 +148,19 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  other: {
+    "geo.region": "MX",
+    "geo.placename": "México",
+    "geo.position": "23.6345;-102.5528",
+    ICBM: "23.6345, -102.5528",
+    "article:publisher": SITE.url,
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fffaf5" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b1f33" },
+    { media: "(prefers-color-scheme: light)", color: "#fbf7f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a1a2b" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -137,37 +171,109 @@ export const viewport: Viewport = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": `${SITE.url}/#organization`,
   name: SITE.name,
+  alternateName: ["Vuelve a Casa", "Vuelvecasa", "Vuelve a Casa MX"],
   url: SITE.url,
-  logo: `${SITE.url}/icon.png`,
-  sameAs: [SITE.social.instagram, SITE.social.tiktok, SITE.social.facebook, SITE.social.x],
+  logo: {
+    "@type": "ImageObject",
+    url: `${SITE.url}/icon.png`,
+    width: 512,
+    height: 512,
+  },
+  image: `${SITE.url}/opengraph-image`,
+  sameAs: [
+    SITE.social.instagram,
+    SITE.social.tiktok,
+    SITE.social.facebook,
+    SITE.social.x,
+  ],
+  foundingDate: "2026-01-01",
+  foundingLocation: {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "MX",
+      addressLocality: "Ciudad de México",
+    },
+  },
   contactPoint: [
     {
       "@type": "ContactPoint",
       email: SITE.contact.email,
       contactType: "customer support",
       areaServed: "MX",
-      availableLanguage: ["Spanish"],
+      availableLanguage: ["Spanish", "es-MX"],
+    },
+    {
+      "@type": "ContactPoint",
+      email: SITE.contact.prensa,
+      contactType: "press",
+      areaServed: "MX",
+      availableLanguage: ["Spanish", "es-MX"],
     },
   ],
   areaServed: { "@type": "Country", name: "Mexico" },
+  knowsAbout: [
+    "Mascotas perdidas",
+    "Rescate animal",
+    "Alertas comunitarias",
+    "Hogar temporal para mascotas",
+    "Donaciones a rescatistas",
+    "Veterinarias aliadas",
+  ],
+  slogan: SITE.tagline,
+  description: SITE.description,
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": `${SITE.url}/#website`,
   name: SITE.name,
+  alternateName: "VuelveaCasa MX",
   url: SITE.url,
   inLanguage: "es-MX",
-  publisher: {
-    "@type": "Organization",
-    name: SITE.name,
-  },
+  publisher: { "@id": `${SITE.url}/#organization` },
   potentialAction: {
     "@type": "SearchAction",
-    target: `${SITE.url}/buscar?q={search_term_string}`,
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE.url}/casos?q={search_term_string}`,
+    },
     "query-input": "required name=search_term_string",
   },
+};
+
+const webAppJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: SITE.name,
+  url: SITE.url,
+  applicationCategory: "SocialNetworkingApplication",
+  operatingSystem: "Any (Web)",
+  browserRequirements: "Requires JavaScript. Mejor experiencia en navegadores modernos.",
+  inLanguage: "es-MX",
+  description: SITE.description,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "MXN",
+    availability: "https://schema.org/InStock",
+  },
+  featureList: [
+    "Reporte de mascotas perdidas",
+    "Alertas por zona geográfica",
+    "Hogar temporal",
+    "Donaciones transparentes",
+    "Directorio de aliados verificados",
+    "Matching entre casos perdidas y encontradas",
+  ],
+  areaServed: CITIES.map((c) => ({
+    "@type": "City",
+    name: c.name,
+    containedInPlace: { "@type": "AdministrativeArea", name: c.state },
+  })),
 };
 
 export default function RootLayout({
@@ -187,6 +293,11 @@ export default function RootLayout({
           id="ld-website"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <Script
+          id="ld-webapp"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
         />
         <a
           href="#main"
@@ -212,7 +323,7 @@ export default function RootLayout({
         appearance={{
           variables: {
             colorPrimary: "#ff5a36",
-            colorText: "#0b1f33",
+            colorText: "#0a1a2b",
             borderRadius: "12px",
           },
         }}
