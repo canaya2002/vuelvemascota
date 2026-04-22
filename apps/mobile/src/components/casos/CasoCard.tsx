@@ -1,17 +1,17 @@
 /**
- * Card de caso en el feed. Toca → navega al detail.
+ * Card de caso en el feed — ahora con tilt + scale + glass accent. Navega
+ * al detail al tocar.
  */
 
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import type { Caso } from "@vuelvecasa/shared";
-import { Text, Card } from "@/components/ui";
+import { Text, TiltPressable, GlassSurface } from "@/components/ui";
 import { colors } from "@/lib/theme";
 import { EstadoBadge } from "./EstadoBadge";
-import * as haptics from "@/lib/haptics";
 
 type Props = { caso: Caso };
 
@@ -27,14 +27,26 @@ export function CasoCard({ caso }: Props) {
 
   return (
     <Link href={`/casos/${caso.slug}` as never} asChild>
-      <Pressable onPress={() => haptics.tap()}>
-        <Card style={{ padding: 0, overflow: "hidden" }}>
+      <TiltPressable
+        style={{
+          borderRadius: 24,
+          overflow: "hidden",
+          shadowColor: "#0a1a2b",
+          shadowOpacity: 0.09,
+          shadowRadius: 18,
+          shadowOffset: { width: 0, height: 10 },
+          elevation: 5,
+        }}
+        tilt={2.5}
+      >
+        <GlassSurface radius={24} border>
           <View style={{ flexDirection: "row" }}>
             <View
               style={{
-                width: 110,
-                height: 130,
+                width: 118,
+                height: 136,
                 backgroundColor: colors.line,
+                overflow: "hidden",
               }}
             >
               {firstPhoto ? (
@@ -42,6 +54,7 @@ export function CasoCard({ caso }: Props) {
                   source={{ uri: firstPhoto }}
                   style={{ width: "100%", height: "100%" }}
                   contentFit="cover"
+                  transition={200}
                 />
               ) : (
                 <View
@@ -54,32 +67,44 @@ export function CasoCard({ caso }: Props) {
                   <Ionicons name="paw" size={32} color={colors.muted} />
                 </View>
               )}
-            </View>
-            <View style={{ flex: 1, padding: 14, gap: 6 }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  gap: 8,
-                }}
-              >
-                <EstadoBadge tipo={caso.tipo} estado={caso.estado} />
-                {distancia ? (
-                  <Text style={{ fontSize: 12, color: colors.muted }}>
+              {distancia ? (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    left: 8,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 4,
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                    borderRadius: 9999,
+                    backgroundColor: "rgba(10,26,43,0.72)",
+                  }}
+                >
+                  <Ionicons name="location" size={11} color="#fff" />
+                  <Text style={{ color: "#fff", fontSize: 11, fontWeight: "700" }}>
                     {distancia}
                   </Text>
-                ) : null}
-              </View>
+                </View>
+              ) : null}
+            </View>
+            <View style={{ flex: 1, padding: 14, gap: 6, justifyContent: "center" }}>
+              <EstadoBadge tipo={caso.tipo} estado={caso.estado} />
               <Text
                 numberOfLines={1}
-                style={{ fontSize: 17, fontWeight: "700", color: colors.ink }}
+                style={{
+                  fontSize: 17,
+                  fontWeight: "800",
+                  color: colors.ink,
+                  letterSpacing: -0.3,
+                }}
               >
                 {caso.nombre ?? descripcionCorta(caso)}
               </Text>
               <Text
                 numberOfLines={2}
-                style={{ fontSize: 13, color: colors.inkSoft }}
+                style={{ fontSize: 13, color: colors.inkSoft, lineHeight: 18 }}
               >
                 {[caso.raza, caso.color, caso.tamano].filter(Boolean).join(" • ")}
               </Text>
@@ -93,7 +118,7 @@ export function CasoCard({ caso }: Props) {
               >
                 <Ionicons
                   name="location-outline"
-                  size={13}
+                  size={12}
                   color={colors.muted}
                 />
                 <Text style={{ fontSize: 12, color: colors.muted }}>
@@ -103,8 +128,8 @@ export function CasoCard({ caso }: Props) {
               </View>
             </View>
           </View>
-        </Card>
-      </Pressable>
+        </GlassSurface>
+      </TiltPressable>
     </Link>
   );
 }

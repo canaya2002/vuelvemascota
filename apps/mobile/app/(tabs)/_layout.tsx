@@ -6,19 +6,16 @@
  *   4. Alertas (gestión de alertas por zona)
  *   5. Perfil (sesión + ajustes)
  *
- * Gate: si no hay sesión → redirige a (auth)/sign-in. El flujo "leer casos
- * sin login" se activará con una variante de este layout en Fase 3 — por
- * ahora todas las tabs requieren usuario autenticado (premium-first).
+ * Gate: si no hay sesión → redirige a (auth)/sign-in.
+ * Look & feel: tab bar flotante glassmorphic (ver FloatingTabBar).
  */
 
 import { Redirect, Tabs } from "expo-router";
 import { useAuth } from "@clerk/clerk-expo";
-import { Ionicons } from "@expo/vector-icons";
-import { Platform, View } from "react-native";
-import { BlurView } from "expo-blur";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
-import { colors } from "@/lib/theme";
 import { AuthedBootstrap } from "@/lib/AuthedBootstrap";
+import { FloatingTabBar } from "@/components/ui";
 
 export default function TabsLayout() {
   const { isSignedIn } = useAuth();
@@ -36,90 +33,15 @@ function TabsInner() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.brand,
-        tabBarInactiveTintColor: colors.muted,
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: "600",
-          marginTop: 2,
-        },
-        tabBarStyle: {
-          position: "absolute",
-          borderTopWidth: 0,
-          elevation: 0,
-          backgroundColor:
-            Platform.OS === "ios" ? "transparent" : colors.surface,
-          height: Platform.OS === "ios" ? 82 : 64,
-          paddingTop: 6,
-        },
-        tabBarBackground: () =>
-          Platform.OS === "ios" ? (
-            <BlurView
-              tint="light"
-              intensity={80}
-              style={{
-                flex: 1,
-                borderTopWidth: 1,
-                borderTopColor: colors.line,
-              }}
-            />
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: colors.surface,
-                borderTopWidth: 1,
-                borderTopColor: colors.line,
-              }}
-            />
-          ),
+        tabBarStyle: { display: "none" },
       }}
+      tabBar={(props: BottomTabBarProps) => <FloatingTabBar {...props} />}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Inicio",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size ?? 22} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="casos"
-        options={{
-          title: "Casos",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="paw" size={size ?? 22} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="reportar"
-        options={{
-          title: "Reportar",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle" size={(size ?? 22) + 6} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="alertas"
-        options={{
-          title: "Alertas",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="notifications" size={size ?? 22} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="perfil"
-        options={{
-          title: "Perfil",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-circle" size={size ?? 22} color={color} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="index" options={{ title: "Inicio" }} />
+      <Tabs.Screen name="casos" options={{ title: "Casos" }} />
+      <Tabs.Screen name="reportar" options={{ title: "Reportar" }} />
+      <Tabs.Screen name="alertas" options={{ title: "Alertas" }} />
+      <Tabs.Screen name="perfil" options={{ title: "Perfil" }} />
     </Tabs>
   );
 }

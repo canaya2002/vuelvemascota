@@ -1,9 +1,6 @@
 /**
- * Sign-in/Sign-up con email + código de 6 dígitos.
- *
- * Clerk Expo expone dos hooks: useSignIn / useSignUp. El usuario escribe
- * su correo, intentamos signIn primero; si no existe, caemos a signUp. En
- * ambos, Clerk manda un código al email y nosotros lo verificamos.
+ * Sign-in / Sign-up por email con código de 6 dígitos. Aurora en fondo,
+ * card glass con inputs grandes y animaciones de paso a paso.
  */
 
 import { useState } from "react";
@@ -14,11 +11,17 @@ import { Ionicons } from "@expo/vector-icons";
 
 import {
   Screen,
-  H2,
+  H1,
   Body,
-  Button,
+  Text,
   Input,
   IconButton,
+  AuroraBackground,
+  AnimatedEntry,
+  GlassSurface,
+  PremiumButton,
+  PulseDot,
+  Eyebrow,
 } from "@/components/ui";
 import { colors } from "@/lib/theme";
 import { errorMessage } from "@/lib/errors";
@@ -40,7 +43,6 @@ export default function EmailAuthScreen() {
     setBusy(true);
     try {
       try {
-        // Intento 1: signIn con email_code
         const attempt = await signIn.create({
           identifier: email,
           strategy: "email_code",
@@ -99,72 +101,113 @@ export default function EmailAuthScreen() {
   };
 
   return (
-    <Screen edges={["top", "bottom"]} background={colors.bg} padded>
+    <Screen edges={["top", "bottom"]} padded>
+      <AuroraBackground variant="sunrise" />
+
       <View style={{ paddingTop: 8, marginBottom: 16 }}>
         <IconButton onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={22} color={colors.ink} />
         </IconButton>
       </View>
 
-      <View style={{ gap: 18 }}>
-        {step === "email" ? (
-          <>
-            <H2>¿Cuál es tu correo?</H2>
-            <Body>Te mandamos un código de 6 dígitos.</Body>
-            <Input
-              label="Correo electrónico"
-              placeholder="tu@ejemplo.com"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              value={email}
-              onChangeText={setEmail}
-              containerStyle={{ marginTop: 16 }}
-            />
-            <Button
-              label="Enviar código"
-              block
-              size="lg"
-              loading={busy}
-              disabled={!email.includes("@")}
-              onPress={sendCode}
-              style={{ marginTop: 8 }}
-            />
-          </>
-        ) : (
-          <>
-            <H2>Código de acceso</H2>
-            <Body>Lo enviamos a {email}.</Body>
-            <Input
-              label="Código"
-              placeholder="123456"
-              keyboardType="number-pad"
-              maxLength={6}
-              value={code}
-              onChangeText={setCode}
-              containerStyle={{ marginTop: 16 }}
-            />
-            <Button
-              label="Entrar"
-              block
-              size="lg"
-              loading={busy}
-              disabled={code.length !== 6}
-              onPress={verifyCode}
-              style={{ marginTop: 8 }}
-            />
-            <Button
-              label="Cambiar correo"
-              variant="ghost"
-              block
-              onPress={() => {
-                setStep("email");
-                setCode("");
-              }}
-            />
-          </>
-        )}
-      </View>
+      <AnimatedEntry delay={40}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
+          <PulseDot size={6} color={colors.brand} />
+          <Eyebrow>
+            {step === "email" ? "Entra con email" : "Verifica el código"}
+          </Eyebrow>
+        </View>
+      </AnimatedEntry>
+
+      <AnimatedEntry delay={120}>
+        <H1 style={{ fontSize: 30, letterSpacing: -0.8, marginBottom: 14 }}>
+          {step === "email" ? "¿Cuál es tu correo?" : "Código de acceso"}
+        </H1>
+      </AnimatedEntry>
+
+      <AnimatedEntry delay={180}>
+        <Body style={{ color: colors.inkSoft, fontSize: 14, marginBottom: 20 }}>
+          {step === "email"
+            ? "Te mandamos un código de 6 dígitos."
+            : `Lo enviamos a ${email}.`}
+        </Body>
+      </AnimatedEntry>
+
+      <AnimatedEntry delay={240}>
+        <GlassSurface radius={22}>
+          <View style={{ padding: 18, gap: 14 }}>
+            {step === "email" ? (
+              <>
+                <Input
+                  label="Correo electrónico"
+                  placeholder="tu@ejemplo.com"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+                <PremiumButton
+                  label="Enviar código"
+                  block
+                  size="lg"
+                  loading={busy}
+                  disabled={!email.includes("@")}
+                  onPress={sendCode}
+                  glow={email.includes("@")}
+                />
+              </>
+            ) : (
+              <>
+                <Input
+                  label="Código"
+                  placeholder="123456"
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  value={code}
+                  onChangeText={setCode}
+                  style={{ fontSize: 22, letterSpacing: 6, textAlign: "center" }}
+                />
+                <PremiumButton
+                  label="Entrar"
+                  block
+                  size="lg"
+                  loading={busy}
+                  disabled={code.length !== 6}
+                  onPress={verifyCode}
+                  glow={code.length === 6}
+                />
+                <PremiumButton
+                  label="Cambiar correo"
+                  variant="ghost"
+                  block
+                  onPress={() => {
+                    setStep("email");
+                    setCode("");
+                  }}
+                />
+              </>
+            )}
+          </View>
+        </GlassSurface>
+      </AnimatedEntry>
+
+      <AnimatedEntry delay={320}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 6,
+            marginTop: 18,
+          }}
+        >
+          <Ionicons name="lock-closed" size={12} color={colors.muted} />
+          <Text style={{ color: colors.muted, fontSize: 12 }}>
+            Autenticación segura con cifrado extremo.
+          </Text>
+        </View>
+      </AnimatedEntry>
     </Screen>
   );
 }

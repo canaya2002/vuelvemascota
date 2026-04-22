@@ -106,8 +106,9 @@ export function Map({
         coordinate={center}
         draggable={!!onDragEnd}
         onDragEnd={(e) => {
-          const coords = (e as { geometry: { coordinates: [number, number] } })
-            .geometry.coordinates;
+          const coords = (
+            e as unknown as { geometry: { coordinates: [number, number] } }
+          ).geometry.coordinates;
           onDragEnd?.({ lat: coords[1], lng: coords[0] });
         }}
       >

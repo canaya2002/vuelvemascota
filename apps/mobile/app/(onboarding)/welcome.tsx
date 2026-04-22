@@ -6,86 +6,111 @@ import {
   Screen,
   H1,
   Body,
-  Button,
+  Text,
   Eyebrow,
-  Card,
+  AuroraBackground,
+  AnimatedEntry,
+  GlassSurface,
+  PremiumButton,
+  PulseDot,
 } from "@/components/ui";
 import { colors } from "@/lib/theme";
 
 export default function OnboardingWelcome() {
   return (
     <Screen edges={["top", "bottom"]} padded>
-      <View style={{ flex: 1, justifyContent: "space-between", paddingTop: 32 }}>
-        <View style={{ gap: 20, marginTop: 40 }}>
-          <Eyebrow>Bienvenido</Eyebrow>
-          <H1 style={{ fontSize: 42 }}>
-            Vamos a configurarte en un minuto.
-          </H1>
-          <Body style={{ fontSize: 17 }}>
-            Te pediremos dos permisos para sacar el máximo de VuelveaCasa.
-            Puedes cambiarlos cuando quieras desde Ajustes.
-          </Body>
+      <AuroraBackground variant="rose" />
+
+      <View style={{ flex: 1, justifyContent: "space-between", paddingTop: 40 }}>
+        <View>
+          <AnimatedEntry delay={40}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <PulseDot size={7} color={colors.brand} />
+              <Eyebrow>Bienvenido</Eyebrow>
+            </View>
+          </AnimatedEntry>
+          <AnimatedEntry delay={120}>
+            <H1 style={{ fontSize: 38, letterSpacing: -1, lineHeight: 44 }}>
+              Vamos a configurarte en un{" "}
+              <Text style={{ color: colors.brand, fontSize: 38, fontWeight: "800" }}>
+                minuto
+              </Text>
+              .
+            </H1>
+          </AnimatedEntry>
+          <AnimatedEntry delay={200}>
+            <Body style={{ fontSize: 16, marginTop: 16, color: colors.inkSoft, lineHeight: 22 }}>
+              Te pediremos dos permisos para sacar el máximo de VuelveaCasa.
+              Puedes cambiarlos cuando quieras desde Ajustes.
+            </Body>
+          </AnimatedEntry>
         </View>
 
         <View style={{ gap: 12, marginVertical: 24 }}>
-          <Card>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
-              <IconBubble icon="location" />
-              <View style={{ flex: 1 }}>
-                <Body style={{ fontWeight: "700", color: colors.ink }}>
-                  Ubicación
-                </Body>
-                <Body style={{ fontSize: 13, color: colors.muted }}>
-                  Para mostrarte casos cerca y alertarte cuando alguien reporte
-                  una mascota en tu zona.
-                </Body>
-              </View>
-            </View>
-          </Card>
-          <Card>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
-              <IconBubble icon="notifications" />
-              <View style={{ flex: 1 }}>
-                <Body style={{ fontWeight: "700", color: colors.ink }}>
-                  Notificaciones
-                </Body>
-                <Body style={{ fontSize: 13, color: colors.muted }}>
-                  Para avisarte al instante si hay una mascota perdida cerca o
-                  pistas sobre la tuya.
-                </Body>
-              </View>
-            </View>
-          </Card>
+          <AnimatedEntry delay={280}>
+            <PermCard
+              icon="location"
+              title="Ubicación"
+              description="Para mostrarte casos cerca y alertarte cuando alguien reporte una mascota en tu zona."
+            />
+          </AnimatedEntry>
+          <AnimatedEntry delay={360}>
+            <PermCard
+              icon="notifications"
+              title="Notificaciones"
+              description="Para avisarte al instante si hay una mascota perdida cerca o pistas sobre la tuya."
+            />
+          </AnimatedEntry>
         </View>
 
-        <Button
-          label="Comenzar"
-          size="lg"
-          block
-          onPress={() => router.push("/(onboarding)/location" as never)}
-        />
+        <AnimatedEntry delay={460}>
+          <PremiumButton
+            label="Comenzar"
+            size="lg"
+            block
+            glow
+            trailing={<Ionicons name="arrow-forward" size={18} color="#fff" />}
+            onPress={() => router.push("/(onboarding)/location" as never)}
+          />
+        </AnimatedEntry>
       </View>
     </Screen>
   );
 }
 
-function IconBubble({
+function PermCard({
   icon,
+  title,
+  description,
 }: {
-  icon: keyof typeof import("@expo/vector-icons/Ionicons").default.glyphMap;
+  icon: keyof typeof Ionicons.glyphMap;
+  title: string;
+  description: string;
 }) {
   return (
-    <View
-      style={{
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: colors.brandSoft,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Ionicons name={icon} size={22} color={colors.brandInk} />
-    </View>
+    <GlassSurface radius={22}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 14, padding: 16 }}>
+        <View
+          style={{
+            width: 52,
+            height: 52,
+            borderRadius: 26,
+            backgroundColor: colors.brandSoft,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Ionicons name={icon} size={24} color={colors.brandInk} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontWeight: "700", color: colors.ink, fontSize: 15 }}>
+            {title}
+          </Text>
+          <Text style={{ color: colors.muted, fontSize: 13, marginTop: 2 }}>
+            {description}
+          </Text>
+        </View>
+      </View>
+    </GlassSurface>
   );
 }

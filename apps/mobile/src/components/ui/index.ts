@@ -14,3 +14,23 @@ export { FormField } from "./FormField";
 export { Select } from "./Select";
 export { ToastProvider, useToast } from "./Toast";
 export { Skeleton, CasoCardSkeleton, HiloSkeleton } from "./Skeleton";
+
+// Premium primitives — gradients, glass, motion, tilt. Re-exported so screens
+// can pick-and-mix without knowing the subfolder.
+export {
+  AuroraBackground,
+  GlassSurface,
+  AnimatedEntry,
+  PopEntry,
+  GradientFill,
+  HeroGradient,
+  gradientPresets,
+  PremiumButton,
+  TiltPressable,
+  PulseDot,
+  ShimmerText,
+  GradientHeading,
+  StatTile,
+  FloatingTabBar,
+  Hero,
+} from "./premium";

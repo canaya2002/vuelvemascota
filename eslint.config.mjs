@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Mobile app and shared packages carry their own lint/typecheck configs.
+    // The Next.js rule set here is not appropriate for Expo/Reanimated code.
+    "apps/**",
+    "packages/**",
   ]),
 ]);
 

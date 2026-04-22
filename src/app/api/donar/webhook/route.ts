@@ -37,9 +37,28 @@ export async function POST(req: Request) {
       customer_details?: { email?: string };
     };
 
+    type InvoiceLike = {
+      id: string;
+      amount_paid?: number;
+      currency?: string;
+      customer_email?: string | null;
+      subscription?: string | null;
+      subscription_details?: { metadata?: Record<string, string> };
+      lines?: {
+        data?: Array<{ metadata?: Record<string, string> }>;
+      };
+    };
+
+    type SubscriptionLike = {
+      id: string;
+      status?: string;
+      metadata?: Record<string, string>;
+    };
+
     switch (event.type) {
       case "checkout.session.completed": {
-        const session = (event as unknown as { data: { object: SessionLike } }).data.object;
+        const session = (event as unknown as { data: { object: SessionLike } })
+          .data.object;
         await db.insertDonation({
           stripe_session_id: session.id,
           amount: Math.round((session.amount_total || 0) / 100),
@@ -52,10 +71,40 @@ export async function POST(req: Request) {
         });
         break;
       }
-      case "invoice.paid":
-      case "customer.subscription.deleted":
-        // TODO: reconcile recurring donations when needed.
+
+      case "invoice.paid": {
+        // Recurring subscription renewal. Record each charge as its own
+        // donation row keyed by the invoice id so retries stay idempotent.
+        const invoice = (event as unknown as { data: { object: InvoiceLike } })
+          .data.object;
+        const lineMeta = invoice.lines?.data?.[0]?.metadata ?? {};
+        const subMeta = invoice.subscription_details?.metadata ?? {};
+        const causa = lineMeta.causa || subMeta.causa || "fondo";
+        const caso_id = lineMeta.caso_id || subMeta.caso_id || null;
+        await db.insertDonation({
+          stripe_session_id: invoice.id,
+          amount: Math.round((invoice.amount_paid || 0) / 100),
+          currency: invoice.currency || "mxn",
+          causa,
+          recurrente: true,
+          email: invoice.customer_email ?? undefined,
+          status: "completed",
+          caso_id,
+        });
         break;
+      }
+
+      case "customer.subscription.deleted": {
+        // Cancellation. We don't insert a new donation; the last paid invoice
+        // already landed via invoice.paid. If a row exists for the subscription
+        // session id, leave it as-is — it represents the active-period donation.
+        // Future work: persist a cancellation record once we add a subscriptions table.
+        const sub = (event as unknown as { data: { object: SubscriptionLike } })
+          .data.object;
+        void sub; // intentionally no DB write in the current schema
+        break;
+      }
+
       default:
         break;
     }

@@ -1,24 +1,33 @@
 /**
- * Home. Muestra stats heroicas + feed corto de casos cerca + accesos
- * rápidos a reportar, alertas y foros.
+ * Home. Hero gradient animado, stats con count-up, feed corto de casos
+ * cerca y accesos rápidos con efecto tilt. Aurora animada en el fondo.
  */
 
 import { useEffect, useState } from "react";
-import { Pressable, RefreshControl, ScrollView, View } from "react-native";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+} from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import {
   Screen,
-  H1,
   H2,
-  Body,
-  Eyebrow,
-  Card,
-  Button,
+  Text,
   EmptyState,
   LoadingState,
+  AuroraBackground,
+  AnimatedEntry,
+  StatTile,
+  PremiumButton,
+  TiltPressable,
+  GlassSurface,
+  Hero,
+  PulseDot,
 } from "@/components/ui";
 import { CasoCard } from "@/components/casos/CasoCard";
 import { useCasos, useAlertas } from "@/lib/hooks";
@@ -30,7 +39,8 @@ import * as haptics from "@/lib/haptics";
 export default function HomeScreen() {
   const { user } = useUser();
   const firstName =
-    user?.firstName ?? (user?.emailAddresses[0]?.emailAddress ?? "Hola").split("@")[0];
+    user?.firstName ??
+    (user?.emailAddresses[0]?.emailAddress ?? "Hola").split("@")[0];
   const [coords, setCoords] = useState<Coords | null>(null);
 
   useEffect(() => {
@@ -52,9 +62,10 @@ export default function HomeScreen() {
 
   return (
     <Screen edges={["top"]} padded={false}>
+      <AuroraBackground variant="rose" />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ padding: 20, paddingBottom: 140 }}
+        contentContainerStyle={{ padding: 18, paddingTop: 10, paddingBottom: 160 }}
         refreshControl={
           <RefreshControl
             refreshing={casos.isRefetching || alertas.isRefetching}
@@ -66,96 +77,191 @@ export default function HomeScreen() {
           />
         }
       >
-        <View style={{ gap: 6, marginBottom: 16 }}>
-          <Eyebrow>Hola, {firstName}</Eyebrow>
-          <H1 style={{ fontSize: 36 }}>{SITE.tagline}</H1>
-        </View>
+        {/* ── HERO ─────────────────────────────────────────────── */}
+        <AnimatedEntry delay={40}>
+          <Hero preset="sunrise" overlay="soft">
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <PulseDot size={8} color="#fff" />
+              <Text
+                style={{
+                  color: "rgba(255,255,255,0.95)",
+                  fontSize: 11,
+                  fontWeight: "700",
+                  letterSpacing: 1.2,
+                  textTransform: "uppercase",
+                }}
+              >
+                Red viva · Hola, {firstName}
+              </Text>
+            </View>
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 32,
+                fontWeight: "800",
+                letterSpacing: -0.8,
+                lineHeight: 38,
+              }}
+            >
+              {SITE.tagline}
+            </Text>
+            <Text
+              style={{
+                color: "rgba(255,255,255,0.9)",
+                fontSize: 14,
+                marginTop: 10,
+                lineHeight: 20,
+              }}
+            >
+              Reporta, comparte y encuentra. Miles de vecinos tejen la red más
+              cálida de México.
+            </Text>
 
-        <View style={{ flexDirection: "row", gap: 10, marginBottom: 18 }}>
-          <StatCard
+            <View style={{ flexDirection: "row", gap: 10, marginTop: 18 }}>
+              <PremiumButton
+                label="Reportar"
+                variant="glass"
+                size="md"
+                leading={<Ionicons name="add" size={18} color={colors.ink} />}
+                onPress={() => router.push("/(tabs)/reportar")}
+              />
+              <PremiumButton
+                label="Ver casos"
+                variant="dark"
+                size="md"
+                leading={<Ionicons name="search" size={16} color="#fff" />}
+                onPress={() => router.push("/(tabs)/casos")}
+              />
+            </View>
+          </Hero>
+        </AnimatedEntry>
+
+        {/* ── STATS ────────────────────────────────────────────── */}
+        <View style={{ flexDirection: "row", gap: 12, marginTop: 18 }}>
+          <StatTile
             label="Casos cerca"
             value={casos.data?.length ?? 0}
             tone="brand"
+            icon="paw"
+            subtitle={coords ? "25 km a la redonda" : "Activa ubicación"}
+            delay={120}
             onPress={() => router.push("/(tabs)/casos")}
           />
-          <StatCard
-            label="Alertas activas"
+          <StatTile
+            label="Alertas"
             value={activas}
-            tone="accent"
+            tone="forest"
+            icon="notifications"
+            subtitle={activas > 0 ? "Escuchando por ti" : "Sin alertas activas"}
+            delay={220}
             onPress={() => router.push("/(tabs)/alertas")}
           />
         </View>
 
-        <View style={{ flexDirection: "row", gap: 10, marginBottom: 24 }}>
-          <Button
-            label="Reportar"
-            size="lg"
-            style={{ flex: 1 }}
-            leading={<Ionicons name="add" size={18} color="#fff" />}
-            onPress={() => router.push("/(tabs)/reportar")}
-          />
-          <Button
-            label="Buscar"
-            variant="outline"
-            size="lg"
-            style={{ flex: 1 }}
-            leading={<Ionicons name="search" size={18} color={colors.ink} />}
-            onPress={() => router.push("/(tabs)/casos")}
-          />
-        </View>
+        {/* ── QUICK ACTIONS ───────────────────────────────────── */}
+        <AnimatedEntry delay={320}>
+          <View style={{ flexDirection: "row", gap: 10, marginTop: 18 }}>
+            <QuickPill
+              icon="flash"
+              label="Avistamiento"
+              onPress={() => router.push("/avistamiento" as never)}
+            />
+            <QuickPill
+              icon="chatbubbles"
+              label="Foros"
+              onPress={() => router.push("/foros" as never)}
+            />
+            <QuickPill
+              icon="heart"
+              label="Donar"
+              onPress={() => router.push("/donar" as never)}
+            />
+          </View>
+        </AnimatedEntry>
 
+        {/* ── FEED ────────────────────────────────────────────── */}
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            marginBottom: 10,
+            marginTop: 26,
+            marginBottom: 12,
           }}
         >
-          <H2 style={{ fontSize: 22 }}>Casos cerca</H2>
-          <Pressable onPress={() => router.push("/(tabs)/casos")}>
-            <Body style={{ fontSize: 13, color: colors.brand, fontWeight: "600" }}>
-              Ver todo
-            </Body>
+          <View style={{ flexDirection: "row", alignItems: "baseline", gap: 10 }}>
+            <H2 style={{ fontSize: 22 }}>Cerca de ti</H2>
+            <Text style={{ color: colors.muted, fontSize: 12 }}>
+              {coords ? "ordenado por cercanía" : "activa ubicación"}
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => {
+              haptics.tap();
+              router.push("/(tabs)/casos");
+            }}
+            hitSlop={10}
+          >
+            <Text
+              style={{
+                fontSize: 13,
+                color: colors.brand,
+                fontWeight: "700",
+              }}
+            >
+              Ver todo →
+            </Text>
           </Pressable>
         </View>
 
         {casos.isPending ? (
           <LoadingState compact />
         ) : (casos.data ?? []).length === 0 ? (
-          <EmptyState
-            icon="paw-outline"
-            title="Sin casos cerca"
-            description={
-              coords
-                ? "Eres el primero. ¿Reportas uno?"
-                : "Activa ubicación para ver casos a tu alrededor."
-            }
-          />
+          <GlassSurface style={{ padding: 4 }}>
+            <EmptyState
+              icon="paw-outline"
+              title="Sin casos cerca"
+              description={
+                coords
+                  ? "Eres el primero. ¿Reportas uno?"
+                  : "Activa ubicación para ver casos a tu alrededor."
+              }
+            />
+          </GlassSurface>
         ) : (
           <View style={{ gap: 12 }}>
-            {(casos.data ?? []).map((c) => (
-              <CasoCard key={c.id} caso={c} />
+            {(casos.data ?? []).map((c, i) => (
+              <AnimatedEntry key={c.id} delay={380 + i * 80} distance={12}>
+                <CasoCard caso={c} />
+              </AnimatedEntry>
             ))}
           </View>
         )}
 
-        <View style={{ marginTop: 24, gap: 10 }}>
+        {/* ── QUICK ACCESS CARDS ──────────────────────────────── */}
+        <View style={{ marginTop: 28, gap: 12 }}>
+          <H2 style={{ fontSize: 20 }}>Más cerca de la comunidad</H2>
           <QuickAccess
-            label="Conversar con la comunidad"
-            description="Foros, consejos y experiencias."
+            delay={140}
+            tone="rose"
+            label="Conversar en foros"
+            description="Consejos, historias y apoyo."
             icon="chatbubbles"
             onPress={() => router.push("/foros" as never)}
           />
           <QuickAccess
+            delay={210}
+            tone="ocean"
             label="Canales de chat"
             description="Urgencias, veterinarias, rescatistas."
             icon="wifi"
             onPress={() => router.push("/chat" as never)}
           />
           <QuickAccess
+            delay={280}
+            tone="forest"
             label="Apoyar con una donación"
-            description="Ayúdanos a mantener la red viva."
+            description="Ayuda a mantener la red viva."
             icon="heart"
             onPress={() => router.push("/donar" as never)}
           />
@@ -165,40 +271,48 @@ export default function HomeScreen() {
   );
 }
 
-function StatCard({
+function QuickPill({
+  icon,
   label,
-  value,
-  tone,
   onPress,
 }: {
+  icon: keyof typeof Ionicons.glyphMap;
   label: string;
-  value: number;
-  tone: "brand" | "accent";
   onPress: () => void;
 }) {
-  const bg = tone === "brand" ? colors.brandSoft : colors.accentSoft;
-  const fg = tone === "brand" ? colors.brandInk : colors.accent;
   return (
-    <Pressable
-      onPress={() => {
-        haptics.tap();
-        onPress();
-      }}
+    <TiltPressable
+      onPress={onPress}
       style={{
         flex: 1,
-        backgroundColor: bg,
         borderRadius: 22,
-        padding: 18,
-        gap: 6,
+        overflow: "hidden",
       }}
     >
-      <Body style={{ fontSize: 12, color: fg, fontWeight: "700", textTransform: "uppercase", letterSpacing: 0.4 }}>
-        {label}
-      </Body>
-      <Body style={{ fontSize: 34, fontWeight: "700", color: fg }}>
-        {value}
-      </Body>
-    </Pressable>
+      <GlassSurface radius={22} style={{ alignItems: "center", paddingVertical: 14, gap: 8 }}>
+        <View
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: colors.brandSoft,
+          }}
+        >
+          <Ionicons name={icon} size={18} color={colors.brandInk} />
+        </View>
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: "700",
+            color: colors.ink,
+          }}
+        >
+          {label}
+        </Text>
+      </GlassSurface>
+    </TiltPressable>
   );
 }
 
@@ -207,50 +321,74 @@ function QuickAccess({
   description,
   icon,
   onPress,
+  tone = "rose",
+  delay = 0,
 }: {
   label: string;
   description: string;
-  icon: keyof typeof import("@expo/vector-icons/Ionicons").default.glyphMap;
+  icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
+  tone?: "rose" | "ocean" | "forest";
+  delay?: number;
 }) {
+  const bubble =
+    tone === "rose"
+      ? { bg: colors.brandSoft, fg: colors.brandInk }
+      : tone === "ocean"
+        ? { bg: colors.skySoft, fg: colors.sky }
+        : { bg: colors.accentSoft, fg: colors.accent };
+
   return (
-    <Pressable
-      onPress={() => {
-        haptics.tap();
-        onPress();
-      }}
-    >
-      <Card>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 14,
-          }}
-        >
+    <AnimatedEntry delay={delay}>
+      <TiltPressable
+        onPress={onPress}
+        style={{ borderRadius: 22 }}
+      >
+        <GlassSurface radius={22}>
           <View
             style={{
-              width: 44,
-              height: 44,
-              borderRadius: 22,
-              backgroundColor: colors.brandSoft,
+              flexDirection: "row",
               alignItems: "center",
-              justifyContent: "center",
+              gap: 14,
+              padding: 16,
             }}
           >
-            <Ionicons name={icon} size={20} color={colors.brandInk} />
+            <View
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 24,
+                backgroundColor: bubble.bg,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name={icon} size={22} color={bubble.fg} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontWeight: "700", color: colors.ink, fontSize: 15 }}>
+                {label}
+              </Text>
+              <Text style={{ color: colors.muted, fontSize: 13, marginTop: 2 }}>
+                {description}
+              </Text>
+            </View>
+            <View
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 14,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "rgba(255,255,255,0.7)",
+              }}
+            >
+              <Ionicons name="chevron-forward" size={16} color={colors.inkSoft} />
+            </View>
           </View>
-          <View style={{ flex: 1 }}>
-            <Body style={{ fontWeight: "700", color: colors.ink, fontSize: 15 }}>
-              {label}
-            </Body>
-            <Body style={{ color: colors.muted, fontSize: 13 }}>
-              {description}
-            </Body>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color={colors.muted} />
-        </View>
-      </Card>
-    </Pressable>
+        </GlassSurface>
+      </TiltPressable>
+    </AnimatedEntry>
   );
 }
+

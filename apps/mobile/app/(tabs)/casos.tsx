@@ -1,6 +1,6 @@
 /**
- * Feed de casos. Permite filtrar por tipo/especie y, si el usuario otorga
- * ubicación, ordena por distancia.
+ * Feed de casos con aurora de fondo, hero de texto e items animados
+ * entrando en stagger.
  */
 
 import { useEffect, useMemo, useState } from "react";
@@ -8,12 +8,18 @@ import { FlatList, RefreshControl, View } from "react-native";
 
 import {
   Screen,
-  H2,
+  H1,
   Body,
   Button,
   CasoCardSkeleton,
   EmptyState,
   ErrorState,
+  AuroraBackground,
+  AnimatedEntry,
+  GlassSurface,
+  Eyebrow,
+  PulseDot,
+  Text,
 } from "@/components/ui";
 import { CasoCard } from "@/components/casos/CasoCard";
 import { FiltrosBar } from "@/components/casos/FiltrosBar";
@@ -52,29 +58,41 @@ export default function CasosListScreen() {
 
   return (
     <Screen edges={["top"]} padded={false}>
-      <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 8 }}>
-        <H2>Casos cerca</H2>
-        <Body style={{ color: colors.muted }}>
-          {coords
-            ? "Ordenados por cercanía. Toca uno para ver detalles."
-            : locationAsked
-              ? "Activa ubicación para ver casos cercanos."
-              : " "}
-        </Body>
-      </View>
+      <AuroraBackground variant="rose" />
 
-      <View style={{ paddingHorizontal: 16, paddingTop: 10 }}>
-        <FiltrosBar
-          value={{ tipo, especie }}
-          onChange={(v) => {
-            setTipo(v.tipo);
-            setEspecie(v.especie);
-          }}
-        />
-      </View>
+      <AnimatedEntry delay={40}>
+        <View style={{ paddingHorizontal: 20, paddingTop: 8, gap: 6 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <PulseDot size={7} color={colors.brand} />
+            <Eyebrow>Casos en vivo</Eyebrow>
+          </View>
+          <H1 style={{ fontSize: 30, letterSpacing: -0.8 }}>
+            Cada historia empieza con una búsqueda.
+          </H1>
+          <Body style={{ color: colors.inkSoft, fontSize: 14 }}>
+            {coords
+              ? "Ordenados por cercanía. Toca uno para ver detalles."
+              : locationAsked
+                ? "Activa ubicación para ver casos cercanos."
+                : "Cargando ubicación…"}
+          </Body>
+        </View>
+      </AnimatedEntry>
+
+      <AnimatedEntry delay={120}>
+        <View style={{ paddingHorizontal: 16, paddingTop: 14 }}>
+          <FiltrosBar
+            value={{ tipo, especie }}
+            onChange={(v) => {
+              setTipo(v.tipo);
+              setEspecie(v.especie);
+            }}
+          />
+        </View>
+      </AnimatedEntry>
 
       {casosQuery.isPending ? (
-        <View style={{ padding: 20, gap: 12 }}>
+        <View style={{ padding: 18, gap: 12 }}>
           <CasoCardSkeleton />
           <CasoCardSkeleton />
           <CasoCardSkeleton />
@@ -83,22 +101,47 @@ export default function CasosListScreen() {
       ) : casosQuery.isError ? (
         <ErrorState onRetry={() => casosQuery.refetch()} />
       ) : casosQuery.data && casosQuery.data.length === 0 ? (
-        <EmptyState
-          icon="paw-outline"
-          title="Sin casos que mostrar"
-          description="Cambia los filtros o reporta una mascota tú mismo."
-          action={<Button label="Reportar ahora" style={{ marginTop: 8 }} />}
-        />
+        <View style={{ padding: 18 }}>
+          <GlassSurface>
+            <EmptyState
+              icon="paw-outline"
+              title="Sin casos que mostrar"
+              description="Cambia los filtros o reporta una mascota tú mismo."
+              action={<Button label="Reportar ahora" style={{ marginTop: 8 }} />}
+            />
+          </GlassSurface>
+        </View>
       ) : (
         <FlatList
           data={casosQuery.data}
           keyExtractor={(c) => c.id}
-          renderItem={({ item }) => <CasoCard caso={item} />}
+          renderItem={({ item, index }) => (
+            <AnimatedEntry delay={index < 8 ? 180 + index * 60 : 0}>
+              <CasoCard caso={item} />
+            </AnimatedEntry>
+          )}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           contentContainerStyle={{
-            padding: 20,
-            paddingBottom: 120,
+            padding: 18,
+            paddingBottom: 160,
           }}
+          ListHeaderComponent={
+            casosQuery.data && casosQuery.data.length > 0 ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 12,
+                  paddingTop: 4,
+                }}
+              >
+                <Text style={{ fontSize: 12, color: colors.muted }}>
+                  {casosQuery.data.length} resultados
+                </Text>
+              </View>
+            ) : null
+          }
           refreshControl={
             <RefreshControl
               refreshing={casosQuery.isRefetching && !casosQuery.isPending}

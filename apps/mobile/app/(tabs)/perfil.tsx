@@ -1,14 +1,10 @@
 /**
- * Perfil principal. Muestra avatar + email + rol + accesos a:
- *  - editar perfil
- *  - donar (webview)
- *  - foros / chat
- *  - privacidad / términos
- *  - cerrar sesión
- *  - borrar cuenta (Apple requirement)
+ * Perfil premium. Hero glassmorphic con avatar grande, gradiente ambiental
+ * y lista de accesos animada. Acciones críticas (cerrar sesión, borrar) en
+ * un bloque diferenciado.
  */
 
-import { Alert, Pressable, View } from "react-native";
+import { Alert, Pressable, ScrollView, View } from "react-native";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,13 +12,18 @@ import { Image } from "expo-image";
 
 import {
   Screen,
-  H2,
+  H1,
   Body,
-  Button,
-  Card,
+  Text,
   Divider,
   Eyebrow,
-  Text,
+  AuroraBackground,
+  AnimatedEntry,
+  GlassSurface,
+  PremiumButton,
+  TiltPressable,
+  GradientFill,
+  PulseDot,
 } from "@/components/ui";
 import { useMe, useDeleteMe } from "@/lib/hooks";
 import { colors } from "@/lib/theme";
@@ -30,7 +31,7 @@ import { errorMessage } from "@/lib/errors";
 import * as haptics from "@/lib/haptics";
 
 type Row = {
-  icon: keyof typeof import("@expo/vector-icons/Ionicons").default.glyphMap;
+  icon: keyof typeof Ionicons.glyphMap;
   label: string;
   onPress: () => void;
   tone?: "default" | "danger";
@@ -100,123 +101,198 @@ export default function PerfilScreen() {
   ];
 
   return (
-    <Screen scroll edges={["top"]}>
-      <View style={{ gap: 20, paddingTop: 8, paddingBottom: 120 }}>
-        <Eyebrow>Perfil</Eyebrow>
+    <Screen edges={["top"]} padded={false}>
+      <AuroraBackground variant="sunrise" />
 
-        <Card>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
-            <View
-              style={{
-                width: 64,
-                height: 64,
-                borderRadius: 32,
-                overflow: "hidden",
-                backgroundColor: colors.brandSoft,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {user?.imageUrl ? (
-                <Image
-                  source={{ uri: user.imageUrl }}
-                  style={{ width: "100%", height: "100%" }}
-                />
-              ) : (
-                <Ionicons
-                  name="person"
-                  size={28}
-                  color={colors.brandInk}
-                />
-              )}
-            </View>
-            <View style={{ flex: 1, gap: 2 }}>
-              <H2 style={{ fontSize: 20 }}>
-                {user?.fullName ?? "Tu cuenta"}
-              </H2>
-              <Body style={{ color: colors.muted, fontSize: 13 }}>
-                {user?.emailAddresses[0]?.emailAddress ?? ""}
-              </Body>
-              {me.data?.rol ? (
-                <Text
-                  style={{
-                    fontSize: 11,
-                    fontWeight: "700",
-                    color: colors.brandInk,
-                    textTransform: "uppercase",
-                    letterSpacing: 0.4,
-                    marginTop: 2,
-                  }}
-                >
-                  {me.data.rol}
-                </Text>
-              ) : null}
-            </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ padding: 18, paddingBottom: 180 }}
+      >
+        <AnimatedEntry delay={40}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <PulseDot size={7} color={colors.brand} />
+            <Eyebrow>Tu cuenta</Eyebrow>
           </View>
-        </Card>
+          <H1 style={{ fontSize: 30, letterSpacing: -0.8, marginBottom: 16 }}>
+            Hola, {user?.firstName ?? "tú"}.
+          </H1>
+        </AnimatedEntry>
 
-        <Card style={{ padding: 0, overflow: "hidden" }}>
+        <AnimatedEntry delay={120}>
+          <View
+            style={{
+              borderRadius: 28,
+              overflow: "hidden",
+              shadowColor: colors.brand,
+              shadowOpacity: 0.22,
+              shadowRadius: 28,
+              shadowOffset: { width: 0, height: 16 },
+              elevation: 10,
+            }}
+          >
+            <GradientFill preset="brandDeep" radius={28}>
+              <View style={{ padding: 20 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
+                  <View
+                    style={{
+                      width: 72,
+                      height: 72,
+                      borderRadius: 36,
+                      overflow: "hidden",
+                      backgroundColor: "rgba(255,255,255,0.18)",
+                      borderWidth: 2,
+                      borderColor: "rgba(255,255,255,0.45)",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {user?.imageUrl ? (
+                      <Image
+                        source={{ uri: user.imageUrl }}
+                        style={{ width: "100%", height: "100%" }}
+                      />
+                    ) : (
+                      <Ionicons name="person" size={30} color="#fff" />
+                    )}
+                  </View>
+                  <View style={{ flex: 1, gap: 4 }}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "800",
+                        color: "#fff",
+                        letterSpacing: -0.3,
+                      }}
+                    >
+                      {user?.fullName ?? "Tu cuenta"}
+                    </Text>
+                    <Text
+                      style={{
+                        color: "rgba(255,255,255,0.85)",
+                        fontSize: 13,
+                      }}
+                    >
+                      {user?.emailAddresses[0]?.emailAddress ?? ""}
+                    </Text>
+                    {me.data?.rol ? (
+                      <View
+                        style={{
+                          marginTop: 4,
+                          alignSelf: "flex-start",
+                          paddingHorizontal: 10,
+                          paddingVertical: 3,
+                          borderRadius: 9999,
+                          backgroundColor: "rgba(255,255,255,0.22)",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 10.5,
+                            fontWeight: "800",
+                            color: "#fff",
+                            textTransform: "uppercase",
+                            letterSpacing: 0.8,
+                          }}
+                        >
+                          {me.data.rol}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </View>
+              </View>
+            </GradientFill>
+          </View>
+        </AnimatedEntry>
+
+        <View style={{ marginTop: 18, gap: 10 }}>
           {rows.map((r, i) => (
-            <Pressable
-              key={r.label}
-              onPress={() => {
-                haptics.tap();
-                r.onPress();
+            <AnimatedEntry key={r.label} delay={200 + i * 50}>
+              <TiltPressable
+                onPress={() => {
+                  haptics.tap();
+                  r.onPress();
+                }}
+                style={{ borderRadius: 20 }}
+                tilt={2}
+              >
+                <GlassSurface radius={20}>
+                  <View
+                    style={{
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
+                      <View
+                        style={{
+                          width: 38,
+                          height: 38,
+                          borderRadius: 19,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: colors.brandSoft,
+                        }}
+                      >
+                        <Ionicons name={r.icon} size={18} color={colors.brandInk} />
+                      </View>
+                      <Text style={{ fontSize: 15, color: colors.ink, fontWeight: "600" }}>
+                        {r.label}
+                      </Text>
+                    </View>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={18}
+                      color={colors.muted}
+                    />
+                  </View>
+                </GlassSurface>
+              </TiltPressable>
+            </AnimatedEntry>
+          ))}
+        </View>
+
+        <AnimatedEntry delay={580}>
+          <View style={{ marginTop: 24, gap: 16 }}>
+            <PremiumButton
+              label="Cerrar sesión"
+              variant="glass"
+              block
+              onPress={async () => {
+                haptics.medium();
+                await signOut();
               }}
+            />
+
+            <Divider />
+
+            <Pressable onPress={confirmDelete} style={{ alignSelf: "center" }}>
+              <Text
+                style={{
+                  color: colors.brand,
+                  fontSize: 14,
+                  fontWeight: "700",
+                }}
+              >
+                Borrar mi cuenta
+              </Text>
+            </Pressable>
+            <Body
               style={{
-                paddingVertical: 14,
-                paddingHorizontal: 16,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
+                textAlign: "center",
+                fontSize: 12,
+                color: colors.muted,
+                marginTop: -8,
               }}
             >
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
-              >
-                <Ionicons name={r.icon} size={20} color={colors.ink} />
-                <Text style={{ fontSize: 16, color: colors.ink }}>
-                  {r.label}
-                </Text>
-              </View>
-              <Ionicons
-                name="chevron-forward"
-                size={18}
-                color={colors.muted}
-              />
-              {i < rows.length - 1 ? null : null}
-            </Pressable>
-          ))}
-        </Card>
-
-        <Button
-          label="Cerrar sesión"
-          variant="outline"
-          block
-          onPress={async () => {
-            haptics.medium();
-            await signOut();
-          }}
-        />
-
-        <Divider style={{ marginTop: 8 }} />
-
-        <Pressable onPress={confirmDelete} style={{ alignSelf: "center" }}>
-          <Text style={{ color: colors.brand, fontSize: 14 }}>
-            Borrar mi cuenta
-          </Text>
-        </Pressable>
-        <Body
-          style={{
-            textAlign: "center",
-            fontSize: 12,
-            color: colors.muted,
-            marginTop: -8,
-          }}
-        >
-          Acción permanente. No se puede deshacer.
-        </Body>
-      </View>
+              Acción permanente. No se puede deshacer.
+            </Body>
+          </View>
+        </AnimatedEntry>
+      </ScrollView>
     </Screen>
   );
 }
