@@ -21,13 +21,22 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params;
   const city = CITIES.find((c) => c.slug === slug);
   if (!city) return {};
+  const title = `Mascotas perdidas y encontradas en ${city.name} | VuelveaCasa`;
+  const description = `Reporta mascotas perdidas, avistamientos y casos de rescate en ${city.name}, ${city.state}. Red comunitaria con alertas por zona y aliados locales.`;
   return {
-    title: `Mascotas perdidas y encontradas en ${city.name} | VuelveaCasa`,
-    description: `Reporta mascotas perdidas, avistamientos y casos de rescate en ${city.name}, ${city.state}. Red comunitaria con alertas por zona y aliados locales.`,
+    title,
+    description,
     alternates: { canonical: `/ciudades/${city.slug}` },
     openGraph: {
       title: `Mascotas perdidas y encontradas en ${city.name}`,
       description: `Red comunitaria para mascotas en ${city.name}, ${city.state}.`,
+      url: `${SITE.url}/ciudades/${city.slug}`,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
     },
   };
 }
@@ -52,9 +61,29 @@ export default async function Page({ params }: { params: Params }) {
     url: `${SITE.url}/ciudades/${city.slug}`,
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: SITE.url },
+      { "@type": "ListItem", position: 2, name: "Ciudades", item: `${SITE.url}/ciudades` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: city.name,
+        item: `${SITE.url}/ciudades/${city.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <Script id={`ld-city-${city.slug}`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldCity) }} />
+      <Script
+        id={`ld-city-${city.slug}-breadcrumb`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
 
       <PageHero
         eyebrow={`Ciudad · ${city.state}`}

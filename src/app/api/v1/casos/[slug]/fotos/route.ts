@@ -49,13 +49,37 @@ export async function POST(
   }
 
   const form = await req.formData();
-  const files = form
+  // Límite de 10 MB por foto: previene saturación de storage y ataques de
+  // exhaustión. Fotos más pesadas que esto se rechazan con 413.
+  const MAX_BYTES = 10 * 1024 * 1024;
+  const raw = form
     .getAll("fotos")
     .filter((v): v is File => v instanceof File && v.size > 0)
     .slice(0, slots);
 
+  const oversize = raw.find((f) => f.size > MAX_BYTES);
+  if (oversize) {
+    return jsonErr(
+      req,
+      "photo_too_large",
+      "Cada foto puede pesar hasta 10 MB. Comprime y vuelve a intentar.",
+      { status: 413 }
+    );
+  }
+
+  // Validamos content-type en server: sólo imágenes JPEG/PNG/WebP/HEIC.
+  const ALLOWED_MIME = new Set([
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "image/heic",
+    "image/heif",
+  ]);
+  const files = raw.filter((f) => ALLOWED_MIME.has((f.type || "").toLowerCase()));
+
   if (files.length === 0) {
-    return jsonErr(req, "no_files", "No seleccionaste fotos.", { status: 400 });
+    return jsonErr(req, "no_files", "No seleccionaste fotos válidas (JPEG/PNG/WebP).", { status: 400 });
   }
 
   let added = 0;

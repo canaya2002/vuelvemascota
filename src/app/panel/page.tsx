@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import { FLAGS } from "@/lib/flags";
 import { IconPaw, IconBell, IconHeart, IconArrow } from "@/components/Icons";
+
+export const metadata: Metadata = {
+  title: "Panel — Tus casos, alertas y donaciones",
+  description:
+    "Tu espacio personal en VuelveaCasa: gestiona los casos de mascotas que reportaste, tus alertas por zona y tus donaciones.",
+  alternates: { canonical: "/panel" },
+  robots: { index: false, follow: false },
+};
 
 export default async function Page() {
   const user = FLAGS.auth ? await currentUser() : null;

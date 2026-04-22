@@ -187,15 +187,34 @@ export async function POST(req: Request) {
   // Si la app ya subió fotos a Supabase y pasa URLs, las persistimos.
   // La moderación de imágenes se hace en el endpoint /api/v1/casos/:slug/fotos
   // cuando sube bytes raw. Aquí confiamos en que el cliente ya las moderó.
+  // Validamos host: sólo aceptamos URLs servidas desde Supabase Storage o el
+  // propio SITE.url. Esto bloquea inyección de enlaces externos (phishing,
+  // tracking pixels, imágenes remotas que burlen la moderación).
   if (Array.isArray(body.photo_urls)) {
+    const allowedHosts = new Set<string>();
+    try {
+      if (process.env.SUPABASE_URL) {
+        allowedHosts.add(new URL(process.env.SUPABASE_URL).host);
+      }
+      allowedHosts.add(new URL(SITE.url).host);
+    } catch {
+      /* bad env — allowedHosts empty means nothing passes */
+    }
     for (let i = 0; i < Math.min(body.photo_urls.length, 6); i++) {
       const url = body.photo_urls[i];
-      if (typeof url === "string" && url.startsWith("http")) {
-        try {
-          await casosRepo.addPhoto(created.id, url, i);
-        } catch {
-          /* skip */
-        }
+      if (typeof url !== "string") continue;
+      let parsed: URL | null = null;
+      try {
+        parsed = new URL(url);
+      } catch {
+        continue;
+      }
+      if (parsed.protocol !== "https:") continue;
+      if (!allowedHosts.has(parsed.host)) continue;
+      try {
+        await casosRepo.addPhoto(created.id, parsed.toString(), i);
+      } catch {
+        /* skip */
       }
     }
   }

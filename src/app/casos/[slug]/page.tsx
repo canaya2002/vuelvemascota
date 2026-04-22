@@ -120,12 +120,32 @@ export default async function Page({
       ? `${caso.especie[0].toUpperCase()}${caso.especie.slice(1)} encontrada`
       : "Avistamiento";
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: SITE.url },
+      { "@type": "ListItem", position: 2, name: "Casos", item: `${SITE.url}/casos` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: title,
+        item: `${SITE.url}/casos/${caso.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <Script
         id={`ld-caso-${caso.slug}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+      />
+      <Script
+        id={`ld-caso-${caso.slug}-breadcrumb`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <div className="vc-container py-8 md:py-12">

@@ -14,10 +14,24 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params;
   const aliado = await aliadosRepo.getBySlug(slug);
   if (!aliado) return { robots: { index: false, follow: false } };
+  const title = `${aliado.organizacion} — Aliado en ${aliado.ciudad}`;
+  const description =
+    aliado.notas ?? `Aliado verificado de VuelveaCasa en ${aliado.ciudad}.`;
   return {
-    title: `${aliado.organizacion} — Aliado en ${aliado.ciudad}`,
-    description: aliado.notas ?? `Aliado verificado de VuelveaCasa en ${aliado.ciudad}.`,
+    title,
+    description,
     alternates: { canonical: `/aliados/${aliado.slug}` },
+    openGraph: {
+      title,
+      description,
+      type: "profile",
+      url: `${SITE.url}/aliados/${aliado.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -45,12 +59,32 @@ export default async function Page({ params }: { params: Params }) {
     description: aliado.notas,
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: SITE.url },
+      { "@type": "ListItem", position: 2, name: "Aliados", item: `${SITE.url}/aliados` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: aliado.organizacion,
+        item: `${SITE.url}/aliados/${aliado.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <Script
         id={`ld-aliado-${aliado.slug}`}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+      />
+      <Script
+        id={`ld-aliado-${aliado.slug}-breadcrumb`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <PageHero

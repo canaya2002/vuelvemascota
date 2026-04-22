@@ -65,7 +65,12 @@ export const alertasRepo = {
   ): Promise<{ ok: boolean }> {
     const sql = db.raw;
     if (!sql) {
-      console.log("[alertas:create:stub]", data);
+      console.log("[alertas:create:stub]", {
+        has_ciudad: !!data.ciudad,
+        has_coords: data.lat != null && data.lng != null,
+        especies: data.especies?.length ?? 0,
+        radio_m: data.radio_m,
+      });
       return { ok: true };
     }
     try {

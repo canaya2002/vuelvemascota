@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Analytics } from "@/components/Analytics";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { PwaRegister } from "@/components/PwaRegister";
+import { ScrollProgress } from "@/components/motion";
 import { SITE, CITIES } from "@/lib/site";
 import { FLAGS } from "@/lib/flags";
 
@@ -347,6 +348,7 @@ export default function RootLayout({
         >
           Saltar al contenido
         </a>
+        <ScrollProgress />
         <Navbar />
         <main id="main" className="flex-1">
           {children}

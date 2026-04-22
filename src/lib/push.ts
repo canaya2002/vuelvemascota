@@ -122,7 +122,14 @@ export async function sendPush(
   payload: { title: string; body?: string; url?: string }
 ): Promise<{ ok: boolean; status?: number }> {
   if (!pushEnabled()) {
-    console.log("[push:stub]", sub.endpoint, payload);
+    // Log shape only — endpoint contains a unique device token.
+    console.log("[push:stub]", {
+      endpoint_host: (() => {
+        try { return new URL(sub.endpoint).host; } catch { return "unknown"; }
+      })(),
+      title: payload.title,
+      has_url: !!payload.url,
+    });
     return { ok: true };
   }
   try {

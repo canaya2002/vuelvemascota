@@ -88,7 +88,15 @@ export const casosRepo = {
     const sql = db.raw;
     const slug = makeSlug(data);
     if (!sql) {
-      console.log("[casos:create:stub]", { ...data, slug });
+      // Log shape only — evita PII (nombre/contacto) en logs de Vercel.
+      console.log("[casos:create:stub]", {
+        slug,
+        tipo: data.tipo,
+        especie: data.especie,
+        ciudad: data.ciudad,
+        has_contacto: !!(data.contacto_email || data.contacto_whatsapp || data.contacto_telefono),
+        has_nombre: !!data.nombre,
+      });
       return { ok: true, id: `stub-${slug}`, slug };
     }
     try {
@@ -345,7 +353,11 @@ export const casosRepo = {
   ) {
     const sql = db.raw;
     if (!sql) {
-      console.log("[casos:avistamiento:stub]", { casoId, ...data });
+      console.log("[casos:avistamiento:stub]", {
+        casoId,
+        has_descripcion: !!data.descripcion,
+        has_contacto: !!(data.autor_contacto || data.autor_nombre),
+      });
       return { ok: true };
     }
     try {

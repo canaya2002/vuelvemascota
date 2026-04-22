@@ -496,6 +496,114 @@ body {
   }
 }
 
+/* === Extra premium utilities (motion, density, no-empty layouts) ========= */
+
+/* Density helpers — eliminate visual dead space on landing sections. */
+.vc-section-tight { padding-top: clamp(3rem, 8vw, 5rem); padding-bottom: clamp(3rem, 8vw, 5rem); }
+.vc-stack-sm > * + * { margin-top: 0.75rem; }
+.vc-stack > * + * { margin-top: 1.25rem; }
+.vc-stack-lg > * + * { margin-top: 2rem; }
+
+/* Ambient full-section background wash, used over marketing pages. */
+.vc-wash {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.vc-wash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(800px 500px at 8% 0%, rgba(var(--brand-rgb), 0.14), transparent 60%),
+    radial-gradient(700px 500px at 100% 100%, rgba(14, 165, 233, 0.10), transparent 65%);
+  pointer-events: none;
+}
+
+/* Pretty focus ring for inputs + glass CTAs. */
+.vc-ring-brand:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 55%, white);
+}
+
+/* Gradient underline for inline emphasis (use on <span> inside h1/h2). */
+.vc-underline {
+  background-image: linear-gradient(90deg, var(--brand) 0%, #f472b6 100%);
+  background-size: 100% 3px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  padding-bottom: 2px;
+}
+
+/* Feature stat tile used across marketing pages. */
+.vc-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.vc-stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  color: var(--brand);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.vc-stat-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+/* Feature chip row — used below heros. */
+.vc-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.vc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.vc-chip-brand {
+  background: var(--brand-soft);
+  border-color: color-mix(in oklab, var(--brand) 18%, white);
+  color: var(--brand-ink);
+}
+
+/* Gradient ring wrapper. */
+.vc-ring {
+  position: relative;
+  border-radius: var(--radius-xl);
+  padding: 1px;
+  background: linear-gradient(135deg, var(--brand) 0%, #f472b6 50%, var(--sky) 100%);
+}
+.vc-ring > * {
+  border-radius: calc(var(--radius-xl) - 1px);
+  background: var(--surface);
+}
+
+/* Dotted grid accent for backgrounds. */
+.vc-dotgrid {
+  background-image: radial-gradient(rgba(10, 26, 43, 0.06) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
 /* Fallback: si el navegador no soporta backdrop-filter, glass queda sólido más opaco */
 @supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
   .vc-glass,

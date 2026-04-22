@@ -126,11 +126,36 @@ export type UserRecord = {
   rol?: string | null;
 };
 
+/**
+ * Redacta un payload para logs: muestra la forma (qué campos llegaron) sin
+ * exponer los valores crudos con PII. Preserva longitud para que siga siendo
+ * útil para debugging. Evita que email/nombre/teléfono aparezcan en Vercel
+ * log retention (3+ meses por default) — reduce superficie de cumplimiento
+ * LFPDPPP / GDPR.
+ */
+function redactForLog(obj: Record<string, unknown>) {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v == null) {
+      out[k] = v;
+      continue;
+    }
+    if (typeof v === "string") {
+      out[k] = v.length <= 2 ? "*" : `*…${v.length}`;
+    } else if (typeof v === "number" || typeof v === "boolean") {
+      out[k] = v;
+    } else {
+      out[k] = typeof v;
+    }
+  }
+  return out;
+}
+
 export const db = {
   /* -------------------- waitlist -------------------- */
   async insertWaitlist(data: WaitlistInput) {
     if (!sql) {
-      console.log("[db:waitlist:stub]", data);
+      console.log("[db:waitlist:stub]", redactForLog(data));
       return { ok: true };
     }
     try {
@@ -152,7 +177,7 @@ export const db = {
   /* -------------------- contacto -------------------- */
   async insertContact(data: ContactInput) {
     if (!sql) {
-      console.log("[db:contacto:stub]", data);
+      console.log("[db:contacto:stub]", redactForLog(data));
       return { ok: true };
     }
     try {
@@ -170,7 +195,7 @@ export const db = {
   /* -------------------- aliados -------------------- */
   async insertAlly(data: AllyInput & { tipo: string }) {
     if (!sql) {
-      console.log("[db:aliados:stub]", data);
+      console.log("[db:aliados:stub]", redactForLog(data));
       return { ok: true };
     }
     try {
@@ -190,7 +215,17 @@ export const db = {
   /* -------------------- donaciones -------------------- */
   async insertDonation(data: DonationRecord & { caso_id?: string | null }) {
     if (!sql) {
-      console.log("[db:donaciones:stub]", data);
+      console.log("[db:donaciones:stub]", redactForLog({
+        stripe_session_id: data.stripe_session_id,
+        amount: data.amount,
+        currency: data.currency,
+        causa: data.causa,
+        recurrente: data.recurrente,
+        status: data.status,
+        caso_id: data.caso_id,
+        // email intentionally redacted below:
+        email: data.email,
+      }));
       return { ok: true };
     }
     try {
@@ -214,7 +249,7 @@ export const db = {
   /* -------------------- usuarios (fase 2) -------------------- */
   async upsertUser(data: UserRecord) {
     if (!sql) {
-      console.log("[db:users:stub]", data);
+      console.log("[db:users:stub]", redactForLog(data as unknown as Record<string, unknown>));
       return { ok: true };
     }
     try {
