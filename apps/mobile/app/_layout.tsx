@@ -14,13 +14,13 @@ import "react-native-gesture-handler";
 import "../global.css";
 
 import { useEffect } from "react";
-import { View } from "react-native";
-import { Slot, SplashScreen } from "expo-router";
+import { Platform, StyleSheet, View } from "react-native";
+import { Slot } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ClerkLoaded, ClerkProvider } from "@clerk/clerk-expo";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { useFonts } from "expo-font";
 import * as SystemUI from "expo-system-ui";
 
 import { ApiProvider } from "@/lib/api";
@@ -30,31 +30,43 @@ import { CLERK_PUBLISHABLE_KEY } from "@/lib/constants";
 import { colors } from "@/lib/theme";
 import { ToastProvider } from "@/components/ui";
 
+// En web, NativeWind/Reanimated necesita saber que el dark mode va por
+// clase CSS — si no, crashea con "Cannot manually set color scheme".
+if (Platform.OS === "web") {
+  (StyleSheet as unknown as { setFlag?: (flag: string, value: string) => void })
+    .setFlag?.("darkMode", "class");
+}
+
 SplashScreen.preventAutoHideAsync().catch(() => {});
-SplashScreen.setOptions({ fade: true, duration: 300 });
+// setOptions solo existe en expo-splash-screen ≥ 0.30; si la versión
+// instalada no lo tiene (o estamos en web), lo ignoramos silenciosamente.
+const splashApi = SplashScreen as typeof SplashScreen & {
+  setOptions?: (o: { fade?: boolean; duration?: number }) => void;
+};
+splashApi.setOptions?.({ fade: true, duration: 300 });
 
 const queryClient = createQueryClient();
 
 export default function RootLayout() {
-  const [fontsLoaded, fontsError] = useFonts({
-    PlusJakartaSans: require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
-    "PlusJakartaSans-Medium": require("../assets/fonts/PlusJakartaSans-Medium.ttf"),
-    "PlusJakartaSans-Bold": require("../assets/fonts/PlusJakartaSans-Bold.ttf"),
-    Fraunces: require("../assets/fonts/Fraunces-Regular.ttf"),
-    "Fraunces-Bold": require("../assets/fonts/Fraunces-Bold.ttf"),
-  });
+  // NOTA: Cuando tengas las 5 TTFs en assets/fonts/, descomenta el bloque
+  // de abajo (y re-añade `useFonts` al import de expo-font) para habilitar
+  // la tipografía premium. Mientras, usamos system fonts.
+  //
+  // const [fontsLoaded, fontsError] = useFonts({
+  //   PlusJakartaSans: require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
+  //   "PlusJakartaSans-Medium": require("../assets/fonts/PlusJakartaSans-Medium.ttf"),
+  //   "PlusJakartaSans-Bold": require("../assets/fonts/PlusJakartaSans-Bold.ttf"),
+  //   Fraunces: require("../assets/fonts/Fraunces-Regular.ttf"),
+  //   "Fraunces-Bold": require("../assets/fonts/Fraunces-Bold.ttf"),
+  // });
 
   useEffect(() => {
     SystemUI.setBackgroundColorAsync(colors.bg).catch(() => {});
   }, []);
 
   useEffect(() => {
-    if (fontsLoaded || fontsError) {
-      SplashScreen.hideAsync().catch(() => {});
-    }
-  }, [fontsLoaded, fontsError]);
-
-  if (!fontsLoaded && !fontsError) return null;
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
 
   if (!CLERK_PUBLISHABLE_KEY) {
     return (

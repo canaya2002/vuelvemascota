@@ -1,4 +1,6 @@
 import type { ExpoConfig } from "expo/config";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 
 /**
  * Config de la app Expo. Las cosas sensibles (keys de Clerk, Mapbox) entran
@@ -13,21 +15,39 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "https://vuelvecasa.com";
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
 const MAPBOX_PUBLIC_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_TOKEN ?? "";
 const MAPBOX_DOWNLOAD_TOKEN = process.env.MAPBOX_DOWNLOAD_TOKEN ?? "";
+const EAS_PROJECT_ID =
+  process.env.EAS_PROJECT_ID ?? "817a12b4-ce4e-451b-8a03-f272e9149fc0";
+
+/** Referencia una imagen del asset pipeline solo si existe en disco.
+ *  Así la app puede buildearse aunque el usuario aún no haya corrido el
+ *  generador de assets. */
+function imgIfExists(relPath: string): string | undefined {
+  return existsSync(resolve(__dirname, relPath)) ? relPath : undefined;
+}
+const iconPath = imgIfExists("./assets/images/icon.png");
+const iconForegroundPath = imgIfExists("./assets/images/icon-foreground.png");
+const splashPath = imgIfExists("./assets/images/splash.png");
+const notificationIconPath = imgIfExists("./assets/images/notification-icon.png");
+const faviconPath = imgIfExists("./assets/images/favicon.png");
 
 const config: ExpoConfig = {
   name: "VuelveaCasa",
   slug: "vuelvecasa",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
+  ...(iconPath ? { icon: iconPath } : {}),
   scheme: "vuelvecasa",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
-  splash: {
-    image: "./assets/images/splash.png",
-    resizeMode: "contain",
-    backgroundColor: "#fbf7f1",
-  },
+  ...(splashPath
+    ? {
+        splash: {
+          image: splashPath,
+          resizeMode: "contain",
+          backgroundColor: "#fbf7f1",
+        },
+      }
+    : {}),
   assetBundlePatterns: ["**/*"],
   ios: {
     bundleIdentifier: "com.vuelvecasa.app",
@@ -52,10 +72,14 @@ const config: ExpoConfig = {
   },
   android: {
     package: "com.vuelvecasa.app",
-    adaptiveIcon: {
-      foregroundImage: "./assets/images/icon-foreground.png",
-      backgroundColor: "#fbf7f1",
-    },
+    ...(iconForegroundPath
+      ? {
+          adaptiveIcon: {
+            foregroundImage: iconForegroundPath,
+            backgroundColor: "#fbf7f1",
+          },
+        }
+      : {}),
     permissions: [
       "CAMERA",
       "ACCESS_COARSE_LOCATION",
@@ -75,20 +99,24 @@ const config: ExpoConfig = {
   },
   web: {
     bundler: "metro",
-    favicon: "./assets/images/favicon.png",
+    ...(faviconPath ? { favicon: faviconPath } : {}),
   },
   plugins: [
     "expo-router",
     "expo-font",
     "expo-secure-store",
-    [
-      "expo-splash-screen",
-      {
-        image: "./assets/images/splash.png",
-        backgroundColor: "#fbf7f1",
-        imageWidth: 200,
-      },
-    ],
+    ...(splashPath
+      ? ([
+          [
+            "expo-splash-screen",
+            {
+              image: splashPath,
+              backgroundColor: "#fbf7f1",
+              imageWidth: 200,
+            },
+          ],
+        ] as [string, Record<string, unknown>][])
+      : []),
     [
       "expo-location",
       {
@@ -113,7 +141,7 @@ const config: ExpoConfig = {
     [
       "expo-notifications",
       {
-        icon: "./assets/images/notification-icon.png",
+        ...(notificationIconPath ? { icon: notificationIconPath } : {}),
         color: "#e11d48",
       },
     ],
@@ -132,10 +160,11 @@ const config: ExpoConfig = {
     clerkPublishableKey: CLERK_PUBLISHABLE_KEY,
     mapboxToken: MAPBOX_PUBLIC_TOKEN,
     eas: {
-      projectId: process.env.EAS_PROJECT_ID ?? "",
+      projectId: EAS_PROJECT_ID,
     },
   },
-  owner: "vuelvecasa",
+  // owner: se infiere de la cuenta logueada. Si luego creas una org en
+  // Expo llamada p.ej. "vuelvecasa", la añades aquí y reconfigureas EAS.
 };
 
 export default config;
