@@ -1,17 +1,23 @@
 /**
- * Runtime loader for the optional Stripe SDK.
+ * Runtime loader del SDK de Stripe.
  *
- * The package `stripe` is intentionally *not* declared as a dependency during
- * fase 1. We resolve it only at runtime via `createRequire`, through a module
- * id that is not a string literal — so the bundler does not try to bundle it.
+ * Cargamos via `createRequire` con un module id armado en runtime para que el
+ * bundler no intente resolver el paquete estáticamente. Así el sitio arranca
+ * aun si Stripe no está instalado (ej. preview sin cobros).
  *
- * To activate real payments in production: `npm i stripe` and set
- * STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET.
+ * Cuando `STRIPE_SECRET_KEY` está presente y `stripe` ya es dependencia (lo
+ * es a partir de producción), este módulo retorna una instancia autenticada.
+ *
+ * Nota sobre apiVersion: NO lo fijamos. Stripe usa el default de la cuenta
+ * Dashboard → Developers, así el SDK se actualiza sin requerir cambio en
+ * código cuando hacemos bump. Igualmente cada evento de webhook contiene su
+ * propio api_version; si algún día necesitamos reproducir eventos viejos,
+ * eso sigue funcionando.
  */
 
 type StripeCtor = new (
   key: string,
-  opts: { apiVersion: string }
+  opts?: Record<string, unknown>
 ) => StripeLike;
 
 type StripeLike = {
@@ -40,6 +46,13 @@ export async function getStripe(): Promise<StripeLike> {
   const mod = req(pkgName) as { default: StripeCtor } | StripeCtor;
   const Ctor = (typeof mod === "function" ? mod : mod.default) as StripeCtor;
   return new Ctor(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-11-20.acacia",
+    // Deja que el SDK use su apiVersion built-in — siempre la última soportada.
+    // Ver https://stripe.com/docs/api/versioning
+    typescript: true,
+    appInfo: {
+      name: "vuelvecasa-web",
+      version: "1.0.0",
+      url: process.env.NEXT_PUBLIC_SITE_URL || "https://vuelvecasa.com",
+    },
   });
 }

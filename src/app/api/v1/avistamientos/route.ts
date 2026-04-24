@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import {
   handleOptions,
   jsonOk,
@@ -168,7 +167,6 @@ export async function POST(req: Request) {
     }
   });
 
-  void NextResponse;
   return jsonOk(req, { created: true }, { status: 201 });
 }
 

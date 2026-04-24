@@ -70,9 +70,17 @@ const STUB: ChatMensaje[] = [
 ];
 
 export const chatRepo = {
-  async list(canal: ChatCanal, limit = 50): Promise<ChatMensaje[]> {
+  async list(
+    canal: ChatCanal,
+    limit = 50,
+    before?: string | null
+  ): Promise<ChatMensaje[]> {
     const sql = db.raw;
     if (!sql) return STUB.filter((m) => m.canal === canal).slice(0, limit);
+    // `before` es un ISO timestamp — paginación por cursor para "cargar más
+    // viejos". Si viene basura, lo ignoramos silenciosamente en vez de 400.
+    const cursor =
+      before && !Number.isNaN(Date.parse(before)) ? new Date(before) : null;
     try {
       const rows = (await sql`
         select c.id, c.autor_usuario_id, coalesce(c.autor_nombre, u.nombre) as autor_nombre,
@@ -80,6 +88,7 @@ export const chatRepo = {
         from chat_mensajes c
         left join usuarios u on u.id = c.autor_usuario_id
         where c.oculto = false and c.canal = ${canal}
+          ${cursor ? sql`and c.created_at < ${cursor}` : sql``}
         order by c.created_at desc
         limit ${Math.min(limit, 100)}
       `) as unknown as ChatMensaje[];

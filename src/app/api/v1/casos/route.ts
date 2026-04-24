@@ -16,7 +16,6 @@ import {
 import { isEstadoMx } from "@/lib/estados";
 import { CITIES, SITE } from "@/lib/site";
 import { moderate } from "@/lib/moderation";
-import { db } from "@/lib/db";
 import { alertasRepo } from "@/lib/alertas";
 import { generateMatchesForCaso } from "@/lib/matching";
 import { alertaCasoNueva, sendEmail } from "@/lib/email";
@@ -285,8 +284,6 @@ export async function POST(req: Request) {
     }
   });
 
-  void db;
-  void SITE;
   return jsonOk(
     req,
     { id: created.id, slug: created.slug, url: `/casos/${created.slug}` },

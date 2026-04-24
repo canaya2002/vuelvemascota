@@ -25,7 +25,8 @@ export async function GET(req: Request, { params }: { params: Params }) {
     return jsonErr(req, "bad_canal", "Canal inválido.", { status: 400 });
   const url = new URL(req.url);
   const limit = Math.max(1, Math.min(100, Number(url.searchParams.get("limit") || 50)));
-  const mensajes = await chatRepo.list(canal, limit);
+  const before = url.searchParams.get("before") || undefined;
+  const mensajes = await chatRepo.list(canal, limit, before);
   return jsonOk(req, mensajes);
 }
 
