@@ -70,14 +70,14 @@ export function PremiumButton({
   ...rest
 }: Props) {
   const scale = useSharedValue(1);
-  const glowOp = useSharedValue(glow ? 1 : 0);
-
   const s = sizeMap[size];
 
   const animated = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
-  const glowStyle = useAnimatedStyle(() => ({ opacity: glowOp.value }));
+  // `glow` y `glowOp` quedan en la firma por compat retro-, pero ya no se
+  // usan — el halo daba mal aspecto fuera del pill.
+  void glow;
 
   const pill: ViewStyle = {
     borderRadius: 9999,
@@ -88,22 +88,23 @@ export function PremiumButton({
     opacity: disabled || loading ? 0.6 : 1,
   };
 
+  // Sombras sutiles tipo Shadcn — sin halo dramático que sobresale del botón.
   const shadow: ViewStyle =
     variant === "primary"
       ? {
           shadowColor: colors.brand,
-          shadowOpacity: 0.45,
-          shadowRadius: 24,
-          shadowOffset: { width: 0, height: 12 },
-          elevation: 10,
+          shadowOpacity: 0.18,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 6 },
+          elevation: 4,
         }
       : variant === "dark"
         ? {
             shadowColor: colors.ink,
-            shadowOpacity: 0.35,
-            shadowRadius: 22,
-            shadowOffset: { width: 0, height: 10 },
-            elevation: 8,
+            shadowOpacity: 0.16,
+            shadowRadius: 10,
+            shadowOffset: { width: 0, height: 5 },
+            elevation: 3,
           }
         : {};
 
@@ -116,21 +117,9 @@ export function PremiumButton({
 
   return (
     <View style={[{ alignSelf: block ? "stretch" : "flex-start" }, shadow, style]}>
-      {glow && variant === "primary" ? (
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            StyleSheet.absoluteFillObject,
-            {
-              borderRadius: 9999,
-              backgroundColor: colors.brand,
-              opacity: 0.55,
-              transform: [{ scale: 1.08 }],
-            },
-            glowStyle,
-          ]}
-        />
-      ) : null}
+      {/* Glow halo eliminado — antes mostraba un parche rojo escalado 1.08
+          que asomaba detrás del botón y daba sensación de "esquina roja"
+          fuera del pill. Ahora el énfasis sale sólo de la sombra sutil. */}
 
       <AnimatedPressable
         disabled={disabled || loading}

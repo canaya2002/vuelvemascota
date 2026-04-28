@@ -20,7 +20,8 @@ export function EmptyState({
   return (
     <View
       style={{
-        paddingVertical: 48,
+        paddingVertical: 56,
+        paddingHorizontal: 24,
         alignItems: "center",
         gap: 12,
       }}

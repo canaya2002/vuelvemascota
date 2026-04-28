@@ -77,7 +77,10 @@ export function Button({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    alignSelf: block ? "stretch" : "flex-start",
+    // Si block → stretch al ancho del padre. Si no, dejamos que el padre
+    // decida vía `alignItems` (antes forzábamos `flex-start` y el botón
+    // quedaba pegado a la izquierda en pantallas centradas como EmptyState).
+    alignSelf: block ? "stretch" : "auto",
     opacity: disabled || loading ? 0.55 : 1,
   };
 

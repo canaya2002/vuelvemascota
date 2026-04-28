@@ -30,6 +30,10 @@ import {
   PulseDot,
 } from "@/components/ui";
 import { CasoCard } from "@/components/casos/CasoCard";
+import {
+  AnnouncementCarousel,
+  type Announcement,
+} from "@/components/AnnouncementCarousel";
 import { useCasos, useAlertas } from "@/lib/hooks";
 import { getCurrentPosition, type Coords } from "@/lib/location";
 import { colors } from "@/lib/theme";
@@ -59,6 +63,55 @@ export default function HomeScreen() {
 
   const alertas = useAlertas();
   const activas = (alertas.data ?? []).filter((a) => a.activa).length;
+
+  const announcements: Announcement[] = [
+    {
+      id: "report",
+      icon: "add-circle-outline",
+      tone: "brand",
+      title: "Reporta un caso en menos de 2 minutos",
+      description: "Foto + zona + contacto. Activa la red local al instante.",
+      href: "/(tabs)/reportar",
+    },
+    {
+      id: "alerts",
+      icon: "notifications-outline",
+      tone: "brand",
+      title:
+        activas > 0
+          ? `Tienes ${activas} ${activas === 1 ? "alerta activa" : "alertas activas"}`
+          : "Activa una alerta por zona",
+      description:
+        activas > 0
+          ? "Te avisamos al instante si aparece un caso cerca."
+          : "Recibe avisos en tiempo real cuando se reporte cerca de ti.",
+      href: "/(tabs)/alertas",
+    },
+    {
+      id: "donate",
+      icon: "heart-outline",
+      tone: "success",
+      title: "Sostén la red con $100 al mes",
+      description: "Veterinaria, transporte y rescates verificados.",
+      href: "/donar",
+    },
+    {
+      id: "foros",
+      icon: "chatbubbles-outline",
+      tone: "ink",
+      title: "Conversa con la comunidad",
+      description: "Consejos, historias y apoyo en los foros.",
+      href: "/foros",
+    },
+    {
+      id: "chat",
+      icon: "flash-outline",
+      tone: "brand",
+      title: "Canal de urgencias 24/7",
+      description: "Coordina rescates en vivo con vecinos y rescatistas.",
+      href: "/chat/urgencias",
+    },
+  ];
 
   return (
     <Screen edges={["top"]} padded={false}>
@@ -134,6 +187,13 @@ export default function HomeScreen() {
               />
             </View>
           </Hero>
+        </AnimatedEntry>
+
+        {/* ── ANNOUNCEMENTS (cross-fade auto-rota cada 5s) ────── */}
+        <AnimatedEntry delay={100}>
+          <View style={{ marginTop: 18 }}>
+            <AnnouncementCarousel items={announcements} intervalMs={5000} />
+          </View>
         </AnimatedEntry>
 
         {/* ── STATS ────────────────────────────────────────────── */}

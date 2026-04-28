@@ -14,68 +14,68 @@ type Preset =
   | "ink"
   | "goldSoft";
 
+/**
+ * Presets alineados con la paleta premium (granate sobrio + neutrales).
+ * Single-tone subtle gradients en vez de rainbow saltones. El de marca va de
+ * brand → brandDeep para dar dimensión sin "esquinas demasiado rojas".
+ */
 const GRADIENTS: Record<
   Preset,
   { stops: Array<[string, number, number]>; angle?: number }
 > = {
   brand: {
     stops: [
-      ["#ff6b8a", 0, 1],
-      ["#e11d48", 0.55, 1],
-      ["#be123c", 1, 1],
+      [colors.brand, 0, 1],
+      [colors.brandDeep, 1, 1],
     ],
-    angle: 135,
+    angle: 145,
   },
   brandDeep: {
     stops: [
-      ["#e11d48", 0, 1],
-      ["#881337", 1, 1],
+      [colors.brandDeep, 0, 1],
+      [colors.brandInk, 1, 1],
     ],
-    angle: 135,
+    angle: 145,
   },
   sunrise: {
     stops: [
-      ["#ffb37a", 0, 1],
-      ["#ff6b8a", 0.55, 1],
-      ["#a3449f", 1, 1],
+      [colors.brandSoft, 0, 1],
+      [colors.brand, 1, 1],
     ],
     angle: 135,
   },
   ocean: {
     stops: [
-      ["#7dd3fc", 0, 1],
-      ["#3b82f6", 0.6, 1],
-      ["#1e40af", 1, 1],
+      [colors.inkSoft, 0, 1],
+      [colors.ink, 1, 1],
     ],
     angle: 135,
   },
   forest: {
     stops: [
-      ["#86efac", 0, 1],
-      ["#10a079", 0.55, 1],
-      ["#065f46", 1, 1],
+      [colors.successSoft, 0, 1],
+      [colors.success, 1, 1],
     ],
     angle: 135,
   },
   twilight: {
     stops: [
-      ["#2a1a4b", 0, 1],
-      ["#6a2a78", 0.5, 1],
-      ["#0b0720", 1, 1],
+      [colors.ink, 0, 1],
+      [colors.bgDeep, 1, 1],
     ],
     angle: 135,
   },
   ink: {
     stops: [
-      ["#1a2942", 0, 1],
-      ["#0a1a2b", 1, 1],
+      [colors.inkSoft, 0, 1],
+      [colors.ink, 1, 1],
     ],
-    angle: 135,
+    angle: 145,
   },
   goldSoft: {
     stops: [
-      ["#fff4d1", 0, 1],
-      ["#ffe0a8", 1, 1],
+      [colors.warnSoft, 0, 1],
+      [colors.bgAlt, 1, 1],
     ],
     angle: 135,
   },
