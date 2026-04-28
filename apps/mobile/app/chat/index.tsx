@@ -17,7 +17,7 @@ import type { ChatCanal } from "@vuelvecasa/shared";
 const CANALES: {
   value: ChatCanal;
   label: string;
-  icon: keyof typeof import("@expo/vector-icons/Ionicons").default.glyphMap;
+  icon: React.ComponentProps<typeof Ionicons>["name"];
   desc: string;
 }[] = [
   {

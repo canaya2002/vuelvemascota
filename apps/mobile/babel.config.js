@@ -1,12 +1,16 @@
 /**
- * Babel config para Expo + NativeWind + Reanimated (SDK 53+).
+ * Babel config para Expo SDK 53 + NativeWind 4.1 + Reanimated 3.
  *
  * Orden importante:
- *  1. "babel-preset-expo" con jsxImportSource nativewind → habilita className.
- *  2. "nativewind/babel" → transforma className → style props.
- *  3. "react-native-worklets/plugin" **debe ser el último** del array.
- *     (En SDK 52 y anteriores era "react-native-reanimated/plugin"; desde
- *      SDK 53 Reanimated extrajo los worklets a un paquete propio.)
+ *  1. `babel-preset-expo` con `jsxImportSource: "nativewind"` → habilita el
+ *     runtime de className vía la nueva API de React.
+ *  2. `nativewind/babel` → transforma `className="..."` a style props RN
+ *     (nativewind 4.1.x + css-interop 0.1.22 cargan react-native-reanimated/plugin
+ *     internamente, compatible con Reanimated 3 built-in de SDK 53).
+ *  3. `react-native-reanimated/plugin` **debe ser el último** del array.
+ *     Reanimated 3.x trae los worklets nativos bundleados — por eso NO
+ *     instalamos react-native-worklets separado (causaba duplicate symbols
+ *     en el linker de iOS al conflictar con Reanimated).
  */
 module.exports = function (api) {
   api.cache(true);
@@ -15,6 +19,6 @@ module.exports = function (api) {
       ["babel-preset-expo", { jsxImportSource: "nativewind" }],
       "nativewind/babel",
     ],
-    plugins: ["react-native-worklets/plugin"],
+    plugins: ["react-native-reanimated/plugin"],
   };
 };

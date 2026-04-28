@@ -1,0 +1,55 @@
+# EAS Build — archivos a excluir del upload de build móvil.
+# Sigue el formato de .gitignore. Se suma a .gitignore (no lo reemplaza).
+#
+# Este repo es un monorepo: apps/mobile es lo que se sube, pero el resto del
+# tree también acompaña (Next.js web, fotos, videos del landing). Sacamos lo
+# que no aporta al build móvil para acelerar la subida y evitar trabajar con
+# 73 MB de basura.
+
+# Next.js web output
+.next/
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# Web public assets pesados — el video del hero no se usa en la app móvil
+public/videos/
+public/generales/
+
+# Web build / deploy
+.vercel/
+
+# Node modules (EAS los instala limpios de todas formas)
+node_modules/
+apps/*/node_modules/
+packages/*/node_modules/
+
+# Platform native folders — EAS hace prebuild solo
+ios/
+android/
+apps/mobile/ios/
+apps/mobile/android/
+
+# Caches varios
+.expo/
+apps/mobile/.expo/
+apps/mobile/dist/
+apps/mobile/web-build/
+
+# Credenciales / dotenvs (EAS las inyecta desde secrets/env profile)
+.env.local
+.env.*.local
+
+# Archivos de dev/docs no necesarios para build
+docs/
+DEPLOY.md
+SETUP.md
+PRODUCCION.md
+
+# Lockfile de mobile excluido a propósito: en el contexto standalone que usa
+# EAS (sin el workspace padre), npm ci se queja de peer deps transitivas
+# (@babel/preset-env es peerDep de react-native-codegen, y la resolución
+# cross-plataforma Windows→macOS mete ruido). Sin lockfile, EAS corre
+# `npm install` que resuelve el árbol fresco en el worker macOS y funciona.
+# El .npmrc con install-links=true + legacy-peer-deps=true garantiza que
+# la resolución sea determinística.
+apps/mobile/package-lock.json

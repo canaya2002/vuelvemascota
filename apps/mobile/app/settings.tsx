@@ -153,7 +153,7 @@ export default function SettingsScreen() {
 }
 
 type RowProps = {
-  icon: keyof typeof import("@expo/vector-icons/Ionicons").default.glyphMap;
+  icon: React.ComponentProps<typeof Ionicons>["name"];
   label: string;
   description?: string;
   right?: React.ReactNode;
