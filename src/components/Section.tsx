@@ -29,7 +29,7 @@ export function Section({
     tone === "alt"
       ? "bg-[var(--bg-alt)]"
       : tone === "dark"
-      ? "relative overflow-hidden bg-[#0b1f33] text-white"
+      ? "relative overflow-hidden bg-[var(--bg-deep)] text-white"
       : "";
 
   const header = (eyebrow || title || subtitle) && (
@@ -71,10 +71,10 @@ export function Section({
       {tone === "dark" && (
         <div
           aria-hidden
-          className="absolute inset-0 pointer-events-none opacity-70"
+          className="absolute inset-0 pointer-events-none opacity-60"
           style={{
             background:
-              "radial-gradient(700px 380px at 15% 10%, rgba(225,29,72,0.22), transparent 60%), radial-gradient(600px 380px at 90% 90%, rgba(14,165,233,0.18), transparent 60%)",
+              "radial-gradient(700px 380px at 15% 10%, rgba(184,38,74,0.10), transparent 60%)",
           }}
         />
       )}

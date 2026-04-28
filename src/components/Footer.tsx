@@ -46,15 +46,6 @@ const col4 = [
 export function Footer() {
   return (
     <footer className="relative mt-24 bg-white text-[var(--ink)] border-t border-[var(--line)] overflow-hidden">
-      {/* Ambient glow (muy sutil sobre blanco) */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(700px 380px at 8% 0%, rgba(225,29,72,0.05), transparent 60%), radial-gradient(600px 360px at 92% 100%, rgba(14,165,233,0.06), transparent 60%)",
-        }}
-      />
 
       <div className="relative vc-container py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-12">

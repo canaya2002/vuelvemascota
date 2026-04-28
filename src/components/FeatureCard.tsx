@@ -5,30 +5,35 @@ type Props = {
   title: string;
   body: string;
   tint?: "brand" | "accent" | "ink";
-  /** Optional gradient ring on hover for extra delight. */
+  /** Reserved for future use; currently identical to default styling. */
   elevated?: boolean;
 };
 
-export function FeatureCard({ icon, title, body, tint = "brand", elevated = false }: Props) {
-  const bg =
+/**
+ * Tarjeta minimalista para grids de features. La paleta es restrictiva:
+ * el icono usa un fondo neutro con outline, y solo cambia a tono de marca
+ * cuando se pide explícitamente. Sin gradientes ni sombras dramáticas.
+ */
+export function FeatureCard({ icon, title, body, tint = "brand" }: Props) {
+  const iconStyle =
     tint === "accent"
-      ? "bg-[var(--accent-soft)] text-[#0d6b52]"
+      ? "bg-[var(--success-soft)] text-[var(--success)] ring-1 ring-[var(--success)]/15"
       : tint === "ink"
-      ? "bg-[#0b1f33] text-white"
-      : "bg-[var(--brand-soft)] text-[var(--brand-ink)]";
-  const base = elevated ? "vc-card-glass" : "vc-card";
+      ? "bg-[var(--ink)] text-white"
+      : "bg-[var(--brand-soft)] text-[var(--brand-ink)] ring-1 ring-[var(--brand)]/10";
+
   return (
-    <div
-      className={`${base} flex flex-col h-full group relative transition-all hover:-translate-y-1 hover:shadow-[0_18px_36px_-18px_rgba(10,26,43,0.25)]`}
-    >
+    <div className="vc-card flex flex-col h-full group relative">
       <span
-        className={`inline-flex w-12 h-12 rounded-2xl items-center justify-center ${bg} transition-transform group-hover:scale-105`}
+        className={`inline-flex w-11 h-11 rounded-xl items-center justify-center ${iconStyle} transition-transform group-hover:scale-105`}
         aria-hidden
       >
         {icon}
       </span>
-      <h3 className="mt-5 text-xl font-semibold">{title}</h3>
-      <p className="mt-3 text-[var(--ink-soft)] leading-relaxed flex-1">{body}</p>
+      <h3 className="mt-5 text-lg font-semibold tracking-tight">{title}</h3>
+      <p className="mt-2.5 text-[15px] text-[var(--ink-soft)] leading-relaxed flex-1">
+        {body}
+      </p>
     </div>
   );
 }

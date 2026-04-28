@@ -33,25 +33,23 @@ export function Hero() {
 
         <div className="relative z-10 vc-container py-20 md:py-24 text-white">
           <div className="max-w-3xl">
-            <span className="vc-eyebrow !bg-white/18 !text-white border border-white/25 backdrop-blur-md vc-fade-up">
-              <span className="relative inline-flex w-2 h-2 rounded-full bg-[var(--brand)] vc-pulse-ring" />
-              <IconPaw size={14} /> Red comunitaria para mascotas en México
+            <span className="vc-eyebrow !bg-white/12 !text-white !border !border-white/20 backdrop-blur-md vc-fade-up">
+              <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-[var(--brand)] vc-pulse-ring" />
+              <IconPaw size={13} /> Red comunitaria · México
             </span>
-            <h1 className="mt-6 text-[2.4rem] leading-[1.04] sm:text-5xl md:text-6xl lg:text-[4.6rem] font-bold tracking-tight vc-fade-up vc-fade-up-delay-1">
-              Reporta, encuentra y ayuda a que{" "}
-              <span className="vc-gradient-text">vuelvan a casa</span>.
+            <h1 className="mt-7 text-[2.4rem] leading-[1.04] sm:text-5xl md:text-6xl lg:text-[4.4rem] font-semibold tracking-tight vc-fade-up vc-fade-up-delay-1">
+              Reporta, encuentra y ayuda a que vuelvan a casa.
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed vc-fade-up vc-fade-up-delay-2">
-              VuelveaCasa es la plataforma mexicana para reportar mascotas
-              perdidas, avistar mascotas encontradas, activar alertas por zona,
-              abrir hogares temporales y apoyar rescates reales.
+            <p className="mt-7 text-lg md:text-xl text-white/85 max-w-2xl leading-relaxed vc-fade-up vc-fade-up-delay-2">
+              La plataforma mexicana para reportar mascotas perdidas, activar
+              alertas por zona, ofrecer hogar temporal y apoyar rescates reales.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 vc-fade-up vc-fade-up-delay-3">
-              <Link href="/registro" className="vc-btn vc-btn-primary vc-shine">
-                Registrarme gratis <IconArrow size={18} />
+            <div className="mt-9 flex flex-col sm:flex-row gap-3 vc-fade-up vc-fade-up-delay-3">
+              <Link href="/registro" className="vc-btn vc-btn-brand">
+                Registrarme gratis <IconArrow size={16} />
               </Link>
               <Link href="/donar" className="vc-btn vc-btn-ghost">
-                <IconHeart size={18} /> Apoyar una causa
+                <IconHeart size={16} /> Apoyar una causa
               </Link>
             </div>
 
@@ -76,8 +74,8 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="absolute bottom-6 right-6 z-10 hidden md:inline-flex items-center gap-2 rounded-full vc-glass-dark-strong text-white text-xs px-3 py-1.5">
-          <span className="w-2 h-2 rounded-full bg-[var(--brand)] vc-pulse-ring" />
+        <div className="absolute bottom-6 right-6 z-10 hidden md:inline-flex items-center gap-2 rounded-full bg-black/30 backdrop-blur-md border border-white/15 text-white/85 text-xs px-3 py-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand)] vc-pulse-ring" />
           Activando cobertura por ciudad
         </div>
       </div>

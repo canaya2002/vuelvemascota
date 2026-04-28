@@ -25,10 +25,10 @@ export function PageHero({
     <section className="relative overflow-hidden bg-white">
       <div
         aria-hidden
-        className="absolute inset-0 opacity-70 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(600px 400px at 12% 10%, rgba(225,29,72,0.10), transparent 60%), radial-gradient(600px 400px at 95% 90%, rgba(14,165,233,0.12), transparent 60%)",
+            "radial-gradient(800px 500px at 8% 0%, rgba(184,38,74,0.05), transparent 60%)",
         }}
       />
       <div className="relative vc-container py-16 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
@@ -39,11 +39,11 @@ export function PageHero({
               {eyebrow}
             </span>
           )}
-          <h1 className="mt-5 text-4xl md:text-6xl font-bold leading-[1.05] vc-fade-up vc-fade-up-delay-1">
+          <h1 className="mt-6 text-4xl md:text-[3.6rem] font-semibold leading-[1.04] tracking-tight vc-fade-up vc-fade-up-delay-1">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-5 text-lg md:text-xl text-[var(--ink-soft)] max-w-2xl leading-relaxed vc-fade-up vc-fade-up-delay-2">
+            <p className="mt-6 text-lg md:text-xl text-[var(--ink-soft)] max-w-2xl leading-relaxed vc-fade-up vc-fade-up-delay-2">
               {subtitle}
             </p>
           )}

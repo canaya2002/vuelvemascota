@@ -1,50 +1,53 @@
 /**
- * Paleta oficial VuelveaCasa.
- * Cambios aquí se propagan a web (via CSS vars wrapper) y app móvil.
+ * Paleta oficial VuelveaCasa — versión "premium minimalista".
+ *
+ * Filosofía: paleta restrictiva (un solo acento de marca + neutrales cálidos
+ * + estados funcionales). El "premium" sale del espacio negativo, la
+ * tipografía y la jerarquía, no de gradientes multicolor.
  */
 
 export const colors = {
-  // Base surfaces
-  bg: "#fbf7f1",
-  bgAlt: "#fff0e4",
-  bgDeep: "#0a1a2b",
+  // --- Surfaces (cream casi blanco, neutral cálido) ---
+  bg: "#f7f3ec",
+  bgAlt: "#efe9dd",
+  bgDeep: "#0e1827",
   surface: "#ffffff",
 
-  // Ink scale
-  ink: "#0a1a2b",
-  inkSoft: "#2b3e57",
-  muted: "#5a6b82",
-  line: "#ece3d6",
-  lineStrong: "#d9ccb9",
+  // --- Ink scale (deep navy, mejor contraste que negro puro) ---
+  ink: "#0e1827",
+  inkSoft: "#2a374b",
+  muted: "#6b7686",
+  line: "#e6dfd0",
+  lineStrong: "#cfc6b3",
 
-  // Brand — rose cálido (reemplaza naranja histórico)
-  brand: "#e11d48",
-  brandInk: "#881337",
-  brandSoft: "#ffe4e6",
-  brandDeep: "#be123c",
+  // --- Brand (rose granate sobrio, NO fucsia) ---
+  brand: "#b8264a",
+  brandInk: "#6e1530",
+  brandSoft: "#fbe9ee",
+  brandDeep: "#8e1b3a",
 
-  // Accent (verde cuidado)
-  accent: "#10a079",
-  accentSoft: "#d6fbec",
+  // --- Estados funcionales (no decorativos) ---
+  success: "#157a55",
+  successSoft: "#e3f3eb",
+  warn: "#a06000",
+  warnSoft: "#fbeed1",
 
-  // Sky — realces secundarios
-  sky: "#0ea5e9",
-  skySoft: "#e0f2fe",
+  // --- Aliases legacy (mapean nombres viejos al nuevo sistema) ---
+  accent: "#157a55",
+  accentSoft: "#e3f3eb",
+  sky: "#2a374b",
+  skySoft: "#efe9dd",
 
-  // Alert
-  warn: "#e8a500",
-  warnSoft: "#fff4d1",
+  // --- Estados en mapa/avistamiento ---
+  statusActive: "#b8264a",
+  statusFound: "#157a55",
+  statusSighting: "#2a374b",
 
-  // Estados en mapa/avistamiento
-  statusActive: "#e11d48",
-  statusFound: "#10a079",
-  statusSighting: "#0ea5e9",
+  // --- Overlays ---
+  overlayDark: "rgba(14, 24, 39, 0.72)",
+  overlayLight: "rgba(255, 255, 255, 0.88)",
 
-  // Overlays
-  overlayDark: "rgba(10, 26, 43, 0.72)",
-  overlayLight: "rgba(255, 255, 255, 0.82)",
-
-  // Texto sobre brand
+  // --- Texto sobre fondos saturados ---
   onBrand: "#ffffff",
   onAccent: "#ffffff",
   onDark: "#ffffff",
@@ -54,7 +57,7 @@ export type Color = keyof typeof colors;
 
 /**
  * Mapping a CSS variables para que la web consuma los mismos valores
- * sin duplicación (útil en globals.css overrides).
+ * sin duplicación. Mantenemos las llaves --accent, --sky, --warn por compat.
  */
 export const cssVars = {
   "--bg": colors.bg,

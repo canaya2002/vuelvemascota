@@ -1,63 +1,73 @@
 @import "tailwindcss";
 
+/* =============================================================================
+ * VuelveaCasa · Design tokens
+ * Filosofía: paleta restrictiva, neutrales cálidos, un único acento de marca,
+ * jerarquía tipográfica firme. Lo "premium" sale del espacio negativo, la
+ * tipografía y la sutileza, no de gradientes multicolor ni glassmorphism.
+ * ===========================================================================*/
+
 :root {
-  /* Base surfaces */
-  --bg: #fbf7f1;
-  --bg-alt: #fff0e4;
-  --bg-deep: #0a1a2b;
+  /* --- Surfaces (cream → bone, neutralidad cálida) --- */
+  --bg: #f7f3ec;
+  --bg-alt: #efe9dd;
+  --bg-deep: #0e1827;
   --surface: #ffffff;
 
-  /* Ink scale — high contrast guaranteed */
-  --ink: #0a1a2b;
-  --ink-soft: #2b3e57;
-  --muted: #5a6b82;
-  --line: #ece3d6;
-  --line-strong: #d9ccb9;
+  /* --- Ink scale (deep navy elegante, mejor contraste que negro puro) --- */
+  --ink: #0e1827;
+  --ink-soft: #2a374b;
+  --muted: #6b7686;
+  --line: #e6dfd0;
+  --line-strong: #cfc6b3;
 
-  /* Brand — rose cálido (reemplaza naranja). Warmth + modernidad. */
-  --brand: #e11d48;
-  --brand-ink: #881337;
-  --brand-soft: #ffe4e6;
-  --brand-deep: #be123c;
-  --brand-rgb: 225, 29, 72;
+  /* --- Brand: una sola voz cromática (rose granate, no fucsia chillón) --- */
+  --brand: #b8264a;
+  --brand-deep: #8e1b3a;
+  --brand-ink: #6e1530;
+  --brand-soft: #fbe9ee;
+  --brand-rgb: 184, 38, 74;
 
-  /* Accent (verde cuidado) */
-  --accent: #10a079;
-  --accent-soft: #d6fbec;
-  --accent-rgb: 16, 160, 121;
+  /* --- Estados funcionales (NO decorativos: solo confirmaciones/errores) --- */
+  --success: #157a55;
+  --success-soft: #e3f3eb;
+  --warn: #a06000;
+  --warn-soft: #fbeed1;
 
-  /* Sky — realces glass / highlights secundarios */
-  --sky: #0ea5e9;
-  --sky-soft: #e0f2fe;
+  /* --- Legacy aliases (mapean código viejo al nuevo design system) ---
+   * `--accent`, `--sky`, etc. quedaron por compat. NO uses en código nuevo;
+   * usa `--success` o `--brand` directamente.
+   */
+  --accent: var(--success);
+  --accent-soft: var(--success-soft);
+  --accent-rgb: 21, 122, 85;
+  --sky: var(--ink-soft);
+  --sky-soft: var(--bg-alt);
 
-  /* Alert */
-  --warn: #e8a500;
-  --warn-soft: #fff4d1;
+  /* --- Glass tokens (uso restringido a navbar y modales) --- */
+  --glass-light: rgba(255, 255, 255, 0.78);
+  --glass-light-strong: rgba(255, 255, 255, 0.92);
+  --glass-dark: rgba(14, 24, 39, 0.62);
+  --glass-dark-strong: rgba(14, 24, 39, 0.78);
+  --glass-border: rgba(14, 24, 39, 0.06);
+  --glass-border-dark: rgba(255, 255, 255, 0.10);
+  --glass-blur: 14px;
+  --glass-blur-strong: 20px;
 
-  /* Glass tokens — contraste verificado WCAG AA */
-  --glass-light: rgba(255, 255, 255, 0.62);
-  --glass-light-strong: rgba(255, 255, 255, 0.82);
-  --glass-dark: rgba(10, 26, 43, 0.55);
-  --glass-dark-strong: rgba(10, 26, 43, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.45);
-  --glass-border-dark: rgba(255, 255, 255, 0.14);
-  --glass-blur: 16px;
-  --glass-blur-strong: 24px;
+  /* --- Geometry --- */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
 
-  /* Radius */
-  --radius-sm: 10px;
-  --radius: 14px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
-  --radius-2xl: 36px;
+  /* --- Shadows (soft Shadcn-style, no glass-heavy) --- */
+  --shadow-sm: 0 1px 2px rgba(14, 24, 39, 0.04), 0 1px 3px rgba(14, 24, 39, 0.03);
+  --shadow: 0 2px 8px rgba(14, 24, 39, 0.05), 0 1px 3px rgba(14, 24, 39, 0.04);
+  --shadow-lg: 0 12px 28px -8px rgba(14, 24, 39, 0.12), 0 4px 12px rgba(14, 24, 39, 0.05);
+  --shadow-glass: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 8px 24px rgba(14, 24, 39, 0.06);
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(10, 26, 43, 0.06), 0 1px 3px rgba(10, 26, 43, 0.04);
-  --shadow: 0 4px 14px rgba(10, 26, 43, 0.08), 0 2px 6px rgba(10, 26, 43, 0.04);
-  --shadow-lg: 0 20px 40px rgba(10, 26, 43, 0.12), 0 8px 16px rgba(10, 26, 43, 0.06);
-  --shadow-glass: 0 8px 32px rgba(10, 26, 43, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-
-  --max: 1240px;
+  --max: 1200px;
 }
 
 @theme inline {
@@ -66,8 +76,6 @@
   --color-brand: var(--brand);
   --color-brand-ink: var(--brand-ink);
   --color-brand-soft: var(--brand-soft);
-  --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-muted: var(--muted);
@@ -78,12 +86,13 @@
   --font-display: var(--font-display-local), ui-serif, Georgia, serif;
 }
 
-* {
-  box-sizing: border-box;
-}
+/* =============================================================================
+ * Base
+ * ===========================================================================*/
 
-html,
-body {
+* { box-sizing: border-box; }
+
+html, body {
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -98,23 +107,16 @@ body {
 }
 
 @layer base {
-  h1,
-  h2,
-  h3,
-  h4 {
+  h1, h2, h3, h4 {
     font-family: var(--font-display);
     letter-spacing: -0.025em;
-    /* Hereda el color del contenedor para que las secciones oscuras
-       (tone="dark", CTA, hero sobre video) se vean en blanco sin overrides. */
     color: inherit;
   }
+  h1 { font-weight: 600; line-height: 1.04; }
+  h2 { font-weight: 600; line-height: 1.08; }
+  h3 { font-weight: 600; line-height: 1.18; }
+  h4 { font-weight: 600; line-height: 1.25; }
 
-  h1 { font-weight: 700; line-height: 1.02; }
-  h2 { font-weight: 700; line-height: 1.06; }
-  h3 { font-weight: 600; line-height: 1.15; }
-
-  /* Importante: dentro de @layer base para que utilidades como text-white
-     en anclas (ej. pills de filtro activas) puedan sobrescribir. */
   a { color: inherit; text-decoration: none; }
 }
 
@@ -124,28 +126,14 @@ body {
 }
 
 :where(a, button, input, textarea, select, [tabindex]):focus-visible {
-  outline: 3px solid color-mix(in oklab, var(--brand) 70%, white);
+  outline: 2px solid var(--brand);
   outline-offset: 2px;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
-/* Ambient gradient background for glass layers */
-.vc-ambient {
-  position: relative;
-  isolation: isolate;
-}
-.vc-ambient::before {
-  content: "";
-  position: absolute;
-  inset: -20% -10%;
-  z-index: -1;
-  background:
-    radial-gradient(500px 420px at 12% 10%, rgba(var(--brand-rgb), 0.16), transparent 60%),
-    radial-gradient(600px 500px at 92% 30%, rgba(var(--accent-rgb), 0.12), transparent 60%),
-    radial-gradient(450px 380px at 50% 95%, rgba(14, 165, 233, 0.12), transparent 60%);
-  filter: blur(6px);
-  pointer-events: none;
-}
+/* =============================================================================
+ * Layout primitives
+ * ===========================================================================*/
 
 @layer components {
   .vc-container {
@@ -155,109 +143,118 @@ body {
     padding-inline: clamp(1rem, 3vw, 2rem);
   }
 
+  /* --- Eyebrow / badge tipográfico minimalista --- */
   .vc-eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.38rem 0.8rem;
-    background: var(--brand-soft);
-    color: var(--brand-ink);
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    padding: 0.32rem 0.72rem;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     border-radius: 999px;
     text-transform: uppercase;
+    border: 1px solid var(--line-strong);
   }
   .vc-eyebrow-accent {
-    background: var(--accent-soft);
-    color: #0d6b52;
+    background: var(--brand-soft);
+    color: var(--brand-ink);
+    border-color: transparent;
   }
   .vc-eyebrow-glass {
-    background: var(--glass-light-strong);
+    background: rgba(255, 255, 255, 0.85);
     color: var(--ink);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
   }
 
-  /* === GLASSMORPHISM UTILITIES ===
-     Text contrast is built-in: glass-light uses dark ink, glass-dark uses white. */
+  /* --- Glass surfaces (navbar + modales solamente) --- */
   .vc-glass {
     background: var(--glass-light);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    box-shadow: var(--shadow-glass);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     color: var(--ink);
   }
   .vc-glass-strong {
     background: var(--glass-light-strong);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur-strong)) saturate(180%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(180%);
-    box-shadow: var(--shadow-glass);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(var(--glass-blur-strong));
+    -webkit-backdrop-filter: blur(var(--glass-blur-strong));
     color: var(--ink);
   }
   .vc-glass-dark {
     background: var(--glass-dark);
     border: 1px solid var(--glass-border-dark);
-    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-    box-shadow: 0 12px 32px rgba(10, 26, 43, 0.3);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     color: #ffffff;
   }
   .vc-glass-dark-strong {
     background: var(--glass-dark-strong);
     border: 1px solid var(--glass-border-dark);
-    backdrop-filter: blur(var(--glass-blur-strong)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(160%);
-    box-shadow: 0 16px 42px rgba(10, 26, 43, 0.4);
+    backdrop-filter: blur(var(--glass-blur-strong));
+    -webkit-backdrop-filter: blur(var(--glass-blur-strong));
     color: #ffffff;
   }
 
-  /* Buttons */
+  /* --- Buttons --- */
   .vc-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.95rem 1.4rem;
-    font-weight: 600;
+    padding: 0.85rem 1.35rem;
+    font-weight: 500;
     border-radius: 999px;
-    font-size: 0.98rem;
+    font-size: 0.95rem;
     line-height: 1;
-    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.15s ease, border-color 0.2s ease;
+    transition: background 0.18s ease, color 0.15s ease, border-color 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
     border: 1px solid transparent;
     cursor: pointer;
     white-space: nowrap;
+    letter-spacing: -0.005em;
   }
   .vc-btn-primary {
-    background: var(--brand);
+    background: var(--ink);
     color: #fff;
-    box-shadow: 0 10px 24px -10px rgba(var(--brand-rgb), 0.55);
+    box-shadow: 0 1px 2px rgba(14, 24, 39, 0.08);
   }
   .vc-btn-primary:hover {
+    background: #1a2640;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px rgba(14, 24, 39, 0.18);
+  }
+  .vc-btn-brand {
+    background: var(--brand);
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(var(--brand-rgb), 0.18);
+  }
+  .vc-btn-brand:hover {
     background: var(--brand-deep);
     transform: translateY(-1px);
-    box-shadow: 0 14px 30px -12px rgba(var(--brand-rgb), 0.7);
+    box-shadow: 0 4px 14px -2px rgba(var(--brand-rgb), 0.35);
   }
   .vc-btn-ghost {
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.10);
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.35);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    border-color: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
   .vc-btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.22);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
   }
   .vc-btn-dark {
     background: var(--ink);
     color: #fff !important;
   }
   .vc-btn-dark:hover {
-    background: #13304a;
+    background: #1a2640;
     transform: translateY(-1px);
   }
   .vc-btn-dark * { color: inherit; }
@@ -267,111 +264,117 @@ body {
     border-color: var(--line-strong);
   }
   .vc-btn-outline:hover {
-    background: #fff;
+    background: var(--surface);
     border-color: var(--ink);
   }
   .vc-btn-glass {
-    background: var(--glass-light-strong);
+    background: rgba(255, 255, 255, 0.78);
     color: var(--ink);
     border-color: var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
   }
   .vc-btn-glass:hover {
     background: #fff;
-    transform: translateY(-1px);
+    border-color: var(--line-strong);
   }
 
-  /* Cards */
+  /* --- Cards --- */
   .vc-card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   }
   .vc-card:hover {
     box-shadow: var(--shadow);
-    transform: translateY(-2px);
     border-color: var(--line-strong);
+    transform: translateY(-1px);
   }
   .vc-card-glass {
-    background: var(--glass-light-strong);
-    border: 1px solid var(--glass-border);
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    box-shadow: var(--shadow-glass);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
   .vc-card-glass:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 42px rgba(10, 26, 43, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
   }
 
-  /* Inputs */
+  /* --- Inputs --- */
   .vc-input {
     width: 100%;
     background: #fff;
     border: 1px solid var(--line-strong);
-    border-radius: 12px;
-    padding: 0.85rem 1rem;
-    font-size: 1rem;
+    border-radius: 10px;
+    padding: 0.78rem 0.95rem;
+    font-size: 0.97rem;
     color: var(--ink);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .vc-input:focus {
-    border-color: var(--brand);
-    box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.18);
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(14, 24, 39, 0.08);
     outline: none;
   }
   .vc-label {
-    font-size: 0.875rem;
+    font-size: 0.84rem;
     font-weight: 600;
     color: var(--ink);
     display: block;
     margin-bottom: 0.4rem;
+    letter-spacing: -0.005em;
   }
   .vc-hint {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--muted);
     margin-top: 0.35rem;
   }
 
-  /* Brand lockup (logo con text) */
+  /* --- Brand lockup --- */
   .vc-logo {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    font-weight: 700;
-    letter-spacing: -0.015em;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
   .vc-logo-mark {
     display: inline-flex;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.1rem;
+    height: 2.1rem;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: #fff;
-    color: var(--brand);
+    background: var(--ink);
+    color: #fff;
     overflow: hidden;
-    box-shadow: 0 6px 18px -6px rgba(var(--brand-rgb), 0.4), inset 0 0 0 1px rgba(10, 26, 43, 0.06);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 2px 8px rgba(14, 24, 39, 0.18);
   }
   .vc-logo-mark img {
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: 80%;
     object-fit: contain;
+    filter: brightness(0) invert(1);
   }
   .vc-logo-mark-dark {
     background: rgba(255, 255, 255, 0.08);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
   }
+  .vc-logo-mark-dark img {
+    filter: brightness(0) invert(1);
+  }
 }
 
-/* Hero video + overlay */
+/* =============================================================================
+ * Hero / overlays
+ * ===========================================================================*/
+
 .vc-hero-video {
   position: absolute;
   inset: 0;
@@ -384,20 +387,55 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(1200px 600px at 18% 22%, rgba(var(--brand-rgb), 0.22), transparent 60%),
-    radial-gradient(900px 500px at 90% 80%, rgba(14, 165, 233, 0.18), transparent 60%),
-    linear-gradient(180deg, rgba(10, 26, 43, 0.45) 0%, rgba(10, 26, 43, 0.72) 55%, rgba(10, 26, 43, 0.92) 100%);
+    linear-gradient(180deg, rgba(14, 24, 39, 0.35) 0%, rgba(14, 24, 39, 0.65) 50%, rgba(14, 24, 39, 0.92) 100%);
   z-index: 1;
 }
 
 .vc-grid-dots {
-  background-image: radial-gradient(rgba(10, 26, 43, 0.08) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(rgba(14, 24, 39, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
+
+/* =============================================================================
+ * Subtle ambient (un solo tono, no rainbow)
+ * ===========================================================================*/
+
+.vc-ambient {
+  position: relative;
+  isolation: isolate;
+}
+.vc-ambient::before {
+  content: "";
+  position: absolute;
+  inset: -10% -5%;
+  z-index: -1;
+  background:
+    radial-gradient(700px 500px at 12% 8%, rgba(var(--brand-rgb), 0.04), transparent 60%);
+  pointer-events: none;
+}
+
+.vc-wash {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.vc-wash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(900px 600px at 8% 0%, rgba(var(--brand-rgb), 0.04), transparent 60%);
+  pointer-events: none;
+}
+
+/* =============================================================================
+ * Animations (preservadas pero sin gradientes coloridos)
+ * ===========================================================================*/
 
 @keyframes vc-marquee {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to   { transform: translateX(-50%); }
 }
 .vc-marquee {
   display: flex;
@@ -415,36 +453,37 @@ body {
 
 @keyframes vc-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50%      { transform: translateY(-6px); }
 }
-.vc-float {
-  animation: vc-float 6s ease-in-out infinite;
-}
+.vc-float { animation: vc-float 6s ease-in-out infinite; }
 
 @keyframes vc-fade-up {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.vc-fade-up { animation: vc-fade-up 0.7s ease-out both; }
-.vc-fade-up-delay-1 { animation-delay: 0.1s; }
-.vc-fade-up-delay-2 { animation-delay: 0.2s; }
-.vc-fade-up-delay-3 { animation-delay: 0.3s; }
+.vc-fade-up { animation: vc-fade-up 0.6s ease-out both; }
+.vc-fade-up-delay-1 { animation-delay: 0.08s; }
+.vc-fade-up-delay-2 { animation-delay: 0.16s; }
+.vc-fade-up-delay-3 { animation-delay: 0.24s; }
 
 @keyframes vc-pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(var(--brand-rgb), 0.45); }
-  70% { box-shadow: 0 0 0 14px rgba(var(--brand-rgb), 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(var(--brand-rgb), 0.32); }
+  70%  { box-shadow: 0 0 0 12px rgba(var(--brand-rgb), 0); }
   100% { box-shadow: 0 0 0 0 rgba(var(--brand-rgb), 0); }
 }
 .vc-pulse-ring { animation: vc-pulse-ring 2.4s ease-out infinite; }
 
 @keyframes vc-blob {
   0%, 100% { border-radius: 42% 58% 57% 43% / 46% 41% 59% 54%; transform: translate3d(0,0,0) rotate(0deg); }
-  33% { border-radius: 58% 42% 33% 67% / 61% 37% 63% 39%; transform: translate3d(0,-10px,0) rotate(6deg); }
-  66% { border-radius: 34% 66% 62% 38% / 41% 56% 44% 59%; transform: translate3d(0,6px,0) rotate(-4deg); }
+  33%      { border-radius: 58% 42% 33% 67% / 61% 37% 63% 39%; transform: translate3d(0,-8px,0) rotate(4deg); }
+  66%      { border-radius: 34% 66% 62% 38% / 41% 56% 44% 59%; transform: translate3d(0,4px,0) rotate(-3deg); }
 }
-.vc-blob { animation: vc-blob 16s ease-in-out infinite; }
+.vc-blob { animation: vc-blob 18s ease-in-out infinite; }
 
-/* Subtle sheen on hover for glassy CTA cards */
+/* =============================================================================
+ * Micro utilities
+ * ===========================================================================*/
+
 .vc-shine {
   position: relative;
   overflow: hidden;
@@ -454,28 +493,26 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.28) 50%, transparent 60%);
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.18) 50%, transparent 60%);
   transform: translateX(-120%);
   transition: transform 0.9s ease;
   pointer-events: none;
 }
 .vc-shine:hover::after { transform: translateX(120%); }
 
-/* Friendly gradient text accent */
+/* Texto enfatizado: sutilísimo gradiente single-tone, NO rainbow */
 .vc-gradient-text {
-  background: linear-gradient(135deg, var(--brand) 0%, #f472b6 50%, var(--sky) 100%);
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-deep) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* Tilt image wrapper */
 .vc-tilt {
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.vc-tilt:hover { transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateZ(0); }
+.vc-tilt:hover { transform: perspective(1000px) rotateX(1.5deg) rotateY(-1.5deg) translateZ(0); }
 
-/* Scrollbar-hidden horizontal scroll container for iPad/mobile */
 .vc-scroll-x {
   display: flex;
   gap: 1rem;
@@ -496,125 +533,13 @@ body {
   }
 }
 
-/* === Extra premium utilities (motion, density, no-empty layouts) ========= */
-
-/* Density helpers — eliminate visual dead space on landing sections. */
+/* --- Density helpers --- */
 .vc-section-tight { padding-top: clamp(3rem, 8vw, 5rem); padding-bottom: clamp(3rem, 8vw, 5rem); }
 .vc-stack-sm > * + * { margin-top: 0.75rem; }
-.vc-stack > * + * { margin-top: 1.25rem; }
+.vc-stack    > * + * { margin-top: 1.25rem; }
 .vc-stack-lg > * + * { margin-top: 2rem; }
 
-/* Ambient full-section background wash, used over marketing pages. */
-.vc-wash {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-}
-.vc-wash::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(800px 500px at 8% 0%, rgba(var(--brand-rgb), 0.14), transparent 60%),
-    radial-gradient(700px 500px at 100% 100%, rgba(14, 165, 233, 0.10), transparent 65%);
-  pointer-events: none;
-}
-
-/* Pretty focus ring for inputs + glass CTAs. */
 .vc-ring-brand:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 55%, white);
-}
-
-/* Gradient underline for inline emphasis (use on <span> inside h1/h2). */
-.vc-underline {
-  background-image: linear-gradient(90deg, var(--brand) 0%, #f472b6 100%);
-  background-size: 100% 3px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  padding-bottom: 2px;
-}
-
-/* Feature stat tile used across marketing pages. */
-.vc-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 1.25rem 1.5rem;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-}
-.vc-stat-value {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  font-weight: 700;
-  color: var(--brand);
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-.vc-stat-label {
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--ink-soft);
-  text-transform: uppercase;
-}
-
-/* Feature chip row — used below heros. */
-.vc-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.vc-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  background: var(--surface);
-  border: 1px solid var(--line-strong);
-  font-size: 0.82rem;
-  color: var(--ink-soft);
-}
-.vc-chip-brand {
-  background: var(--brand-soft);
-  border-color: color-mix(in oklab, var(--brand) 18%, white);
-  color: var(--brand-ink);
-}
-
-/* Gradient ring wrapper. */
-.vc-ring {
-  position: relative;
-  border-radius: var(--radius-xl);
-  padding: 1px;
-  background: linear-gradient(135deg, var(--brand) 0%, #f472b6 50%, var(--sky) 100%);
-}
-.vc-ring > * {
-  border-radius: calc(var(--radius-xl) - 1px);
-  background: var(--surface);
-}
-
-/* Dotted grid accent for backgrounds. */
-.vc-dotgrid {
-  background-image: radial-gradient(rgba(10, 26, 43, 0.06) 1px, transparent 1px);
-  background-size: 18px 18px;
-}
-
-/* Fallback: si el navegador no soporta backdrop-filter, glass queda sólido más opaco */
-@supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
-  .vc-glass,
-  .vc-glass-strong,
-  .vc-eyebrow-glass,
-  .vc-btn-glass,
-  .vc-card-glass {
-    background: rgba(255, 255, 255, 0.94);
-  }
-  .vc-glass-dark,
-  .vc-glass-dark-strong {
-    background: rgba(10, 26, 43, 0.92);
-  }
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 45%, white);
 }

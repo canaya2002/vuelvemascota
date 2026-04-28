@@ -42,9 +42,9 @@ export function ScrollProgress() {
         style={{
           height: "100%",
           width: `${p * 100}%`,
-          background: "linear-gradient(90deg, var(--brand) 0%, #f472b6 50%, var(--sky) 100%)",
+          background: "linear-gradient(90deg, var(--brand) 0%, var(--brand-deep) 100%)",
           transition: "width 80ms linear",
-          boxShadow: "0 0 12px rgba(225,29,72,0.45)",
+          boxShadow: "0 0 8px rgba(184,38,74,0.3)",
         }}
       />
     </div>
