@@ -96,18 +96,57 @@ export function createClient(config: ClientConfig) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), timeoutMs);
 
-    let res: Response;
-    try {
-      res = await fetch(url.toString(), {
+    // Manejamos redirects manualmente para preservar el header
+    // Authorization. Por seguridad RFC 7235, fetch dropea el header en
+    // redirects automáticos a otro origin (apex → www, http → https, etc.),
+    // y eso producía 401 (no-bearer-token) en mobile. `redirect: "manual"`
+    // nos da el 3xx y reenviamos manualmente con el header intacto si
+    // el target sigue en HTTPS.
+    async function fetchFollow(currentUrl: string, hops = 0): Promise<Response> {
+      if (hops > 4) {
+        throw new ApiClientError({
+          code: "too_many_redirects",
+          message: "Demasiados redirects.",
+          status: 0,
+        });
+      }
+      const r = await fetch(currentUrl, {
         method,
         headers,
         body,
         signal: ctrl.signal,
         cache: opts.cache ?? "no-store",
         credentials: "include",
+        redirect: "manual",
       });
+      // Algunos runtimes RN reportan status 0 + type "opaqueredirect" para
+      // redirects manuales. En esos casos no podemos leer el Location, así
+      // que caemos al fetch normal (con el riesgo del header drop).
+      if (r.type === "opaqueredirect" || r.status === 0) {
+        return await fetch(currentUrl, {
+          method,
+          headers,
+          body,
+          signal: ctrl.signal,
+          cache: opts.cache ?? "no-store",
+          credentials: "include",
+        });
+      }
+      if (r.status >= 300 && r.status < 400) {
+        const loc = r.headers.get("location");
+        if (!loc) return r;
+        const next = new URL(loc, currentUrl).toString();
+        return fetchFollow(next, hops + 1);
+      }
+      return r;
+    }
+
+    let res: Response;
+    try {
+      res = await fetchFollow(url.toString());
     } catch (err) {
       clearTimeout(timer);
+      if (err instanceof ApiClientError) throw err;
       throw new ApiClientError({
         code: "network",
         message:

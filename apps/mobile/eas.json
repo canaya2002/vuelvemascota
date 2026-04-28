@@ -13,7 +13,7 @@
       "distribution": "internal",
       "channel": "preview",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://vuelvecasa.com",
+        "EXPO_PUBLIC_API_URL": "https://www.vuelvecasa.com",
         "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsudnVlbHZlY2FzYS5jb20k"
       }
     },
@@ -21,7 +21,7 @@
       "autoIncrement": true,
       "channel": "production",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://vuelvecasa.com",
+        "EXPO_PUBLIC_API_URL": "https://www.vuelvecasa.com",
         "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsudnVlbHZlY2FzYS5jb20k"
       }
     }
