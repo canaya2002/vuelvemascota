@@ -134,7 +134,19 @@ type MeCtx = {
  */
 export async function resolveMe(): Promise<MeCtx | null> {
   if (!FLAGS.auth) return null;
-  const u = await currentUser();
+  let u: Awaited<ReturnType<typeof currentUser>>;
+  try {
+    u = await currentUser();
+  } catch (err) {
+    // Si Clerk tira (token inválido, instance mismatch, network), loggeamos
+    // para diagnóstico — antes esto se silenciaba como null y el usuario
+    // recibía solo "Necesitas iniciar sesión" sin pista del motivo.
+    console.warn(
+      "[auth:resolveMe:clerk-error]",
+      err instanceof Error ? err.message : err
+    );
+    return null;
+  }
   if (!u) return null;
   const primary =
     u.emailAddresses?.find((e) => e.id === u.primaryEmailAddressId) ||
@@ -172,9 +184,21 @@ export async function requireAuth(
 ): Promise<MeCtx | NextResponse<ApiErr>> {
   const me = await resolveMe();
   if (!me) {
-    return jsonErr(req, "unauthenticated", "Necesitas iniciar sesión.", {
-      status: 401,
-    });
+    // Diagnostic info para el cliente — muestra qué le falta al request:
+    // ¿no había Authorization header? ¿el JWT no validó? ¿flags off?
+    const authHeader = req.headers.get("authorization") ?? "";
+    const hasBearer = /^Bearer\s+/i.test(authHeader);
+    const reason = !FLAGS.auth
+      ? "auth-flag-off"
+      : !hasBearer
+        ? "no-bearer-token"
+        : "token-rejected";
+    return jsonErr(
+      req,
+      "unauthenticated",
+      `Necesitas iniciar sesión. (${reason})`,
+      { status: 401 }
+    );
   }
   return me;
 }
