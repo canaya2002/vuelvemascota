@@ -51,28 +51,21 @@ export function ApiProvider({ children }: { children: ReactNode }) {
         baseUrl: API_URL,
         defaultHeaders: publicHeaders,
         getAuthToken: async () => {
-          // Si Clerk aún no terminó de cargar, esperamos hasta 1.5s en
-          // ráfagas de 100ms. Antes devolvíamos null inmediato y las
-          // requests salían sin token (bug "no-bearer-token").
+          // Espera hasta 1.5s a que Clerk Expo cargue (bursts de 100ms).
+          // Antes devolvíamos null inmediato y las primeras requests salían
+          // sin token aunque el usuario estuviera logueado (bug
+          // "no-bearer-token"): la closure capturaba isSignedIn=undefined
+          // del primer render y nunca se renovaba.
           let tries = 0;
           while (!authRef.current.isLoaded && tries < 15) {
             await new Promise((r) => setTimeout(r, 100));
             tries++;
           }
           const { isLoaded, isSignedIn, getToken } = authRef.current;
-          if (!isLoaded || !isSignedIn) {
-            console.log("[api:getAuthToken] sin sesion", { isLoaded, isSignedIn });
-            return null;
-          }
+          if (!isLoaded || !isSignedIn) return null;
           try {
-            const token = await getToken();
-            console.log(
-              "[api:getAuthToken] token",
-              token ? `${token.slice(0, 18)}…(${token.length} chars)` : "null"
-            );
-            return token ?? null;
-          } catch (err) {
-            console.warn("[api:getAuthToken] error", err);
+            return (await getToken()) ?? null;
+          } catch {
             return null;
           }
         },
