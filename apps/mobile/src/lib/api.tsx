@@ -51,26 +51,28 @@ export function ApiProvider({ children }: { children: ReactNode }) {
         baseUrl: API_URL,
         defaultHeaders: publicHeaders,
         getAuthToken: async () => {
-          const { isLoaded, isSignedIn, getToken } = authRef.current;
-          // Si Clerk aún no terminó de cargar, NO devolvemos null —
-          // esperamos a que cargue. Antes hacíamos return null inmediato
-          // y esa request salía sin token aunque el usuario sí estaba
-          // logueado: por eso el backend respondía 401 (no-bearer-token).
-          if (!isLoaded) {
-            // Espera corta y reintenta. Clerk normalmente carga en <500ms.
-            await new Promise((r) => setTimeout(r, 150));
-            const fresh = authRef.current;
-            if (!fresh.isLoaded || !fresh.isSignedIn) return null;
-            try {
-              return (await fresh.getToken()) ?? null;
-            } catch {
-              return null;
-            }
+          // Si Clerk aún no terminó de cargar, esperamos hasta 1.5s en
+          // ráfagas de 100ms. Antes devolvíamos null inmediato y las
+          // requests salían sin token (bug "no-bearer-token").
+          let tries = 0;
+          while (!authRef.current.isLoaded && tries < 15) {
+            await new Promise((r) => setTimeout(r, 100));
+            tries++;
           }
-          if (!isSignedIn) return null;
+          const { isLoaded, isSignedIn, getToken } = authRef.current;
+          if (!isLoaded || !isSignedIn) {
+            console.log("[api:getAuthToken] sin sesion", { isLoaded, isSignedIn });
+            return null;
+          }
           try {
-            return (await getToken()) ?? null;
-          } catch {
+            const token = await getToken();
+            console.log(
+              "[api:getAuthToken] token",
+              token ? `${token.slice(0, 18)}…(${token.length} chars)` : "null"
+            );
+            return token ?? null;
+          } catch (err) {
+            console.warn("[api:getAuthToken] error", err);
             return null;
           }
         },
