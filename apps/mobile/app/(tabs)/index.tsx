@@ -91,8 +91,8 @@ export default function HomeScreen() {
       id: "donate",
       icon: "heart-outline",
       tone: "success",
-      title: "Sostén la red con $100 al mes",
-      description: "Veterinaria, transporte y rescates verificados.",
+      title: "Apoya con una donación voluntaria",
+      description: "Veterinaria, transporte y rescates verificados — desde el sitio web.",
       href: "/donar",
     },
     {

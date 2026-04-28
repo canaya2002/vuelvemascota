@@ -1,17 +1,17 @@
 /**
  * Donar — pantalla nativa.
  *
- * IMPORTANTE: el cobro NO sucede dentro de la app. Apple App Store Review
- * Guideline 3.2.1(vi) requiere que las donaciones a non-profits NO procesen
- * pagos in-app a menos que la organización esté verificada como nonprofit
- * por Apple. VuelveaCasa está en proceso de verificación (pre-donataria
- * autorizada en MX) — mientras tanto, esta pantalla solo explica el por qué
- * y el cómo, y abre `https://vuelvecasa.com/donar` en el navegador para que
- * Stripe Checkout se ejecute fuera del contexto de la app.
+ * IMPORTANTE: el cobro NUNCA sucede dentro de la app. VuelveaCasa NO es
+ * donataria autorizada por SAT y NO buscará certificación non-profit con
+ * Apple, así que para cumplir con App Store Review Guideline 3.1.1 + 3.1.3(a)
+ * las donaciones se procesan EXCLUSIVAMENTE en el sitio web vía Stripe.
  *
- * Cuando Apple apruebe el non-profit status, podemos rehabilitar el flujo
- * native con WebBrowser.openBrowserAsync(checkoutUrl) — el código del API
- * `/api/donar/checkout` sigue funcionando y la web sigue cobrando normal.
+ * Esta pantalla es informativa: explica a dónde va el dinero y abre
+ * `https://www.vuelvecasa.com/donar` con `Linking.openURL` (Safari del
+ * sistema, no SafariViewController). Apple lo trata como navegación externa
+ * — fuera del scope del app — por lo que NO requiere IAP.
+ *
+ * El código del API `/api/donar/checkout` sigue funcionando solo para la web.
  */
 
 import { Linking, Pressable, ScrollView, View } from "react-native";
@@ -65,8 +65,8 @@ const TRUST: { icon: keyof typeof Ionicons.glyphMap; text: string }[] = [
     text: "Cada donación queda registrada y rastreable.",
   },
   {
-    icon: "close-circle-outline",
-    text: "Sin comisiones ocultas. Cancela mensual cuando quieras.",
+    icon: "heart-outline",
+    text: "Donación 100% voluntaria. No desbloquea ni amplía funciones de la app.",
   },
 ];
 
@@ -247,9 +247,10 @@ export default function DonarScreen() {
               lineHeight: 18,
             }}
           >
-            VuelveaCasa opera en modo pre-donataria autorizada en México. Las
-            donaciones se procesan fuera de la app por nuestra plataforma web
-            con Stripe — el 100% del monto va al fondo o caso que elegiste.
+            VuelveaCasa no es donataria autorizada por SAT, por lo que las
+            donaciones no son deducibles de impuestos. Son apoyo voluntario
+            al proyecto. Se procesan fuera de la app en nuestra plataforma
+            web con Stripe — el 100% del monto va al fondo o caso que elegiste.
           </Text>
         </View>
       </ScrollView>

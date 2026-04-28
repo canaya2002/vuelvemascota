@@ -46,7 +46,7 @@ export default function TerminosScreen() {
         },
         {
           heading: "Donaciones",
-          body: "Las donaciones se procesan con Stripe. Son voluntarias y pueden cancelarse en cualquier momento desde tu correo. Cada donación se asigna al fondo común o al caso específico que elegiste. Publicamos reportes periódicos de transparencia. No emitimos CFDI deducible (operamos en modo pre-donataria autorizada).",
+          body: "Las donaciones se procesan exclusivamente en nuestro sitio web con Stripe — la app móvil no procesa pagos. Son voluntarias y no desbloquean ni amplían funciones del app: todas las funciones están disponibles para todos los usuarios sin distinción. VuelveaCasa no es donataria autorizada por SAT, por lo que las donaciones no son deducibles de impuestos y no emitimos CFDI deducible. Cada donación se asigna al fondo común o al caso específico que elegiste y publicamos reportes periódicos de transparencia.",
         },
         {
           heading: "Avisos importantes",

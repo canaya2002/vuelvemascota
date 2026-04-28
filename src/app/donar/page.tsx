@@ -344,7 +344,7 @@ const faqDonaciones = [
   },
   {
     q: "¿Dan recibo deducible de impuestos?",
-    a: "Hoy no emitimos CFDI con deducción fiscal porque operamos en modo pre-donataria. Estamos trabajando en eso para 2026.",
+    a: "No. VuelveaCasa no es donataria autorizada por SAT, así que no emitimos CFDI con deducción fiscal. Tus donaciones son apoyo voluntario al proyecto. Recibirás un comprobante interno de Stripe por email para tu propio control.",
   },
   {
     q: "¿Cómo sé que mi donación llegó a un caso real?",
