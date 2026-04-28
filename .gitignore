@@ -36,6 +36,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# expo (cache local de cualquier subdirectorio — evita commits accidentales
+# como apps/.expo/ que se crean si corres `expo start` desde el dir wrong)
+**/.expo/
+.expo/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
