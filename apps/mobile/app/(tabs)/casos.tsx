@@ -5,6 +5,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, RefreshControl, View } from "react-native";
+import { router } from "expo-router";
 
 import {
   Screen,
@@ -107,7 +108,13 @@ export default function CasosListScreen() {
               icon="paw-outline"
               title="Sin casos que mostrar"
               description="Cambia los filtros o reporta una mascota tú mismo."
-              action={<Button label="Reportar ahora" style={{ marginTop: 8 }} />}
+              action={
+                <Button
+                  label="Reportar ahora"
+                  style={{ marginTop: 8 }}
+                  onPress={() => router.push("/(tabs)/reportar")}
+                />
+              }
             />
           </GlassSurface>
         </View>

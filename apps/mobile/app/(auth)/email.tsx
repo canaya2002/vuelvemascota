@@ -311,33 +311,27 @@ export default function EmailAuthScreen() {
                   value={email}
                   onChangeText={(v) => setEmail(v.trim())}
                 />
-                <View>
-                  <Input
-                    label="Contraseña"
-                    placeholder="Mínimo 8 caracteres"
-                    secureTextEntry={!showPassword}
-                    autoCapitalize="none"
-                    autoComplete={mode === "signIn" ? "current-password" : "new-password"}
-                    value={password}
-                    onChangeText={setPassword}
-                  />
-                  <Pressable
-                    onPress={() => setShowPassword((v) => !v)}
-                    hitSlop={10}
-                    style={{
-                      position: "absolute",
-                      right: 14,
-                      top: 38,
-                      padding: 4,
-                    }}
-                  >
-                    <Ionicons
-                      name={showPassword ? "eye-off-outline" : "eye-outline"}
-                      size={20}
-                      color={colors.muted}
-                    />
-                  </Pressable>
-                </View>
+                <Input
+                  label="Contraseña"
+                  placeholder="Mínimo 8 caracteres"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoComplete={mode === "signIn" ? "current-password" : "new-password"}
+                  value={password}
+                  onChangeText={setPassword}
+                  trailing={
+                    <Pressable
+                      onPress={() => setShowPassword((v) => !v)}
+                      hitSlop={10}
+                    >
+                      <Ionicons
+                        name={showPassword ? "eye-off-outline" : "eye-outline"}
+                        size={20}
+                        color={colors.muted}
+                      />
+                    </Pressable>
+                  }
+                />
                 <PremiumButton
                   label={mode === "signIn" ? "Entrar" : "Crear cuenta"}
                   block
