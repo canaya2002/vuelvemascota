@@ -89,7 +89,7 @@ export default function ForosIndex() {
           <HiloSkeleton />
         </View>
       ) : query.isError ? (
-        <ErrorState onRetry={() => query.refetch()} />
+        <ErrorState error={query.error} onRetry={() => query.refetch()} />
       ) : (query.data?.hilos ?? []).length === 0 ? (
         <EmptyState
           icon="chatbubbles-outline"

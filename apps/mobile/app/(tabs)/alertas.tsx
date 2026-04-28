@@ -96,7 +96,7 @@ export default function AlertasScreen() {
       {query.isPending ? (
         <LoadingState label="Cargando alertas..." />
       ) : query.isError ? (
-        <ErrorState onRetry={() => query.refetch()} />
+        <ErrorState error={query.error} onRetry={() => query.refetch()} />
       ) : query.data && query.data.length === 0 ? (
         <View style={{ paddingHorizontal: 20 }}>
           <GlassSurface>

@@ -71,18 +71,65 @@ export async function sendEmail(
 
 /* ------------------------------- templates ------------------------------- */
 
+/**
+ * Layout base premium para emails. Inline CSS porque clientes (Gmail/Outlook/
+ * Apple Mail) son inconsistentes con `<style>`. Paleta alineada con la web:
+ * ink deep navy + brand granate sobrio + cream neutral.
+ */
+function emailShell(opts: {
+  preheader: string;
+  badge?: { label: string; tone?: "brand" | "success" | "warn" };
+  title: string;
+  body: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  footer?: string;
+}) {
+  const tone = opts.badge?.tone ?? "brand";
+  const badgeBg =
+    tone === "success" ? "#e3f3eb" : tone === "warn" ? "#fbeed1" : "#fbe9ee";
+  const badgeFg =
+    tone === "success" ? "#157a55" : tone === "warn" ? "#a06000" : "#6e1530";
+  return `<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(opts.title)}</title></head>
+<body style="margin:0;padding:0;background:#f7f3ec;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,sans-serif;color:#0e1827;">
+  <span style="display:none;max-height:0;overflow:hidden;color:#f7f3ec;">${escapeHtml(opts.preheader)}</span>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f3ec;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border:1px solid #e6dfd0;border-radius:18px;overflow:hidden;">
+        <tr><td style="padding:28px 32px 18px;">
+          <table role="presentation" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="vertical-align:middle;"><span style="display:inline-block;background:#0e1827;color:#fff;width:34px;height:34px;border-radius:999px;text-align:center;line-height:34px;font-weight:700;font-size:13px;letter-spacing:-0.02em;">VC</span></td>
+              <td style="vertical-align:middle;padding-left:10px;"><span style="font-weight:600;font-size:15px;letter-spacing:-0.01em;color:#0e1827;">${SITE.name}</span></td>
+            </tr>
+          </table>
+        </td></tr>
+        <tr><td style="padding:0 32px 12px;">
+          ${opts.badge ? `<span style="display:inline-block;background:${badgeBg};color:${badgeFg};font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:5px 11px;border-radius:999px;">${escapeHtml(opts.badge.label)}</span>` : ""}
+          <h1 style="margin:14px 0 6px;font-size:24px;line-height:1.2;letter-spacing:-0.02em;font-weight:600;color:#0e1827;">${escapeHtml(opts.title)}</h1>
+        </td></tr>
+        <tr><td style="padding:6px 32px 20px;font-size:15px;line-height:1.6;color:#2a374b;">${opts.body}</td></tr>
+        ${opts.ctaLabel && opts.ctaHref ? `<tr><td style="padding:0 32px 26px;"><a href="${opts.ctaHref}" style="display:inline-block;background:#0e1827;color:#fff;padding:13px 22px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;">${escapeHtml(opts.ctaLabel)}</a></td></tr>` : ""}
+        <tr><td style="padding:18px 32px 22px;border-top:1px solid #e6dfd0;font-size:12px;line-height:1.6;color:#6b7686;">${opts.footer ?? `Recibes este correo porque interactuaste con ${SITE.name}. <a href="${SITE.url}" style="color:#6b7686;text-decoration:underline;">vuelvecasa.com</a>`}</td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
 export function waitlistWelcome(name: string) {
   return {
-    subject: `¡Bienvenida/o a ${SITE.name}!`,
-    html: `
-      <div style="font-family: -apple-system, Segoe UI, Roboto, Inter, sans-serif; color:#0b1f33; max-width:560px; margin:0 auto;">
-        <h1 style="margin:0 0 12px; font-size:28px;">Estás dentro, ${escapeHtml(name)}.</h1>
-        <p>Gracias por sumarte a <strong>${SITE.name}</strong>. Te avisaremos apenas tu zona se active y podrás reportar, recibir alertas y apoyar casos reales.</p>
-        <p>Mientras tanto, puedes apoyar a la comunidad:</p>
-        <p><a href="${SITE.url}/donar" style="display:inline-block; background:#e11d48; color:#fff; padding:12px 18px; border-radius:999px; text-decoration:none; font-weight:600;">Apoyar con una donación</a></p>
-        <p style="color:#6a7a8c; font-size:13px; margin-top:24px;">Si no te registraste tú, ignora este correo.</p>
-      </div>
-    `,
+    subject: `Bienvenida/o a ${SITE.name}`,
+    html: emailShell({
+      preheader: "Estás dentro. Te avisamos cuando tu zona se active.",
+      badge: { label: "Bienvenida/o", tone: "brand" },
+      title: `Estás dentro, ${escapeHtml(name)}.`,
+      body: `<p style="margin:0 0 14px;">Gracias por sumarte a <strong>${SITE.name}</strong>. Te avisaremos apenas tu zona se active y podrás reportar, recibir alertas y apoyar casos reales en tu comunidad.</p><p style="margin:0;">Mientras tanto, ya puedes apoyar a la red comunitaria con una donación a un caso verificado.</p>`,
+      ctaLabel: "Apoyar con una donación",
+      ctaHref: `${SITE.url}/donar`,
+      footer: `Si no te registraste tú, puedes ignorar este correo. <a href="${SITE.url}" style="color:#6b7686;text-decoration:underline;">vuelvecasa.com</a>`,
+    }),
     text: `Estás dentro, ${name}. Gracias por sumarte a ${SITE.name}. Te avisaremos apenas tu zona se active.`,
   };
 }
@@ -101,17 +148,26 @@ export function contactNotify(
     to: teamEmail,
     subject: `[Contacto · ${payload.tema}] ${payload.nombre}`,
     replyTo: payload.email,
-    html: `
-      <div style="font-family: -apple-system, Segoe UI, Roboto, Inter, sans-serif; color:#0b1f33;">
-        <h2>Nuevo mensaje de contacto</h2>
-        <p><strong>Nombre:</strong> ${escapeHtml(payload.nombre)}</p>
-        <p><strong>Email:</strong> ${escapeHtml(payload.email)}</p>
-        <p><strong>Teléfono:</strong> ${escapeHtml(payload.telefono || "—")}</p>
-        <p><strong>Tema:</strong> ${escapeHtml(payload.tema)}</p>
-        <hr />
-        <p style="white-space:pre-wrap;">${escapeHtml(payload.mensaje)}</p>
-      </div>
-    `,
+    html: emailShell({
+      preheader: `${payload.nombre} (${payload.email}) — ${payload.mensaje.slice(0, 90)}`,
+      badge: { label: `Contacto · ${payload.tema}`, tone: "brand" },
+      title: `Nuevo mensaje de ${escapeHtml(payload.nombre)}`,
+      body: `
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px;">
+          <tr><td style="padding:5px 0;color:#6b7686;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;width:90px;">Email</td>
+              <td style="padding:5px 0;color:#0e1827;"><a href="mailto:${escapeHtml(payload.email)}" style="color:#0e1827;text-decoration:underline;">${escapeHtml(payload.email)}</a></td></tr>
+          ${payload.telefono ? `<tr><td style="padding:5px 0;color:#6b7686;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;">Teléfono</td><td style="padding:5px 0;color:#0e1827;"><a href="tel:${escapeHtml(payload.telefono)}" style="color:#0e1827;text-decoration:underline;">${escapeHtml(payload.telefono)}</a></td></tr>` : ""}
+          <tr><td style="padding:5px 0;color:#6b7686;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;">Tema</td>
+              <td style="padding:5px 0;color:#0e1827;text-transform:capitalize;">${escapeHtml(payload.tema)}</td></tr>
+        </table>
+        <div style="background:#f7f3ec;border-radius:12px;padding:16px 18px;border:1px solid #e6dfd0;">
+          <p style="margin:0;white-space:pre-wrap;color:#2a374b;line-height:1.55;font-size:14.5px;">${escapeHtml(payload.mensaje)}</p>
+        </div>
+      `,
+      ctaLabel: "Responder",
+      ctaHref: `mailto:${encodeURIComponent(payload.email)}?subject=${encodeURIComponent(`Re: ${payload.tema}`)}`,
+      footer: `Tu reply se manda directo a ${escapeHtml(payload.email)}.`,
+    }),
   };
 }
 

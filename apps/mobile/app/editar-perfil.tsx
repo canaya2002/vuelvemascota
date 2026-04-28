@@ -85,7 +85,7 @@ export default function EditarPerfilScreen() {
   if (perfil.isError) {
     return (
       <Screen edges={["top"]}>
-        <ErrorState onRetry={() => perfil.refetch()} />
+        <ErrorState error={perfil.error} onRetry={() => perfil.refetch()} />
       </Screen>
     );
   }

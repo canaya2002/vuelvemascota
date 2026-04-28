@@ -99,7 +99,7 @@ export default function CasosListScreen() {
           <CasoCardSkeleton />
         </View>
       ) : casosQuery.isError ? (
-        <ErrorState onRetry={() => casosQuery.refetch()} />
+        <ErrorState error={casosQuery.error} onRetry={() => casosQuery.refetch()} />
       ) : casosQuery.data && casosQuery.data.length === 0 ? (
         <View style={{ padding: 18 }}>
           <GlassSurface>

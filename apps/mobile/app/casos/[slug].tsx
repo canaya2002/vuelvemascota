@@ -73,7 +73,7 @@ export default function CasoDetailScreen() {
   if (query.isError || !caso) {
     return (
       <Screen edges={["top"]}>
-        <ErrorState onRetry={() => query.refetch()} />
+        <ErrorState error={query.error} onRetry={() => query.refetch()} />
       </Screen>
     );
   }

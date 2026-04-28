@@ -41,7 +41,7 @@ export default function HiloDetail() {
   if (query.isError || !query.data) {
     return (
       <Screen edges={["top"]}>
-        <ErrorState onRetry={() => query.refetch()} />
+        <ErrorState error={query.error} onRetry={() => query.refetch()} />
       </Screen>
     );
   }

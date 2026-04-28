@@ -76,7 +76,7 @@ export default function ChatCanal() {
         {query.isPending ? (
           <LoadingState />
         ) : query.isError ? (
-          <ErrorState onRetry={() => query.refetch()} />
+          <ErrorState error={query.error} onRetry={() => query.refetch()} />
         ) : (query.data ?? []).length === 0 ? (
           <EmptyState
             icon="chatbubbles-outline"
