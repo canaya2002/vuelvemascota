@@ -223,14 +223,24 @@ export default function CasoDetailScreen() {
             </View>
           ) : null}
 
-          <Button
-            label="Reportar avistamiento"
-            variant="dark"
-            block
-            size="lg"
-            leading={<Ionicons name="eye" size={18} color="#fff" />}
-            onPress={() => router.push(`/avistamiento/${caso.slug}` as never)}
-          />
+          <View style={{ gap: 10 }}>
+            <Button
+              label="Hablar del caso"
+              variant="primary"
+              block
+              size="lg"
+              leading={<Ionicons name="chatbubbles" size={18} color="#fff" />}
+              onPress={() => router.push(`/casos/${caso.slug}/chat` as never)}
+            />
+            <Button
+              label="Reportar avistamiento"
+              variant="dark"
+              block
+              size="lg"
+              leading={<Ionicons name="eye" size={18} color="#fff" />}
+              onPress={() => router.push(`/avistamiento/${caso.slug}` as never)}
+            />
+          </View>
 
           {avistamientos.length > 0 ? (
             <View style={{ gap: 10, marginTop: 8 }}>

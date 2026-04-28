@@ -47,6 +47,8 @@ export type Caso = {
   contacto_telefono: string | null;
   contacto_whatsapp: string | null;
   contacto_email: string | null;
+  /** usuarios.id del creador. Null si fue creado anónimo o el usuario fue borrado. */
+  creado_por: string | null;
   destacado: boolean;
   vistas: number;
   donado_mxn: number;
@@ -185,7 +187,13 @@ export type ForoHiloInput = {
 
 /* --------------------------- Chat ------------------------------ */
 
+/**
+ * Canales legacy (general/urgencias/veterinarias/rescatistas) ya no se usan
+ * en el cliente: el backend los mapea al canal único 'comunidad'. Mantenemos
+ * los strings en el tipo para no romper Validations viejas que aún los usen.
+ */
 export type ChatCanal =
+  | "comunidad"
   | "general"
   | "urgencias"
   | "veterinarias"
@@ -195,9 +203,44 @@ export type ChatMensaje = {
   id: string;
   autor_usuario_id: string | null;
   autor_nombre: string | null;
-  canal: ChatCanal;
+  caso_id: string | null;
+  canal: ChatCanal | null;
   cuerpo: string;
+  reportes: number;
+  oculto: boolean;
   created_at: string;
+};
+
+/* --------------------------- Vistas ---------------------------- */
+
+export type VistaFiltros = {
+  radio_km?: number;
+  especies?: CasoEspecie[];
+  tipo?: CasoTipo[];
+  ciudad?: string;
+  municipio?: string;
+  colonia?: string;
+  estado_caso?: Array<"activo" | "cerrado" | "reencontrado">;
+  solo_verificados?: boolean;
+  recientes_horas?: number;
+};
+
+export type Vista = {
+  id: string;
+  usuario_id: string;
+  nombre: string;
+  filtros: VistaFiltros;
+  publica: boolean;
+  share_slug: string | null;
+  suscriptores: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type VistaInput = {
+  nombre: string;
+  filtros: VistaFiltros;
+  publica?: boolean;
 };
 
 /* --------------------------- Perfil ---------------------------- */
@@ -223,6 +266,10 @@ export type PerfilMe = Perfil & {
   clerk_user_id: string;
   email: string;
   usuario_id: string | null;
+  /** ISO timestamp si el usuario está bajo shadow-ban; null si no. */
+  shadow_until?: string | null;
+  /** Cuántos casos cerró como reencontrado — gate de reputación. */
+  casos_verificados?: number;
 };
 
 export type PerfilInput = {

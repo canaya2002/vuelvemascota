@@ -246,6 +246,43 @@ export const db = {
     }
   },
 
+  /**
+   * Marca una donación como refunded/failed cuando llega un evento de Stripe
+   * de devolución o pago fallido. Idempotente: si la fila no existe, no hace
+   * nada (el evento puede llegar antes que checkout.session.completed por
+   * orden de webhook).
+   */
+  async updateDonationStatus(data: {
+    stripe_session_id: string;
+    status: "refunded" | "failed";
+  }) {
+    if (!sql) {
+      console.log("[db:donaciones:status:stub]", data);
+      return { ok: true };
+    }
+    try {
+      const rows = (await sql`
+        update donaciones set status = ${data.status}
+        where stripe_session_id = ${data.stripe_session_id}
+        returning amount, caso_id, status as prev_status
+      `) as unknown as Array<{
+        amount: number;
+        caso_id: string | null;
+      }>;
+      const updated = rows[0];
+      if (data.status === "refunded" && updated?.caso_id) {
+        await sql`
+          update casos set donado_mxn = greatest(0, donado_mxn - ${updated.amount})
+          where id = ${updated.caso_id}
+        `;
+      }
+      return { ok: true };
+    } catch (err) {
+      console.error("[db:donaciones:status:error]", err);
+      return { ok: false };
+    }
+  },
+
   /* -------------------- usuarios (fase 2) -------------------- */
   async upsertUser(data: UserRecord) {
     if (!sql) {

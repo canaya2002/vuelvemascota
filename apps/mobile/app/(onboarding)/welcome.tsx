@@ -68,7 +68,6 @@ export default function OnboardingWelcome() {
             label="Comenzar"
             size="lg"
             block
-            glow
             trailing={<Ionicons name="arrow-forward" size={18} color="#fff" />}
             onPress={() => router.push("/(onboarding)/location" as never)}
           />

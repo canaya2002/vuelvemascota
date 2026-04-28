@@ -7,3 +7,5 @@ export * from "./useCatalogos";
 export * from "./useAvistamientos";
 export * from "./usePushRegistration";
 export * from "./useDeepLinks";
+export * from "./useVistas";
+export * from "./useSilencias";

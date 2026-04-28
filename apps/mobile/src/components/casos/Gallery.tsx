@@ -31,9 +31,10 @@ export function Gallery({ fotos, height = 320 }: Props) {
           backgroundColor: colors.line,
           alignItems: "center",
           justifyContent: "center",
+          gap: 8,
         }}
       >
-        <Ionicons name="image-outline" size={48} color={colors.muted} />
+        <Ionicons name="image-outline" size={36} color={colors.muted} />
       </View>
     );
   }

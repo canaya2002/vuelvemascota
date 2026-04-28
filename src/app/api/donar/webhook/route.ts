@@ -105,6 +105,39 @@ export async function POST(req: Request) {
         break;
       }
 
+      case "charge.refunded": {
+        // Devolución completa o parcial. Marca la donación como refunded para
+        // que no cuente en reportes de transparencia.
+        const charge = (event as unknown as {
+          data: {
+            object: {
+              id: string;
+              payment_intent?: string | null;
+              amount_refunded?: number;
+              amount?: number;
+            };
+          };
+        }).data.object;
+        await db.updateDonationStatus({
+          stripe_session_id: charge.payment_intent ?? charge.id,
+          status: "refunded",
+        });
+        break;
+      }
+
+      case "payment_intent.payment_failed": {
+        // El cobro falló (tarjeta declinada, autenticación 3DS rechazada, etc.).
+        // Marcamos la donación como failed si existe en DB.
+        const pi = (event as unknown as {
+          data: { object: { id: string } };
+        }).data.object;
+        await db.updateDonationStatus({
+          stripe_session_id: pi.id,
+          status: "failed",
+        });
+        break;
+      }
+
       default:
         break;
     }

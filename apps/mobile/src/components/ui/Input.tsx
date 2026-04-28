@@ -107,7 +107,7 @@ export const Input = forwardRef<TextInput, Props>(function Input(
               : focused
                 ? colors.ink
                 : colors.line,
-            paddingHorizontal: leading ? 12 : 14,
+            paddingHorizontal: leading ? 10 : 14,
             // Sombra muy sutil cuando NO focused (eleva del fondo cream)
             shadowColor: colors.ink,
             shadowOpacity: focused ? 0 : 0.04,

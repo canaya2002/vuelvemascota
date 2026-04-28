@@ -74,7 +74,12 @@ export default function PerfilScreen() {
       onPress: () => router.push("/editar-perfil" as never),
     },
     {
-      icon: "chatbubbles-outline",
+      icon: "filter-outline",
+      label: "Comunidad",
+      onPress: () => router.push("/chat" as never),
+    },
+    {
+      icon: "book-outline",
       label: "Foros",
       onPress: () => router.push("/foros" as never),
     },
@@ -122,16 +127,22 @@ export default function PerfilScreen() {
           <View
             style={{
               borderRadius: 28,
-              overflow: "hidden",
               shadowColor: colors.brand,
-              shadowOpacity: 0.22,
-              shadowRadius: 28,
-              shadowOffset: { width: 0, height: 16 },
-              elevation: 10,
+              shadowOpacity: 0.18,
+              shadowRadius: 24,
+              shadowOffset: { width: 0, height: 14 },
+              elevation: 8,
             }}
           >
-            <GradientFill preset="brandDeep" radius={28}>
-              <View style={{ padding: 20 }}>
+            <Pressable
+              onPress={() => {
+                haptics.tap();
+                router.push("/perfil-publico" as never);
+              }}
+              style={{ borderRadius: 28, overflow: "hidden" }}
+            >
+              <GradientFill preset="brand" radius={28}>
+                <View style={{ padding: 20 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
                   <View
                     style={{
@@ -199,9 +210,26 @@ export default function PerfilScreen() {
                       </View>
                     ) : null}
                   </View>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color="rgba(255,255,255,0.85)"
+                  />
                 </View>
-              </View>
-            </GradientFill>
+                <Text
+                  style={{
+                    marginTop: 14,
+                    color: "rgba(255,255,255,0.78)",
+                    fontSize: 12,
+                    fontWeight: "500",
+                    letterSpacing: 0.3,
+                  }}
+                >
+                  Toca para ver tu vista pública →
+                </Text>
+                </View>
+              </GradientFill>
+            </Pressable>
           </View>
         </AnimatedEntry>
 

@@ -73,9 +73,15 @@ export default function AvistamientoScreen() {
       haptics.success();
       Alert.alert(
         "¡Gracias!",
-        "Avisamos al dueño con los datos que compartiste."
+        "Avisamos al dueño con los datos que compartiste.",
+        [
+          {
+            text: "Ver el caso",
+            onPress: () =>
+              router.replace(`/casos/${slug}` as never),
+          },
+        ]
       );
-      router.back();
     } catch (err) {
       haptics.error();
       Alert.alert("No se pudo enviar", errorMessage(err));

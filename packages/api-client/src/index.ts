@@ -23,6 +23,8 @@ import { makeMeApi } from "./me";
 import { makePushApi } from "./push";
 import { makeAvistamientosApi, type AvistamientoInput } from "./avistamientos";
 import { makeCatalogosApi, type CityEntry } from "./catalogos";
+import { makeVistasApi } from "./vistas";
+import { makeSilenciasApi } from "./silencias";
 
 export type { ClientConfig, ApiClient, ListCasosFilters, AvistamientoInput, CityEntry };
 export { ApiClientError, createClient } from "./client";
@@ -40,6 +42,8 @@ export function createApi(config: ClientConfig) {
     push: makePushApi(client),
     avistamientos: makeAvistamientosApi(client),
     catalogos: makeCatalogosApi(client),
+    vistas: makeVistasApi(client),
+    silencias: makeSilenciasApi(client),
   };
 }
 

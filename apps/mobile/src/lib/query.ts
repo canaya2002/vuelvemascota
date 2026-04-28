@@ -49,6 +49,12 @@ export const qk = {
     detail: (id: string) => [...qk.foros.all(), "detail", id] as const,
   },
   chat: (canal: string) => [...qk.all, "chat", canal] as const,
+  chatCaso: (slug: string) => [...qk.all, "chatCaso", slug] as const,
+  vistas: {
+    all: () => [...qk.all, "vistas"] as const,
+    detail: (id: string) => [...qk.all, "vistas", id] as const,
+  },
+  silencias: () => [...qk.all, "silencias"] as const,
   catalogos: {
     cities: () => [...qk.all, "catalogos", "cities"] as const,
     estados: () => [...qk.all, "catalogos", "estados"] as const,

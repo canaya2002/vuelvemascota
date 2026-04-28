@@ -32,6 +32,8 @@ export function IconButton({
     tone === "brand" ? colors.brand : tone === "dark" ? colors.ink : "transparent";
   return (
     <AnimatedPressable
+      accessibilityRole="button"
+      accessibilityLabel={rest.accessibilityLabel ?? "Botón"}
       onPressIn={(e) => {
         scale.value = withSpring(0.9, { damping: 14, stiffness: 260 });
         haptics.tap();

@@ -169,7 +169,8 @@ const config: ExpoConfig = {
       "expo-notifications",
       {
         ...(notificationIconPath ? { icon: notificationIconPath } : {}),
-        color: "#e11d48",
+        // Brand granate sobrio — debe matchear packages/design-tokens colors.brand.
+        color: "#b8264a",
       },
     ],
     // @rnmapbox/maps: el plugin lee el download token del env var

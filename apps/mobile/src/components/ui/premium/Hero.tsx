@@ -28,7 +28,7 @@ export function Hero({
         {
           borderRadius: radius,
           overflow: "hidden",
-          shadowColor: preset === "twilight" || preset === "ink" ? "#0a1a2b" : "#e11d48",
+          shadowColor: preset === "twilight" || preset === "ink" ? "#0a1a2b" : "#b8264a",
           shadowOpacity: 0.25,
           shadowRadius: 30,
           shadowOffset: { width: 0, height: 18 },
@@ -51,7 +51,7 @@ export function Hero({
           ]}
         />
       ) : null}
-      <View style={{ padding: 22 }}>{children}</View>
+      <View style={{ padding: 20 }}>{children}</View>
     </View>
   );
 }

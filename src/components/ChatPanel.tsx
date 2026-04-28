@@ -1,19 +1,34 @@
 "use client";
 import { useActionState, useState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
-import { postChatAction, type ForoActionState } from "@/lib/foroActions";
+import {
+  postChatAction,
+  reportChatAction,
+  silenciarUserAction,
+  type ForoActionState,
+} from "@/lib/foroActions";
 import type { ChatCanal, ChatMensaje } from "@/lib/chat";
 import { TextArea } from "./forms/Field";
 import { IconArrow, IconPaw } from "./Icons";
 
 const initial: ForoActionState = { ok: false, message: "" };
 
+/**
+ * ChatPanel — render del scroller de mensajes + input. Reusable para:
+ *   - Comunidad global (canal="comunidad", sin casoSlug)
+ *   - Hilo de caso (casoSlug="firulais-coyoacan-a1b2", canal puede ir comunidad)
+ *
+ * Cada mensaje (cuando no es del usuario actual) tiene un botón "···" que
+ * abre un menú con Reportar y Silenciar al autor.
+ */
 export function ChatPanel({
   canal,
   mensajes,
+  casoSlug,
 }: {
   canal: ChatCanal;
   mensajes: ChatMensaje[];
+  casoSlug?: string;
 }) {
   const [state, formAction] = useActionState(postChatAction, initial);
   const [cuerpo, setCuerpo] = useState("");
@@ -56,12 +71,17 @@ export function ChatPanel({
         }}
         className="border-t border-[var(--line)] p-4 md:p-5 bg-[var(--bg-alt)]"
       >
+        {casoSlug ? <input type="hidden" name="caso_slug" value={casoSlug} /> : null}
         <input type="hidden" name="canal" value={canal} />
         <TextArea
           label="Tu mensaje"
           name="cuerpo"
           rows={3}
-          placeholder="Escribe algo útil y respetuoso…"
+          placeholder={
+            casoSlug
+              ? "Comparte una pista o pregunta sobre este caso…"
+              : "Escribe algo útil y respetuoso…"
+          }
           value={cuerpo}
           onChange={(e) => setCuerpo(e.target.value)}
           maxLength={800}
@@ -107,19 +127,6 @@ function EmptyChat() {
           Rompe el hielo: pregunta, ofrece ayuda o comparte una pista. La
           comunidad suele responder en minutos.
         </p>
-        <ul className="mt-5 text-left text-sm text-[var(--ink-soft)] space-y-2">
-          <li>
-            💬 &ldquo;¿Hay algún rescatista en [zona] que pueda ir a revisar un
-            avistamiento?&rdquo;
-          </li>
-          <li>
-            🐾 &ldquo;Encontré un gato con collar en [colonia], buscando
-            dueño&rdquo;
-          </li>
-          <li>
-            🩺 &ldquo;¿Alguien conoce vet 24h con consulta accesible?&rdquo;
-          </li>
-        </ul>
       </div>
     </div>
   );
@@ -135,12 +142,12 @@ function DateSeparator({ date }: { date: string }) {
   const label = isToday
     ? "Hoy"
     : isYesterday
-    ? "Ayer"
-    : d.toLocaleDateString("es-MX", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
+      ? "Ayer"
+      : d.toLocaleDateString("es-MX", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
   return (
     <div className="flex items-center gap-3 my-4" aria-label={label}>
       <span className="h-px flex-1 bg-[var(--line)]" />
@@ -163,7 +170,7 @@ function ChatBubble({ m }: { m: ChatMensaje }) {
     <div className="flex items-start gap-3 group">
       <span
         aria-hidden
-        className="shrink-0 w-9 h-9 rounded-full inline-flex items-center justify-center text-white text-xs font-bold bg-gradient-to-br from-[var(--brand)] to-[#f472b6]"
+        className="shrink-0 w-9 h-9 rounded-full inline-flex items-center justify-center text-white text-xs font-bold bg-gradient-to-br from-[var(--brand)] to-[var(--brand-deep,#7e1933)]"
       >
         {initials}
       </span>
@@ -172,16 +179,88 @@ function ChatBubble({ m }: { m: ChatMensaje }) {
           <p className="text-sm font-semibold text-[var(--ink)] truncate">
             {m.autor_nombre ?? "Comunidad"}
           </p>
-          <span className="text-[11px] text-[var(--muted)] whitespace-nowrap">
-            {formatTime(m.created_at)}
-          </span>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[11px] text-[var(--muted)] whitespace-nowrap">
+              {formatTime(m.created_at)}
+            </span>
+            <MessageActions mensaje={m} />
+          </div>
         </div>
-        <div className="mt-1 rounded-2xl bg-white border border-[var(--line)] px-4 py-2.5 shadow-sm">
+        <div
+          className={`mt-1 rounded-2xl bg-white border border-[var(--line)] px-4 py-2.5 shadow-sm ${
+            m.oculto ? "opacity-60" : ""
+          }`}
+        >
           <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--ink)]">
             {m.cuerpo}
           </p>
+          {m.oculto ? (
+            <p className="mt-1 text-[11px] italic text-[var(--muted)]">
+              Oculto por reportes — solo visible para ti.
+            </p>
+          ) : null}
         </div>
       </div>
+    </div>
+  );
+}
+
+function MessageActions({ mensaje }: { mensaje: ChatMensaje }) {
+  const [open, setOpen] = useState(false);
+  const [, reportAction] = useActionState(reportChatAction, initial);
+  const [, silenceAction] = useActionState(silenciarUserAction, initial);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((p) => !p)}
+        aria-label="Opciones del mensaje"
+        className="opacity-40 hover:opacity-100 group-hover:opacity-100 transition-opacity rounded-full px-1.5 py-0.5 text-[var(--muted)] hover:bg-[var(--bg-alt)]"
+      >
+        ⋯
+      </button>
+      {open ? (
+        <div
+          className="absolute right-0 top-full mt-1 z-10 min-w-[180px] rounded-xl border border-[var(--line)] bg-white shadow-lg overflow-hidden"
+          onMouseLeave={() => setOpen(false)}
+        >
+          <form
+            action={async (fd) => {
+              await reportAction(fd);
+              setOpen(false);
+            }}
+          >
+            <input type="hidden" name="id" value={mensaje.id} />
+            <button
+              type="submit"
+              className="block w-full text-left px-4 py-2.5 text-sm text-[var(--brand)] hover:bg-[var(--bg-alt)] font-semibold"
+            >
+              Reportar mensaje
+            </button>
+          </form>
+          {mensaje.autor_usuario_id ? (
+            <form
+              action={async (fd) => {
+                await silenceAction(fd);
+                setOpen(false);
+              }}
+            >
+              <input
+                type="hidden"
+                name="usuario_id"
+                value={mensaje.autor_usuario_id}
+              />
+              <button
+                type="submit"
+                className="block w-full text-left px-4 py-2.5 text-sm text-[var(--ink)] hover:bg-[var(--bg-alt)] border-t border-[var(--line)]"
+              >
+                Silenciar a este autor
+              </button>
+            </form>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -7,7 +7,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -134,14 +134,11 @@ export default function AvistamientoIndexScreen() {
               {casos.length} {casos.length === 1 ? "caso" : "casos"} cerca
             </Text>
             {casos.map((c) => (
-              <Pressable
+              <CasoCard
                 key={c.id}
-                onPress={() =>
-                  router.push(`/avistamiento/${c.slug}` as never)
-                }
-              >
-                <CasoCard caso={c} />
-              </Pressable>
+                caso={c}
+                onPress={() => router.push(`/avistamiento/${c.slug}` as never)}
+              />
             ))}
           </>
         )}

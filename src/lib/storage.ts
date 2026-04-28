@@ -30,10 +30,12 @@ export async function uploadPhoto(args: {
   bytes: ArrayBuffer | Uint8Array;
   contentType: string;
 }): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
-  if (!storageEnabled()) {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
+  if (!supabaseUrl || !serviceRole) {
     return { ok: false, error: "storage-no-configurado" };
   }
-  const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
+  const base = supabaseUrl.replace(/\/$/, "");
   const url = `${base}/storage/v1/object/${STORAGE_BUCKET}/${encodeURI(args.path)}`;
   try {
     const body: BodyInit =
@@ -44,7 +46,7 @@ export async function uploadPhoto(args: {
       method: "POST",
       headers: {
         "Content-Type": args.contentType,
-        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE}`,
+        Authorization: `Bearer ${serviceRole}`,
         "x-upsert": "true",
       },
       body,

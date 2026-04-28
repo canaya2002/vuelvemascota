@@ -31,7 +31,7 @@ export async function GET(req: Request) {
     try {
       const rows = (await sql`
         select id, email, nombre, ciudad, estado, rol, bio, verificado,
-               created_at, foto_url
+               created_at, foto_url, shadow_until, casos_verificados
         from usuarios where id = ${me.usuarioId} limit 1
       `) as unknown as Array<Record<string, unknown>>;
       if (rows[0]) {

@@ -88,7 +88,6 @@ export default function OnboardingLocation() {
               label="Permitir ubicación"
               size="lg"
               block
-              glow
               loading={busy}
               leading={<Ionicons name="location" size={18} color="#fff" />}
               onPress={() => go(true)}

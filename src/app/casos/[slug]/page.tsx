@@ -336,6 +336,19 @@ export default async function Page({
               />
             </div>
 
+            {/* Hilo del caso (chat) */}
+            <div className="mt-6">
+              <Link
+                href={`/casos/${caso.slug}/chat`}
+                className="vc-btn vc-btn-primary w-full justify-center"
+              >
+                <IconChat size={18} /> Hablar del caso
+              </Link>
+              <p className="mt-2 text-xs text-[var(--muted)] text-center">
+                Comparte pistas o pregunta. Mensajes moderados.
+              </p>
+            </div>
+
             {/* Donación progreso */}
             {(caso.donado_mxn > 0 || caso.meta_donacion) && (
               <div className="mt-6">

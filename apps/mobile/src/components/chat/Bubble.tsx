@@ -1,12 +1,16 @@
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Body, Text } from "@/components/ui";
 import type { ChatMensaje } from "@vuelvecasa/shared";
 import { colors } from "@/lib/theme";
 import { relativeTime } from "@/lib/format";
 
-type Props = { mensaje: ChatMensaje; mine: boolean };
+type Props = {
+  mensaje: ChatMensaje;
+  mine: boolean;
+  onLongPress?: () => void;
+};
 
-export function Bubble({ mensaje, mine }: Props) {
+export function Bubble({ mensaje, mine, onLongPress }: Props) {
   return (
     <View
       style={{
@@ -27,7 +31,11 @@ export function Bubble({ mensaje, mine }: Props) {
           {mensaje.autor_nombre}
         </Text>
       ) : null}
-      <View
+      <Pressable
+        onLongPress={onLongPress}
+        delayLongPress={350}
+        accessibilityRole="text"
+        accessibilityHint={onLongPress ? "Mantén pulsado para opciones" : undefined}
         style={{
           backgroundColor: mine ? colors.brand : colors.surface,
           borderRadius: 18,
@@ -37,6 +45,7 @@ export function Bubble({ mensaje, mine }: Props) {
           borderBottomLeftRadius: mine ? 18 : 4,
           borderWidth: mine ? 0 : 1,
           borderColor: colors.line,
+          opacity: mensaje.oculto ? 0.5 : 1,
         }}
       >
         <Body
@@ -47,7 +56,19 @@ export function Bubble({ mensaje, mine }: Props) {
         >
           {mensaje.cuerpo}
         </Body>
-      </View>
+        {mensaje.oculto ? (
+          <Text
+            style={{
+              fontSize: 10,
+              color: mine ? "rgba(255,255,255,0.7)" : colors.muted,
+              marginTop: 4,
+              fontStyle: "italic",
+            }}
+          >
+            Oculto por reportes — solo visible para ti.
+          </Text>
+        ) : null}
+      </Pressable>
       <Text
         style={{
           fontSize: 10,

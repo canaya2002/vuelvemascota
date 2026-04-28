@@ -1,53 +1,31 @@
 /**
- * Runtime loader del SDK de Stripe.
+ * Loader del SDK de Stripe.
  *
- * Cargamos via `createRequire` con un module id armado en runtime para que el
- * bundler no intente resolver el paquete estáticamente. Así el sitio arranca
- * aun si Stripe no está instalado (ej. preview sin cobros).
+ * Antes usábamos `createRequire` + module id dinámico para que el bundler no
+ * intentara resolver el paquete estáticamente — útil cuando Stripe era
+ * opcional. Pero con Turbopack en Next.js 16 ese truco rompe en runtime con
+ * `"Cannot find module as expression is too dynamic"` y deja `/api/donar/checkout`
+ * tirando 500 en producción.
  *
- * Cuando `STRIPE_SECRET_KEY` está presente y `stripe` ya es dependencia (lo
- * es a partir de producción), este módulo retorna una instancia autenticada.
+ * Ahora `stripe` es una dependencia real (package.json), así que importamos
+ * estático. El gate de "Stripe no configurado" se hace por `stripeEnabled()`
+ * en `./stripe.ts` ANTES de llamar a `getStripe()`.
  *
  * Nota sobre apiVersion: NO lo fijamos. Stripe usa el default de la cuenta
  * Dashboard → Developers, así el SDK se actualiza sin requerir cambio en
- * código cuando hacemos bump. Igualmente cada evento de webhook contiene su
- * propio api_version; si algún día necesitamos reproducir eventos viejos,
- * eso sigue funcionando.
+ * código cuando hacemos bump.
  */
 
-type StripeCtor = new (
-  key: string,
-  opts?: Record<string, unknown>
-) => StripeLike;
+import Stripe from "stripe";
 
-type StripeLike = {
-  checkout: {
-    sessions: {
-      create: (args: Record<string, unknown>) => Promise<{ url: string | null }>;
-    };
-  };
-  webhooks: {
-    constructEvent: (
-      payload: string,
-      header: string,
-      secret: string
-    ) => { type: string };
-  };
-};
+let cached: Stripe | null = null;
 
-export async function getStripe(): Promise<StripeLike> {
+export async function getStripe(): Promise<Stripe> {
+  if (cached) return cached;
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error("Stripe no está configurado");
   }
-  const { createRequire } = await import("node:module");
-  const req = createRequire(import.meta.url);
-  // Non-literal module id prevents bundler static analysis / pre-resolution.
-  const pkgName: string = process.env.STRIPE_MODULE_NAME || ["strip", "e"].join("");
-  const mod = req(pkgName) as { default: StripeCtor } | StripeCtor;
-  const Ctor = (typeof mod === "function" ? mod : mod.default) as StripeCtor;
-  return new Ctor(process.env.STRIPE_SECRET_KEY, {
-    // Deja que el SDK use su apiVersion built-in — siempre la última soportada.
-    // Ver https://stripe.com/docs/api/versioning
+  cached = new Stripe(process.env.STRIPE_SECRET_KEY, {
     typescript: true,
     appInfo: {
       name: "vuelvecasa-web",
@@ -55,4 +33,5 @@ export async function getStripe(): Promise<StripeLike> {
       url: process.env.NEXT_PUBLIC_SITE_URL || "https://vuelvecasa.com",
     },
   });
+  return cached;
 }

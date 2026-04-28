@@ -33,7 +33,6 @@ type Props = Omit<PressableProps, "children" | "style"> & {
   block?: boolean;
   style?: StyleProp<ViewStyle>;
   haptic?: "tap" | "light" | "medium" | "heavy" | "none";
-  glow?: boolean;
 };
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -63,7 +62,6 @@ export function PremiumButton({
   disabled,
   style,
   haptic = "tap",
-  glow = false,
   onPressIn,
   onPressOut,
   onPress,
@@ -75,9 +73,6 @@ export function PremiumButton({
   const animated = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
-  // `glow` y `glowOp` quedan en la firma por compat retro-, pero ya no se
-  // usan — el halo daba mal aspecto fuera del pill.
-  void glow;
 
   const pill: ViewStyle = {
     borderRadius: 9999,

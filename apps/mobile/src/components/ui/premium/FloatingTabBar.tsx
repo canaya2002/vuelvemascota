@@ -96,10 +96,10 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
           style={[
             {
               position: "absolute",
-              top: 10,
-              bottom: 10,
-              borderRadius: 26,
-              paddingHorizontal: 6,
+              top: 7,
+              bottom: 7,
+              borderRadius: 22,
+              paddingHorizontal: 4,
             },
             indicatorStyle,
           ]}
@@ -107,13 +107,13 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
           <View
             style={{
               flex: 1,
-              borderRadius: 26,
+              borderRadius: 22,
               overflow: "hidden",
-              marginHorizontal: 6,
+              marginHorizontal: 5,
               shadowColor: colors.brand,
-              shadowOpacity: 0.45,
-              shadowRadius: 14,
-              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.4,
+              shadowRadius: 12,
+              shadowOffset: { width: 0, height: 5 },
               elevation: 8,
             }}
           >
@@ -121,7 +121,7 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
           </View>
         </Animated.View>
 
-        <View style={{ flexDirection: "row", paddingVertical: 10, paddingHorizontal: 6 }}>
+        <View style={{ flexDirection: "row", paddingVertical: 7, paddingHorizontal: 4 }}>
           {state.routes.map((route, index) => {
             const { options } = descriptors[route.key];
             const spec = ICONS[route.name] ?? { focused: "ellipse", unfocused: "ellipse-outline", label: route.name };
@@ -155,7 +155,6 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
                 label={label}
                 onPress={onPress}
                 accessibilityLabel={options.tabBarAccessibilityLabel ?? label}
-                isReportar={route.name === "reportar"}
               />
             );
           })}
@@ -172,7 +171,6 @@ function TabItem({
   label,
   onPress,
   accessibilityLabel,
-  isReportar,
 }: {
   focused: boolean;
   iconFocused: IconName;
@@ -180,7 +178,6 @@ function TabItem({
   label: string;
   onPress: () => void;
   accessibilityLabel?: string;
-  isReportar: boolean;
 }) {
   const scale = useSharedValue(focused ? 1 : 0.94);
   const lift = useSharedValue(focused ? -2 : 0);
@@ -206,43 +203,30 @@ function TabItem({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        paddingVertical: 6,
+        paddingVertical: 4,
       }}
     >
       <Animated.View
         style={[
-          { alignItems: "center", gap: 2 },
+          { alignItems: "center", gap: 3 },
           animated,
         ]}
       >
         <Ionicons
           name={focused ? iconFocused : iconUnfocused}
-          size={isReportar ? 26 : 22}
+          size={20}
           color={iconColor}
         />
-        {!isReportar ? (
-          <Text
-            style={{
-              fontSize: 10.5,
-              fontWeight: "700",
-              color: textColor,
-              letterSpacing: 0.3,
-            }}
-          >
-            {label}
-          </Text>
-        ) : (
-          <Text
-            style={{
-              fontSize: 10.5,
-              fontWeight: "700",
-              color: textColor,
-              letterSpacing: 0.3,
-            }}
-          >
-            {label}
-          </Text>
-        )}
+        <Text
+          style={{
+            fontSize: 10,
+            fontWeight: "700",
+            color: textColor,
+            letterSpacing: 0.3,
+          }}
+        >
+          {label}
+        </Text>
       </Animated.View>
     </Pressable>
   );

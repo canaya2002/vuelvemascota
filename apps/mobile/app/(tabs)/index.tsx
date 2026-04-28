@@ -97,19 +97,19 @@ export default function HomeScreen() {
     },
     {
       id: "foros",
-      icon: "chatbubbles-outline",
+      icon: "book-outline",
       tone: "ink",
-      title: "Conversa con la comunidad",
-      description: "Consejos, historias y apoyo en los foros.",
+      title: "Foros con consejos e historias",
+      description: "Hilos largos de la comunidad — adopción, rescate, cuidados.",
       href: "/foros",
     },
     {
-      id: "chat",
-      icon: "flash-outline",
+      id: "comunidad",
+      icon: "filter-outline",
       tone: "brand",
-      title: "Canal de urgencias 24/7",
-      description: "Coordina rescates en vivo con vecinos y rescatistas.",
-      href: "/chat/urgencias",
+      title: "Tu vista de la comunidad",
+      description: "Crea filtros para ver solo lo que te importa, sin spam.",
+      href: "/chat",
     },
   ];
 
@@ -312,9 +312,9 @@ export default function HomeScreen() {
           <QuickAccess
             delay={210}
             tone="ocean"
-            label="Canales de chat"
-            description="Urgencias, veterinarias, rescatistas."
-            icon="wifi"
+            label="Tu vista de la comunidad"
+            description="Filtros guardados sin spam."
+            icon="filter"
             onPress={() => router.push("/chat" as never)}
           />
           <QuickAccess

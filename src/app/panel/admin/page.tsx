@@ -7,7 +7,10 @@ import { AliadoReviewCard } from "@/components/panel/AliadoReviewCard";
 import { AdminCasoRow } from "@/components/panel/AdminCasoRow";
 import Link from "next/link";
 
-export const metadata = { title: "Admin" };
+export const metadata = {
+  title: "Admin",
+  robots: { index: false, follow: false },
+};
 
 export default async function Page() {
   if (!FLAGS.auth) redirect("/panel");

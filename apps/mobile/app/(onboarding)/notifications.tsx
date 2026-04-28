@@ -101,7 +101,6 @@ export default function OnboardingNotifications() {
               label="Activar notificaciones"
               size="lg"
               block
-              glow
               loading={busy}
               leading={<Ionicons name="notifications" size={18} color="#fff" />}
               onPress={() => finish(true)}
