@@ -98,9 +98,11 @@ npx eas-cli@latest init --id 817a12b4-ce4e-451b-8a03-f272e9149fc0
 
 # 2) (Opcional) subir el download token de Mapbox como secret en EAS en vez
 #    de quedarse en .env. Solo si querés máxima higiene de secretos:
-npx eas-cli secret:create --scope project \
-  --name MAPBOX_DOWNLOAD_TOKEN \
-  --value "<MAPBOX_DOWNLOAD_TOKEN>"
+npx eas-cli secret:create --scope project `
+  --name MAPBOX_DOWNLOAD_TOKEN `
+  --value "<MAPBOX_DOWNLOAD_TOKEN_FROM_ENV>"
+# El valor se lee del archivo apps/mobile/.env (variable MAPBOX_DOWNLOAD_TOKEN).
+# NUNCA pegues el token literal en docs versionadas — git history queda público.
 
 # 3) Assets (logos + splash)
 #    Genera: apps/mobile/assets/images/{icon.png, icon-foreground.png,
