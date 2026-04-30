@@ -1,0 +1,136 @@
+<!--
+  VuelveaCasa — Auto-responder
+
+  Para qué: respuesta automática a quien escriba a hola@vuelvecasa.com.
+  Compatible con: Resend, Cloudflare Email Routing (vía workers),
+  Gmail "Vacation responder", Outlook "Automatic replies".
+
+  Subject sugerido (texto plano, no HTML):
+    Recibimos tu mensaje · VuelveaCasa
+
+  Si tu proveedor solo acepta texto plano, copia el bloque "TEXTO PLANO"
+  de abajo. Si acepta HTML (la mayoría), pega el <body> de este archivo.
+-->
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recibimos tu mensaje · VuelveaCasa</title>
+</head>
+<body style="margin:0; padding:0; background:#fbf7f1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color:#0a1a2b;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fbf7f1; padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border-radius:16px; box-shadow:0 1px 3px rgba(10,26,43,0.08); overflow:hidden;">
+          <tr>
+            <td style="padding:28px 32px 0; text-align:center;">
+              <div style="display:inline-block; padding:8px 14px; background:#fdf0f3; color:#b8264a; border-radius:999px; font-size:12px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;">
+                Mensaje recibido
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px 0;">
+              <h1 style="margin:0; font-size:24px; line-height:1.2; font-weight:700; color:#0a1a2b;">
+                Gracias por escribirnos
+              </h1>
+              <p style="margin:14px 0 0; font-size:15px; line-height:1.6; color:#3a4a5b;">
+                Recibimos tu mensaje. Te respondemos en
+                <strong>menos de 48 horas hábiles</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px 32px 0;">
+              <div style="border:1px solid #f0e9dc; border-radius:12px; padding:18px;">
+                <p style="margin:0; font-size:14px; line-height:1.55; color:#3a4a5b;">
+                  <strong style="color:#0a1a2b;">¿Es una mascota perdida o encontrada?</strong><br>
+                  No esperes a que respondamos: publica el caso de inmediato.
+                  Cuanto más rápido, más probabilidad de reencuentro.
+                </p>
+                <div style="margin-top:14px;">
+                  <a href="https://www.vuelvecasa.com/reportar-mascota"
+                     style="display:inline-block; background:#b8264a; color:#ffffff; text-decoration:none; padding:11px 18px; border-radius:10px; font-size:14px; font-weight:600;">
+                    Reportar caso ahora →
+                  </a>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px 32px 0;">
+              <p style="margin:0; font-size:14px; line-height:1.6; color:#3a4a5b;">
+                <strong style="color:#0a1a2b;">Si tu mensaje es sobre:</strong>
+              </p>
+              <ul style="margin:8px 0 0 18px; padding:0; font-size:14px; line-height:1.7; color:#3a4a5b;">
+                <li>Solicitud ARCO de privacidad → respondemos en máximo 20 días hábiles según la LFPDPPP.</li>
+                <li>Reportar abuso o spam → tramitamos en menos de 24h.</li>
+                <li>Alianzas con rescatistas o veterinarias → te enviamos el formulario de aliados.</li>
+                <li>Prensa → nos comunicamos contigo en máximo 3 días.</li>
+              </ul>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px 28px;">
+              <p style="margin:0; font-size:13px; line-height:1.6; color:#7a8595;">
+                Este es un mensaje automático. No respondas a este correo —
+                ya recibimos el original y te responderemos pronto desde
+                <a href="mailto:hola@vuelvecasa.com" style="color:#b8264a; text-decoration:none;">hola@vuelvecasa.com</a>.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:18px 32px; background:#fbf7f1; text-align:center;">
+              <p style="margin:0; font-size:12px; line-height:1.5; color:#7a8595;">
+                <strong style="color:#0a1a2b;">VuelveaCasa</strong> ·
+                Red comunitaria de México para mascotas perdidas<br>
+                <a href="https://www.vuelvecasa.com" style="color:#7a8595; text-decoration:none;">vuelvecasa.com</a>
+                ·
+                <a href="https://www.vuelvecasa.com/privacidad" style="color:#7a8595; text-decoration:none;">privacidad</a>
+                ·
+                <a href="https://www.vuelvecasa.com/contacto" style="color:#7a8595; text-decoration:none;">contacto</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+  VERSIÓN TEXTO PLANO (si tu proveedor solo soporta plain text)
+═══════════════════════════════════════════════════════════════════════════════
+
+Subject: Recibimos tu mensaje · VuelveaCasa
+
+Hola,
+
+Gracias por escribirnos. Recibimos tu mensaje y te respondemos
+en menos de 48 horas hábiles.
+
+¿Es sobre una mascota perdida o encontrada?
+No esperes a que respondamos: publica el caso de inmediato en
+https://www.vuelvecasa.com/reportar-mascota — cuanto más rápido,
+más probabilidad de reencuentro.
+
+Tiempos de respuesta según el tipo de mensaje:
+  · Solicitud ARCO de privacidad: máximo 20 días hábiles (LFPDPPP).
+  · Reportar abuso o spam: menos de 24 horas.
+  · Alianzas (rescatistas, veterinarias): enviamos formulario.
+  · Prensa: máximo 3 días.
+
+Este es un mensaje automático. No respondas a este correo — ya recibimos
+tu mensaje original y nos comunicaremos pronto.
+
+— Equipo VuelveaCasa
+https://www.vuelvecasa.com
+═══════════════════════════════════════════════════════════════════════════════
+-->

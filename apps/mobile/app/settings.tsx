@@ -152,7 +152,7 @@ export default function SettingsScreen() {
       router.replace("/(auth)/sign-in" as never);
       Alert.alert(
         "Cuenta eliminada",
-        "Tus datos se anonimizaron. Si necesitas algo más, escribe a hola@vuelvecasa.com."
+        "Tus datos se anonimizaron. Si necesitas algo más, escríbenos desde vuelvecasa.com/contacto."
       );
     } catch (err) {
       Alert.alert(

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SignUp } from "@clerk/nextjs";
 import { FLAGS } from "@/lib/flags";
 import { PageHero } from "@/components/PageHero";
+import { AuthFrame } from "@/components/AuthFrame";
 
 export const metadata: Metadata = {
   title: "Crear cuenta — VuelveaCasa",
@@ -25,37 +26,41 @@ export default function Page() {
   }
 
   return (
-    <section className="min-h-[80vh] flex items-center justify-center py-20 bg-[var(--bg-alt)]">
-      <div className="vc-container flex flex-col items-center">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold">Crea tu cuenta</h1>
-          <p className="mt-2 text-[var(--ink-soft)]">
-            Te tomará menos de un minuto. Gratis siempre.
-          </p>
-        </div>
-        <SignUp
-          appearance={{
-            elements: {
-              rootBox: "w-full flex justify-center",
-              card: "shadow-lg border border-[var(--line)] rounded-2xl",
-            },
-          }}
-          routing="path"
-          path="/crear-cuenta"
-          signInUrl="/entrar"
-        />
-        <p className="mt-8 text-sm text-[var(--muted)] max-w-md text-center">
+    <AuthFrame
+      mode="signup"
+      bottomNote={
+        <>
           Al continuar aceptas los{" "}
-          <Link href="/terminos" className="underline">
+          <Link
+            href="/terminos"
+            className="underline underline-offset-4 hover:text-[var(--brand)]"
+          >
             términos
           </Link>{" "}
           y el{" "}
-          <Link href="/privacidad" className="underline">
+          <Link
+            href="/privacidad"
+            className="underline underline-offset-4 hover:text-[var(--brand)]"
+          >
             aviso de privacidad
           </Link>
           .
-        </p>
-      </div>
-    </section>
+        </>
+      }
+    >
+      <SignUp
+        appearance={{
+          elements: {
+            rootBox: "w-full",
+            card: "shadow-lg border border-[var(--line)] rounded-2xl bg-white",
+            headerTitle: "hidden",
+            headerSubtitle: "hidden",
+          },
+        }}
+        routing="path"
+        path="/crear-cuenta"
+        signInUrl="/entrar"
+      />
+    </AuthFrame>
   );
 }

@@ -52,7 +52,7 @@ export default function PrivacidadScreen() {
         },
         {
           heading: "Tus derechos ARCO",
-          body: "Por LFPDPPP tienes derecho a Acceder, Rectificar, Cancelar u Oponerte al tratamiento de tus datos personales. Puedes ejercerlos desde el correo registrado a hola@vuelvecasa.com — respondemos en máximo 20 días hábiles.",
+          body: "Por LFPDPPP tienes derecho a Acceder, Rectificar, Cancelar u Oponerte al tratamiento de tus datos personales. Puedes ejercerlos desde nuestro formulario en vuelvecasa.com/contacto indicando el tema 'privacidad' — respondemos en máximo 20 días hábiles.",
         },
         {
           heading: "Seguridad",
@@ -63,7 +63,7 @@ export default function PrivacidadScreen() {
           body: "Si modificamos este documento de forma sustancial, te avisamos por email o notificación push antes de que entre en vigor. La versión vigente siempre está disponible en vuelvecasa.com/privacidad y desde Ajustes → Aviso de privacidad.",
         },
       ]}
-      footer="¿Dudas o quieres ejercer tus derechos? Escríbenos a hola@vuelvecasa.com. VuelveaCasa MX · México."
+      footer="¿Dudas o quieres ejercer tus derechos? Escríbenos desde vuelvecasa.com/contacto. VuelveaCasa MX · México."
     />
   );
 }

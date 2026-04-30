@@ -543,3 +543,65 @@ body {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 45%, white);
 }
+
+/* =============================================================================
+ * Legal / long-form typography (replaces missing @tailwindcss/typography)
+ * Used by <LegalDoc> on /privacidad and /terminos.
+ * ===========================================================================*/
+
+.legal-body {
+  color: var(--ink-soft);
+  font-size: 1.0125rem;
+  line-height: 1.72;
+}
+.legal-body > * + * { margin-top: 1.05rem; }
+.legal-body p { color: var(--ink-soft); }
+.legal-body strong { color: var(--ink); font-weight: 600; }
+.legal-body a {
+  color: var(--brand-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+.legal-body a:hover { color: var(--brand); }
+.legal-body h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-size: 1.18rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 1.75rem;
+}
+.legal-body ul,
+.legal-body ol {
+  padding-left: 1.25rem;
+}
+.legal-body ul li { list-style: disc; margin-top: 0.4rem; }
+.legal-body ol li { list-style: decimal; margin-top: 0.4rem; }
+.legal-body li::marker { color: var(--muted); }
+.legal-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--bg-alt);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.legal-body blockquote {
+  border-left: 3px solid var(--brand);
+  padding: 0.25rem 0 0.25rem 1.1rem;
+  color: var(--ink);
+  font-style: italic;
+  background: linear-gradient(
+    90deg,
+    var(--brand-soft) 0%,
+    transparent 60%
+  );
+  border-radius: 0 8px 8px 0;
+}
+.legal-body hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 2rem 0;
+}

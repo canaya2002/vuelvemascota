@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.2.3",
+    "@sentry/nextjs": "^10.50.0",
     "@vercel/analytics": "^2.0.1",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^3.22.0",

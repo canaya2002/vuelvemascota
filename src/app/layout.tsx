@@ -233,14 +233,14 @@ const organizationJsonLd = {
   contactPoint: [
     {
       "@type": "ContactPoint",
-      email: SITE.contact.email,
+      url: `${SITE.url}/contacto`,
       contactType: "customer support",
       areaServed: "MX",
       availableLanguage: ["Spanish", "es-MX"],
     },
     {
       "@type": "ContactPoint",
-      email: SITE.contact.prensa,
+      url: `${SITE.url}/contacto?tema=prensa`,
       contactType: "press",
       areaServed: "MX",
       availableLanguage: ["Spanish", "es-MX"],

@@ -352,7 +352,7 @@ const faqDonaciones = [
   },
   {
     q: "¿Puedo donar productos en vez de dinero?",
-    a: "Sí, pero ese flujo lo coordinamos directamente con rescatistas aliados. Escríbenos a hola@vuelvecasa.com.",
+    a: "Sí, pero ese flujo lo coordinamos directamente con rescatistas aliados. Escríbenos desde /contacto indicando el tema 'donaciones en especie'.",
   },
   {
     q: "¿Puedo donar a un rescatista específico?",

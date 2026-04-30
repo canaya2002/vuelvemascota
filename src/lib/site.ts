@@ -7,10 +7,14 @@ export const SITE = {
   locale: "es-MX",
   country: "MX",
   contact: {
+    // email queda como reply-to interno y fallback en código de outbound
+    // (no expuesto a usuarios — el dominio aún no recibe correo entrante).
+    // Para canal público usar `formUrl` (ruta /contacto del sitio).
     email: "hola@vuelvecasa.com",
     ayuda: "ayuda@vuelvecasa.com",
     prensa: "prensa@vuelvecasa.com",
     phone: "+52 55 0000 0000",
+    formUrl: "https://www.vuelvecasa.com/contacto",
   },
   social: {
     instagram: "https://instagram.com/vuelvecasa.mx",

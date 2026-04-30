@@ -22,7 +22,7 @@ export default function TerminosScreen() {
         },
         {
           heading: "Tu cuenta",
-          body: "Eres responsable de mantener tu contraseña segura y de toda la actividad que ocurra desde tu cuenta. Si sospechas un acceso no autorizado, avísanos a hola@vuelvecasa.com de inmediato.",
+          body: "Eres responsable de mantener tu contraseña segura y de toda la actividad que ocurra desde tu cuenta. Si sospechas un acceso no autorizado, avísanos de inmediato desde vuelvecasa.com/contacto.",
         },
         {
           heading: "Contenido que publicas",
@@ -65,7 +65,7 @@ export default function TerminosScreen() {
           body: "Estos términos se rigen por las leyes de los Estados Unidos Mexicanos. Cualquier controversia se resuelve en los tribunales de la Ciudad de México, salvo que la ley te dé un fuero específico distinto.",
         },
       ]}
-      footer="¿Dudas? Escríbenos a hola@vuelvecasa.com. VuelveaCasa MX · México · Hecho con cariño por las mascotas."
+      footer="¿Dudas? Escríbenos desde vuelvecasa.com/contacto. VuelveaCasa MX · México · Hecho con cariño por las mascotas."
     />
   );
 }

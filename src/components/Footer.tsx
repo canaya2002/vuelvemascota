@@ -162,9 +162,9 @@ export function Footer() {
           <p>
             <a
               className="underline underline-offset-4 hover:text-[var(--ink)] transition-colors"
-              href={`mailto:${SITE.contact.email}`}
+              href="/contacto"
             >
-              {SITE.contact.email}
+              Contáctanos
             </a>
           </p>
         </div>
